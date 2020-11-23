@@ -1,6 +1,7 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
+#include <string>
+#include <unordered_set>
 
 #include "DataChunk.hpp"
 
@@ -9,7 +10,7 @@ namespace core {
 
 class FitnessFunction {
     public:
-        FitnessFunction(nlohmann::json::json parameters) {};
+        FitnessFunction(const std::unordered_set<std::string, std::string>& fitnessFunctionParameters) {};
         virtual ~FitnessFunction() {};
         virtual void evaluate(const DataChunk& predictions, const DataChunk& labels) = 0;
 };

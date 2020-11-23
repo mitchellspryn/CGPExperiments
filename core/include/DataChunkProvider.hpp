@@ -4,6 +4,7 @@
 #include <string>
 
 #include "DataChunk.hpp"
+#include "RandomNumberGenerator.hpp"
 
 namespace cgpExperiments {
 namespace core {
@@ -13,14 +14,23 @@ class DataChunkProvider {
         DataChunkProvider(const std::string& fileName, int sampleWidth, int sampleHeight);
         ~DataChunkProvider();
 
-        int getNumChunksInDataset();
-        void getRandomChunk(DataChunk& chunk, int startIndex = -1);
+        int getNumSamplesInDataset();
+        void getRandomChunk(DataChunk& chunk, RandomNumberGenerator& rng, int startIndex = -1);
     
     private:
-        std::atomic<bool> fileMapped;
+        std::string fileName_;
+        int fileDescriptor_;
 
-        mapFileIntoMemory(const std::string& fileName);
-        releaseMappedFile();
+        int sampleWidth_;
+        int sampleHeight_;
+        int numSamples_;
+        int fileSizeInBytes_;
+        int sampleSizeInBytes_;
+
+        float* baseAddress_ = nullptr;
+
+        void mapFileIntoMemory(const std::string& fileName);
+        void releaseMappedFile();
 };
 
 }
