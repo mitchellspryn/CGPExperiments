@@ -23,7 +23,7 @@ class Genotype {
                 std::shared_ptr<FitnessFunction> fitnessFunction);
 
         void mutate(RandomNumberGenerator& rng);
-        const DataChunk& evaluate();
+        const DataChunk& evaluate(int sampleStartIndex=-1);
         std::vector<std::unordered_set<std::string, std::string>> serialize() const;
         std::string generateCode(CodeGenerationContext_t& context) const;
 
