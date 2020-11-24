@@ -13,14 +13,18 @@ class DataChunk {
         inline int getHeight() { return height_; }
         inline int getNum() { return num_; }
         inline int getSize() { return size_; }
-        float* getDataPtr() { return data_->data(); }
+        inline int getCapacity() { return capacity_; }
+        float* getDataPtr() { return data_.data(); }
+        inline void setNum(int num);
 
     private:
         int width_;
         int height_;
         int num_;
+        int maxNum_;
         int size_;
-        std::unique_ptr<std::vector<float>> data_; 
+        int capacity_;
+        std::vector<float> data_; 
 };
 
 }

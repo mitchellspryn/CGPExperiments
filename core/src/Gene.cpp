@@ -8,22 +8,36 @@ namespace cc = cgpExperiments::core;
 std::unordered_set<std::string, std::string> cc::Gene::serialize() {
     std::unordered_set<std::string, std::string> serializedGene = serializeInternal();
     serializedGene["geneName"] = getGeneName();
+
+    std::string inputBufferIndicesStr = "";
+    for (int i = 0; i < inputBufferIndices_.size(); i++) {
+        inputBufferIndicesStr += std::to_string(inputBufferIndices_[i]);
+        if (i < inputBufferIndices_.size() - 1) {
+            inputBufferIndicesStr += ",";
+        }
+    }
+    serializedGene["inputBufferIndexes"] = inputBufferIndicesStr;
+
     return serializedGene;
 }
 
-void cc::Gene::connectInput(int inputNumber, int geneIndex) {
-    if (inputNumber >= inputGeneIndexes_.size()) {
+void cc::Gene::connectInput(int inputNumber, int inputBufferIndex) {
+    if (inputNumber >= inputBufferIndices_.size()) {
         throw std::runtime_error(
             "Error: tried to connect to input "
             + std::to_string(inputNumber)
             + ", but gene "
             + getGeneName()
             + " only has "
-            + std::to_string(inputGeneIndexes_.size())
+            + std::to_string(inputBufferIndices_.size())
             + " inputs.");
     }
 
-    inputGeneIndexes_[inputNumber] = geneIndex;
+    inputBufferIndices_[inputNumber] = inputBufferIndex;
+}
+
+void cc::Gene::setOutputIndex(int outputBufferIndex) {
+    outputBufferIndex_ = outputBufferIndex;
 }
 
 std::string cc::Gene::generateUnusedVariableName(cc::CodeGenerationContext_t& context) {

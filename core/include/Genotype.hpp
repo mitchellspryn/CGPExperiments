@@ -15,25 +15,65 @@
 namespace cgpExperiments {
 namespace core {
 
+enum class MutationType {
+    Percentage = 0,
+    Probability,
+    SingleActive
+};
+
 class Genotype {
     public:
         Genotype(
                 const std::unordered_map<std::string, std::string>& genotypeParameters,
-                std::shared_ptr<GeneFactory> geneFactory,
-                std::shared_ptr<FitnessFunction> fitnessFunction);
+                std::shared_ptr<RandomNumberGenerator> rng,
+                std::shared_ptr<GeneFactory> geneFactory);
 
         void mutate(RandomNumberGenerator& rng);
-        const DataChunk& evaluate(int sampleStartIndex=-1);
+        void setGenes(
+                const std::vector<std::unique_ptr<Gene>>& modelGenes, 
+                const std::unordered_set<int>& activeGenes);
+        const std::vector<std::unique_ptr<Gene>>& getGenes();
+        const std::unordered_set<int> getActiveGenes();
+        const DataChunk& evaluate(std::vector<std::shared_ptr<DataChunk>>& inputs);
         std::vector<std::unordered_set<std::string, std::string>> serialize() const;
+        void deserialize(const std::vector<std::unordered_set<std::string, std::string>>& data);
         std::string generateCode(CodeGenerationContext_t& context) const;
+        void initializeRandomly();
+        void randomlyReconnectGeneInput(int inputNumber, int geneIndex);
 
     private:
-        std::vector<std::unique_ptr<Gene>> genes_;
-        std::vector<std::unique_ptr<DataChunkProvider>> inputDataProviders_;
-        std::vector<std::unique_ptr<DataChunk>> buffers_;
-        std::stack<int> indicesToEvaluate_;
-        std::unordered_set<int> activeGenomes_;
+        int geneGridWidth_;
+        int geneGridHeight_;
+        int maxLookback_;
+        int numInputDatasets_;
+        int inputDataWidth_;
+        int inputDataHeight_;
+        int inputDataNumSamples_;
 
+        int outputBufferIndex_;
+
+        MutationType mutationType_;
+        double mutationPercentage_;
+        int mutationPercentageNumGenes_;
+        double mutationProbability_;
+
+        std::vector<std::unique_ptr<Gene>> genes_;
+        std::vector<std::shared_ptr<DataChunk>> buffers_;
+        std::stack<int> indicesToEvaluate_;
+
+        // TODO: should this be a bool vec?
+        std::unordered_set<int> activeGenes_;
+
+        std::shared_ptr<GeneFactory> geneFactory_;
+        std::shared_ptr<RandomNumberGenerator> rng_;
+
+        void mutateUntilPercentage();
+        void mutateByProbability();
+        void mutateUntilSingleActive();
+        void mutateSingleGene(int geneIndex);
+
+        void fillParametersFromMap(
+                const std::unordered_map<std::string, std::string>& params);
 };
 
 }

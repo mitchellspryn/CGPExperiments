@@ -8,6 +8,7 @@ class RandomNumberGenerator {
     public:
         explicit RandomNumberGenerator(int seed);
         float getRandomFloat();
+        int getRandomInt(int lowerBoundInclusive, int upperBoundInclusive);
 
     private:
         std::default_random_engine generator_;
