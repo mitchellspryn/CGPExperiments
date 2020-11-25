@@ -14,8 +14,7 @@ namespace core {
 class DataChunkProvider {
     public:
         DataChunkProvider(
-            const std::unordered_map<std::string, std::string>& dataChunkParameters, 
-            std::shared_ptr<RandomNumberGenerator> rng);
+            const std::unordered_map<std::string, std::string>& dataChunkParameters);
         ~DataChunkProvider();
 
         inline int getChunkWidth() {
@@ -33,7 +32,6 @@ class DataChunkProvider {
         void getRandomChunk(DataChunk& chunk, int startIndex = -1);
     
     private:
-        std::shared_ptr<RandomNumberGenerator> rng_;
         std::string fileName_;
         int fileDescriptor_;
 

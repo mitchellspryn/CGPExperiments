@@ -17,6 +17,7 @@ std::unordered_set<std::string, std::string> cc::Gene::serialize() {
         }
     }
     serializedGene["inputBufferIndexes"] = inputBufferIndicesStr;
+    serializedGene["numInputs"] = inputBufferIndices_.size();
 
     return serializedGene;
 }

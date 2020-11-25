@@ -9,9 +9,7 @@
 namespace cc = cgpExperiments::core;
 
 cc::DataChunkProvider::DataChunkProvider(
-        const std::unordered_map<std::string, std::string>& parameters,
-        std::shared_ptr<cc::RandomNumberGenerator> rng) {
-    rng_ = rng;
+        const std::unordered_map<std::string, std::string>& parameters) {
 
     sampleWidth_ = std::stoi(parameters["sampleWidth"]);
     sampleHeight_ = std::stoi(parameters["sampleHeight"]);
@@ -49,7 +47,7 @@ void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex = -1
                 + " samples in the dataset.");
     }
     else if (startIndex < 0) {
-        startIndex = rng->getRandomInt(0, numSamples_ - 1);
+        startIndex = cc::randomNumberGenerator::getRandomInt(0, numSamples_ - 1);
     }
 
     // If we select a portion of the data near the end of the file, 

@@ -9,7 +9,6 @@
 #include "DataChunk.hpp"
 #include "ExperimentConfiguration.hpp"
 #include "Gene.hpp"
-#include "GeneFactory.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "Types.hpp"
 
@@ -26,10 +25,9 @@ class Genotype {
     public:
         Genotype(
                 std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
-                std::shared_ptr<RandomNumberGenerator> rng,
-                std::shared_ptr<GeneFactory> geneFactory);
+                std::shared_ptr<GenePool> genePool);
 
-        void mutate(RandomNumberGenerator& rng);
+        void mutate();
         void setGenes(
                 const std::vector<std::unique_ptr<Gene>>& modelGenes, 
                 const std::unordered_set<int>& activeGenes);
@@ -66,8 +64,7 @@ class Genotype {
         std::unordered_set<int> activeGenes_;
 
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
-        std::shared_ptr<GeneFactory> geneFactory_;
-        std::shared_ptr<RandomNumberGenerator> rng_;
+        std::shared_ptr<GenePool> genePool_;
 
         void mutateUntilPercentage();
         void mutateByProbability();

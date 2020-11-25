@@ -9,10 +9,8 @@ namespace cc = cgpExperiments::core;
 
 cc::Genotype::Genotype(
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
-        std::shared_ptr<RandomNumberGenerator> rng,
-        std::shared_ptr<GeneFactory> geneFactory) {
-    rng_ = rng;
-    geneFactory_ = geneFactory;
+        std::shared_ptr<GenePool> genePool) {
+    genePool_ = genePool;
     experimentConfiguration_ = experimentConfiguration;
 
     fillParametersFromMap(experimentConfiguration_->getGenotypeParameters());
@@ -42,8 +40,11 @@ void cc::Genotype::setGenes(
     //      (gene pool. heh)
     // However, the pool would have to be thread safe, which would hurt parallelism.
     // Elide it for now.
+    const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& geneParams = 
     for (size_t i = 0; i < genes_.size(); i++) {
-        genes[i] = modelGenes[i]->createCopy();
+        genePool_->returnToPool(std::move(genes_[i]));
+        genes_[i] = genePool_->getFromPool(modelGenes[i]->getGeneName());
+        genes_[i]->initializeFromTemplateGene(modelGenes[i].get());
     }
 
     activeGenes_ = activeGenes;
@@ -161,8 +162,9 @@ void cc::Genotype::deserialize(const std::vector<std::unordered_set<std::string,
     }
 
     for (int i = 1; i < data.size(); i++) {
-        std::string geneName = genomeParameters[i]["geneName"];
-        genes_[i-1] = geneFactory_->createGene(geneName, genomeParameters[i]);
+        const std::string& geneName = genomeParameters[i]["geneName"];
+        genes_[i-1] = genePool_->getFromPool(geneName);
+        genes_[i-1]->initializeFromParameters(genomeParameters[i]);
 
         // connect inputs
         std::stringstream stream(genomeParameters[i]["inputBufferIndexes"]);
@@ -263,14 +265,18 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
 
 void cc::Genotype::initializeRandomly() {
     for (size_t i = 0; i < genes_.size(); i++) {
-        genes[i] = geneFactory_->createRandomGene();
+        genes[i] = genePool_->getRandomGeneFromPool();
+        genes[i]->initializeFromParameters(
+            experimentConfiguration_->getGeneParameters(
+                genes[i]->getGeneName()));
         genes[i]->setOutputIndex(numInputDatasets_ + i);
         for (int j = 0; j < genes[i]->getNumInputs(); j++) {
             randomlyReconnectGeneInput(j, i);
         }
     }
 
-    outputIndex = numInputDatasets_ + rng->getRandomInt(0, genes_.size() - 1);
+    outputIndex = 
+        numInputDatasets_ + cc::RandomNumberGenerator::getRandomInt(0, genes_.size() - 1);
 }
 
 void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
@@ -278,13 +284,13 @@ void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
     int endColumn = (geneIndex / geneGridHeight_) - 1;
     int startColumn = std::max(0, endColumn - maxLookback_);
 
-    int columnNumber = rng_->getRandomInt(endColumn, startColumn);
+    int columnNumber = cc::RandomNumberGenerator::getRandomInt(endColumn, startColumn);
 
     int connectIndex = 0;
     if (columnNumber == 0) {
-        connectIndex = rng_->getRandomInt(0, numInputDatasets_); 
+        connectIndex = cc::RandomNumberGenerator::getRandomInt(0, numInputDatasets_); 
     } else {
-        connectIndex = (rng_->getRandomInt(0, endColumn-1) * geneGridHeight_)
+        connectIndex = (cc::RandomNumberGenerator::getRandomInt(0, endColumn-1) * geneGridHeight_)
             + (columnNumber * geneGridHeght)
             + numInputDatasets_;
     }
@@ -295,7 +301,7 @@ void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
 void cc::Genotype::mutateUntilPercentage() {
     std::unordered_set<int> mutatedGenes;
     while (mutatedGenes.size() < mutationPercentageNumGenes_) {
-        int geneIndex = rng_->getRandomInt(0, genes_.size());
+        int geneIndex = cc::RandomNumberGenerator::getRandomInt(0, genes_.size());
         if (mutatedGenes.count(geneIndex) == 0) {
             mutateSingleGene(geneIndex);
             mutatedGenes.add(geneIndex);
@@ -305,7 +311,7 @@ void cc::Genotype::mutateUntilPercentage() {
 
 void cc::Genotype::mutateByProbability() {
     for (size_t i = 0; i <= genes_.size(); i++) {
-        if (rng_->getRandomFloat() < mutationProbability_) {
+        if (cc::RandomNumberGenerator::getRandomFloat() < mutationProbability_) {
             mutateSingleGene(i);
         }
     }
@@ -314,7 +320,7 @@ void cc::Genotype::mutateByProbability() {
 void cc::Genotype::mutateUntilSingleActive() {
     bool mutatedActiveGene = false;
     while (!mutatedActiveGene) {
-        int geneIndex = rng_->getRandomInt(0, genes_.size());
+        int geneIndex = cc::RandomNumberGenerator::getRandomInt(0, genes_.size());
         mutateSingleGene(geneIndex);
         mutatedActiveGene = (
                 (geneIndex == genes_.size())
@@ -325,24 +331,29 @@ void cc::Genotype::mutateUntilSingleActive() {
 void cc::Genotype::mutateSingleGene(int geneIndex) {
     // Special case - change the output to point somewhere else
     if (geneIndex == genes_.size()) {
-        outputIndex_ = numInputDatasets_ + rng_->getRandomInt(0, genes_.size() - 1);
+        outputIndex_ = 
+            numInputDatasets_ + cc::RandomNumberGenerator::getRandomInt(0, genes_.size() - 1);
         return;
     }
 
     // 0 => completely new random gene
     // 1 => reconnect an input
     // 2 => mutate a parameter
-    int typeOfMutation = rng_->getRandomInt(0, 2);
+    int typeOfMutation = cc::RandomNumberGenerator::getRandomInt(0, 2);
     
     if (typeOfMutation == 0) {
-        genes_[geneIndex] = geneFactory_->createRandomGene();
+        genes_[geneIndex] = genePool_->getRandomGeneFromPool();
+        genes_[geneIndex]->initializeFromParameters(
+            experimentConfiguration_->getGeneParameters(
+                genes_[geneIndex]->getGeneName()));
         
         int numInputs = genes_[geneIndex]->getNumInputs();
         for (int i = 0; i < numInputs; i++) {
             randomlyReconnectGeneInput(i, geneIndex);
         }
     } else if (typeOfMutation == 1) {
-        int inputToReconnect = rng_->getRandomInt(0, genes_[geneIndex]->getNumInputs());
+        int inputToReconnect = 
+            cc::RandomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
         randomlyReconnectGeneInput(inputToReconnect, geneIndex);
     } else if (typeOfMutation == 2) {
         genes_[geneIndex]->mutateParameters();

@@ -4,13 +4,12 @@ namespace cc = cgpExperiments::core;
 
 cc::Island::Island(
         std::shared_ptr<FitnessFunctionFactory> fitnessFunctionFactory,
-        std::shared_ptr<GeneFactory> geneFactory,
+        std::shared_ptr<GenePool> genePool,
         const std::vector<std::shared_ptr<DataChunkProvider>>& inputDataChunkProviders,
         const std::shared_ptr<DataChunkProvider>& labelDataChunkProvider,
-        std::shared_ptr<RandomNumberGenerator> rng) {
+        std::shared_ptr<ExperimentConfiguration> experimentConfiguration) {
     experimentConfiguration_ = experimentConfiguration;
-    rng_ = rng;
-    geneFactory_ = geneFactory;
+    genePool_ = genePool;
     inputDataChunkProviders_ = inputDataChunkProviders;
     labelDataChunkProvider_ = labelDataChunkProvider;
     fitnessFunction_ = fitnessFunctionFactory->create(
@@ -19,7 +18,7 @@ cc::Island::Island(
     fillParametersFromMap(experimentConfiguration_->getIslandParameters());
 
     for (int i = 0; i < island.numGenotypes_; i++) {
-        residents_.emplace_back(experimentConfiguration_, rng, geneFactory_);
+        residents_.emplace_back(experimentConfiguration_, genePool_);
         residents_[i]->initializeRandomly();
     }
 
@@ -36,6 +35,10 @@ cc::Island::Island(
             numEvaluationSamples_));
 }
 
+int cc::Island::getNumIterationsPerEpoch() {
+    return numIterationsPerEpoch_;
+}
+
 void cc::Island::runEpoch() {
     // TODO: technically, this should be inside the loops. 
     // But, if the genes do not modify the input buffers (as they should not),
@@ -45,7 +48,9 @@ void cc::Island::runEpoch() {
     int chunkStartIndex = evalStartIndex_;
     if (chunkStartIndex < 0) {
         chunkStartIndex = 
-            rng_->getRandomInt(0, inputDataChunkProviders_[0]->getNumSamplesInDataset() - 1);
+            cc::RandomNumberGenerator::getRandomInt(
+                0, 
+                inputDataChunkProviders_[0]->getNumSamplesInDataset() - 1);
     }
 
     for (size_t j = 0; j < inputDataChunkBuffers_[i].size(); j++) {
@@ -54,22 +59,24 @@ void cc::Island::runEpoch() {
 
     labelDataChunkProvider_->getRandomChunk(*labelDataChunkBuffer_, chunkStartIndex);
 
-    // Find the initial parent
-    for (int i = 0; i < numGenotypes_; i++) {
-        const cc::DataChunk& predictions = residents_[i]->evaluate(inputDataChunkBuffers_);
+    // Find the initial parent only if it hasn't been set.
+    if (bestFitnessIndex_ < 0) {
+        for (int i = 0; i < numGenotypes_; i++) {
+            const cc::DataChunk& predictions = residents_[i]->evaluate(inputDataChunkBuffers_);
 
-        double fitness = fitnessFunction_->evaluate(
-            predictions,
-            *labelDataChunkProvider_,
-            *residents_[i]);
+            double fitness = fitnessFunction_->evaluate(
+                predictions,
+                *labelDataChunkProvider_,
+                *residents_[i]);
 
-        if (fitness <= bestFitness_) {
-            bestFitnessIndex_ = i; 
-            bestFitness_ = fitness;
+            if (fitness <= bestFitness_) {
+                bestFitnessIndex_ = i; 
+                bestFitness_ = fitness;
+            }
         }
     }
 
-    for (int iter = 1; iter < numIterationsPerEpoch_; initializeRandomly++) {
+    for (int iter = 0; iter < numIterationsPerEpoch_; iter++) {
         for (int i = 0; i < numGenotypes_; i++) {
             if (i != bestFitnessIndex_) {
                 residents_[i]->setGenes(
@@ -92,12 +99,12 @@ void cc::Island::runEpoch() {
     }
 }
 
-const cc::Genotype& cc::Island::getBestGenotype() {
-    return residents_[bestFitnessIndex_];
-}
-
 double cc::Island::getBestFitness() {
     return bestFitness_;
+}
+
+const cc::Genotype& cc::Island::getBestGenotype() {
+    return residents_[bestFitnessIndex_];
 }
 
 void cc::Island::setResidentGenotypes(const cc::Genotype& genotype, double fitness) {
@@ -106,6 +113,10 @@ void cc::Island::setResidentGenotypes(const cc::Genotype& genotype, double fitne
                 genotype.getGenes(),
                 genotype.getActiveGenes());
     }
+
+    // All genes are the same, so take the first one to be the parent.
+    bestFitnessIndex_ = 0;
+    bestFitness_ = fitness;
 }
 
 

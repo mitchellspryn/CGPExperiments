@@ -15,19 +15,17 @@ namespace core {
 template <typename NumInputs>
 class Gene {
     public:
-        Gene(
-                const std::unordered_map<std::string, std::string>& geneParameters,
-                std::shared_ptr<RandomNumberGenerator> rng) {
+        Gene() {
             static_assert(std::is_integral<NumInputs>::value, "Integral NumInputs required.");
 
-            inputGeneIndexes_.resize(NumInputs, 0);
-            rng_ = rng;
+            inputBufferIndexes_.resize(NumInputs, 0);
         }
 
         virtual ~Gene() {};
+        virtual void initializeFromParameters(const std::unordered_map<std::string, std:;string>& geneParameters) = 0;
+        virtual void initializeFromTemplateGene(const Gene* other) = 0;
         virtual void mutateParameters() = 0;
         virtual std::string getGeneName() const = 0;
-        virtual std::unique_ptr<Gene> createCopy() = 0;
 
         virtual void evaluate(std::vector<DataChunk>& buffers) = 0;
         std::string generateCode(CodeGenerationContext_t& context) const = 0;
@@ -41,7 +39,6 @@ class Gene {
     protected:
         int outputBufferIndex_;
         std::vector<int> inputBufferIndices_;
-        std::shared_ptr<RandomNumberGenerator> rng_;
 
         virtual std::unordered_set<std::string, std::string> serializeInternal() const = 0;
 

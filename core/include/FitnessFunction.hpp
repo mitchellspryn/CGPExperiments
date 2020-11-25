@@ -11,7 +11,6 @@ namespace core {
 
 class FitnessFunction {
     public:
-        FitnessFunction(const std::unordered_set<std::string, std::string>& fitnessFunctionParameters) {};
         virtual ~FitnessFunction() {};
         virtual double evaluate(const DataChunk& predictions, const DataChunk& labels, const Genotype& genotype) = 0;
 };

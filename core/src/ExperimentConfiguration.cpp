@@ -13,7 +13,7 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
     genotypeParameters_.clear();
     geneParameters_.clear();
 
-    nlohmann::json::json json;
+    nlohmann::json::json j;
     std::ifstream stream(inputJsonFilePath);
     if (!stream.good()) {
         throw std::runtime_error(
@@ -22,23 +22,33 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
             + "'.");
     }
 
-    stream >> json;
+    stream >> j;
 
     auto fillFromKeyValue = 
-        [&](json::object jobj, std::unordered_map<std::string, std::string>& map) {
+        [](json::json jobj, std::unordered_map<std::string, std::string>& map) {
         for (json::iterator it = jobj.begin(); it != jobj.end(); ++it) {
             map[it.key().get<std::string>()] = it.value().get<std::string>();
         }
     };
 
-    fillFromKeyValue(json["trainerParameters"], trainerParameters_);
-    fillFromKeyValue(json["islandParameters"], islandParameters_);
-    fillFromKeyValue(json["genotypeParameters"], genotypeParameters_);
-    fillFromKeyValue(json["fitnessFunctionParameters"], fitnessFunctionParameters_);
+    fillFromKeyValue(j["trainerParameters"], trainerParameters_);
+    fillFromKeyValue(j["islandParameters"], islandParameters_);
+    fillFromKeyValue(j["genotypeParameters"], genotypeParameters_);
+    fillFromKeyValue(j["fitnessFunctionParameters"], fitnessFunctionParameters_);
+    fillFromKeyValue(j["genePoolParameters"], genePoolParameters_);
 
-    json::object geneParametersObj = json["geneParameters"];
+    json::object geneParametersObj = j["geneParameters"];
     for (json::iterator it = geneParametersObj.begin(); it != geneParametersObj.end(); ++it) {
         std::string geneName = it.key().get<std::string>();
         fillFromKeyValue(geneParametersObj[geneName], geneParameters_[geneName]);
     }
+
+    json::array arr = j["inputDataChunkParameters"];
+    for (json::iterator it = arr.begin(); it != arr.end(); ++it) {
+        std::map<std::string, std::string> tmp;
+        fillFromKeyValue(json::object(*it), tmp);
+        inputDataChunkProviderParameters_.emplace_back(tmp);
+    }
+
+    fillFromKeyValue(j["labelDataChunkParameters"], labelDataChunkProviderParameters_);
 }

@@ -10,6 +10,7 @@
 #include "FitnessFunction.hpp"
 #include "FitnessFunctionFactory.hpp"
 #include "Genotype.hpp"
+#include "GeneFactory.hpp"
 #include "RandomNumberGenerator.hpp"
 
 namespace cgpExperiments {
@@ -18,14 +19,17 @@ namespace core {
 class Island {
     public:
         Island(
-                std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
                 std::shared_ptr<FitnessFunctionFactory> fitnessFunctionFactory,
-                std::shared_ptr<RandomNumberGenerator> rng);
+                std::shared_ptr<GenePool> genePool,
+                const std::vector<std::shared_ptr<DataChunkProvider>>& inputDataChunkProviders,
+                const std::shared_ptr<DataChunkProvider>& labelDataChunkProvider,
+                std::shared_ptr<ExperimentConfiguration> experimentConfiguration);
 
+        int getNumIterationsPerEpoch();
         void runEpoch();
         double getBestFitness();
         const Genotype& getBestGenotype();
-        void setParentGenotype(const Genotype& genotype, double fitness);
+        void setResidentGenotypes(const Genotype& genotype, double fitness);
 
     private:
         int numGenotypes_;
@@ -36,7 +40,6 @@ class Island {
         int bestFitnessIndex_ = -1;
 
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
-        std::shared_ptr<RandomNumberGenerator> rng_;
         std::unique_ptr<FitnessFunction> fitnessFunction_;
         std::vector<Genotype> residents_;
         std::vector<std::shared_ptr<DataChunkProvider>> inputDataChunkProviders_;
