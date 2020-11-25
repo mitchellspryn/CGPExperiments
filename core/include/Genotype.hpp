@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "DataChunk.hpp"
+#include "ExperimentConfiguration.hpp"
 #include "Gene.hpp"
 #include "GeneFactory.hpp"
 #include "RandomNumberGenerator.hpp"
@@ -24,7 +25,7 @@ enum class MutationType {
 class Genotype {
     public:
         Genotype(
-                const std::unordered_map<std::string, std::string>& genotypeParameters,
+                std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
                 std::shared_ptr<RandomNumberGenerator> rng,
                 std::shared_ptr<GeneFactory> geneFactory);
 
@@ -64,6 +65,7 @@ class Genotype {
         // TODO: should this be a bool vec?
         std::unordered_set<int> activeGenes_;
 
+        std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
         std::shared_ptr<GeneFactory> geneFactory_;
         std::shared_ptr<RandomNumberGenerator> rng_;
 

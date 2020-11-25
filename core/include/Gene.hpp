@@ -15,7 +15,8 @@ namespace core {
 template <typename NumInputs>
 class Gene {
     public:
-        Gene(const std::unordered_map<std::string, std::string>& geneParameters,
+        Gene(
+                const std::unordered_map<std::string, std::string>& geneParameters,
                 std::shared_ptr<RandomNumberGenerator> rng) {
             static_assert(std::is_integral<NumInputs>::value, "Integral NumInputs required.");
 

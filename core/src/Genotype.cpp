@@ -8,13 +8,14 @@
 namespace cc = cgpExperiments::core;
 
 cc::Genotype::Genotype(
-        const std::unordered_map<std::string, std::string>& genotypeParameters,
+        std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
         std::shared_ptr<RandomNumberGenerator> rng,
         std::shared_ptr<GeneFactory> geneFactory) {
     rng_ = rng;
     geneFactory_ = geneFactory;
+    experimentConfiguration_ = experimentConfiguration;
 
-    fillParametersFromMap(genotypeParameters);
+    fillParametersFromMap(experimentConfiguration_->getGenotypeParameters());
 }
 
 void cc::Genotype::mutate() {

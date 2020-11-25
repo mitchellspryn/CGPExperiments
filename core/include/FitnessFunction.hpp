@@ -4,6 +4,7 @@
 #include <unordered_set>
 
 #include "DataChunk.hpp"
+#include "Genotype.hpp"
 
 namespace cgpExperiments {
 namespace core {
@@ -12,7 +13,7 @@ class FitnessFunction {
     public:
         FitnessFunction(const std::unordered_set<std::string, std::string>& fitnessFunctionParameters) {};
         virtual ~FitnessFunction() {};
-        virtual void evaluate(const DataChunk& predictions, const DataChunk& labels) = 0;
+        virtual double evaluate(const DataChunk& predictions, const DataChunk& labels, const Genotype& genotype) = 0;
 };
 
 }

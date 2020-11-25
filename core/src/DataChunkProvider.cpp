@@ -8,11 +8,15 @@
 
 namespace cc = cgpExperiments::core;
 
-cc::DataChunkProvider::DataChunkProvider(const std::string& fileName, int sampleWidth, int sampleHeight) {
-    sampleWidth_ = sampleWidth;
-    sampleHeight_ = sampleHeight;
-    fileSizeInBytes_ = std::filesystem::file_size(fileName);
-    fileName_ = fileName;
+cc::DataChunkProvider::DataChunkProvider(
+        const std::unordered_map<std::string, std::string>& parameters,
+        std::shared_ptr<cc::RandomNumberGenerator> rng) {
+    rng_ = rng;
+
+    sampleWidth_ = std::stoi(parameters["sampleWidth"]);
+    sampleHeight_ = std::stoi(parameters["sampleHeight"]);
+    fileName_ = parameters["fileName"];
+    fileSizeInBytes_ = std::filesystem::file_size(fileName_);
 
     sampleSizeInBytes_ = sampleWidth_ * sampleHeight_ * sizeof(float);
     if ((fileSizeInBytes_ % sampleSizeInBytes_) != 0) {
@@ -35,11 +39,7 @@ cc::DataChunkProvider::~DataChunkProvider() {
     releaseMappedFile();
 }
 
-int cc::DataChunkProvider::getNumSamplesInDataset() {
-    return numSamples_;
-};
-
-void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, RandomNumberGenerator& rng, int startIndex = -1) {
+void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex = -1) {
     if (startIndex >= numSamples_) {
         throw std::runtime_error(
                 "Attempted to grab data at (zero-based) index "
@@ -49,8 +49,7 @@ void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, RandomNumberGenerat
                 + " samples in the dataset.");
     }
     else if (startIndex < 0) {
-        float randomFloat = rng.getRandomFloat(); 
-        startIndex = static_cast<int>(std::floor(numSamples_*randomFloat)) % numSamples_;
+        startIndex = rng->getRandomInt(0, numSamples_ - 1);
     }
 
     // If we select a portion of the data near the end of the file, 

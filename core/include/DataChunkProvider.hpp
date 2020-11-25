@@ -1,7 +1,9 @@
 #pragma once
 
 #include <atomic>
+#include <memory>
 #include <string>
+#include <unordered_map>
 
 #include "DataChunk.hpp"
 #include "RandomNumberGenerator.hpp"
@@ -11,13 +13,27 @@ namespace core {
 
 class DataChunkProvider {
     public:
-        DataChunkProvider(const std::string& fileName, int sampleWidth, int sampleHeight);
+        DataChunkProvider(
+            const std::unordered_map<std::string, std::string>& dataChunkParameters, 
+            std::shared_ptr<RandomNumberGenerator> rng);
         ~DataChunkProvider();
 
-        int getNumSamplesInDataset();
-        void getRandomChunk(DataChunk& chunk, RandomNumberGenerator& rng, int startIndex = -1);
+        inline int getChunkWidth() {
+            return sampleWidth_;
+        }
+
+        inline int getChunkHeight() {
+            return sampleHeight_;
+        }
+
+        inline int getNumSamplesInDataset() {
+            return numSamples_;
+        }
+
+        void getRandomChunk(DataChunk& chunk, int startIndex = -1);
     
     private:
+        std::shared_ptr<RandomNumberGenerator> rng_;
         std::string fileName_;
         int fileDescriptor_;
 
