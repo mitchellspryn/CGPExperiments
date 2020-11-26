@@ -5,6 +5,17 @@
 
 namespace cc = cgpExperiments::core;
 
+void initializeFromTemplateGene(const cc::Gene* other) {
+    inputBufferIndices_.resize(other->inputBufferIndices_.size());
+    for (size_t i = 0; i < inputBufferIndices_.size(); i++) {
+        inputBufferIndices_[i] = other->inputBufferIndices_[i];
+    }
+
+    outputBufferIndex_ = other->outputBufferIndex_;
+
+    initializeParametersFromTemplateGene(other);
+}
+
 std::unordered_set<std::string, std::string> cc::Gene::serialize() {
     std::unordered_set<std::string, std::string> serializedGene = serializeInternal();
     serializedGene["geneName"] = getGeneName();

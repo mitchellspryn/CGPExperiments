@@ -12,7 +12,7 @@ namespace core {
 class FitnessFunctionFactory {
     public:
         virtual ~FitnessFunctionFactory() {};
-        virtual std::unique_ptr<FitnessFunction> create(const std::unordered_map<std::string, std::string> fitnessFunctionParameters) = 0;
+        virtual std::unique_ptr<FitnessFunction> create(const std::unordered_map<std::string, std::string>& fitnessFunctionParameters) = 0;
 };
 
 }

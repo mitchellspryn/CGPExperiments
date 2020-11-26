@@ -14,7 +14,7 @@ class DataChunk {
         inline int getNum() { return num_; }
         inline int getSize() { return size_; }
         inline int getCapacity() { return capacity_; }
-        float* getDataPtr() { return data_.data(); }
+        inline float* getDataPtr() { return data_.data(); }
         inline void setNum(int num);
 
     private:
@@ -24,6 +24,8 @@ class DataChunk {
         int maxNum_;
         int size_;
         int capacity_;
+
+        int widthHeight_;
         std::vector<float> data_; 
 };
 

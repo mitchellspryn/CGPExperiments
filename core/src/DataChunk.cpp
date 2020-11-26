@@ -8,6 +8,7 @@ cc::DataChunk::DataChunk(int width, int height, int num) {
     num_ = num;
     num_ = maxNum_;
     size_ = width * height * num;
+    widthHeight_ = width * height;
 
     data_.resize(size_, 0);
 }

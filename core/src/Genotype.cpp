@@ -187,24 +187,25 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
         throw std::runtime_error("Only c++ code generation is currently supported.");
     }
 
-    std::stringstream outputStringStream;
-    outputStringStream << "#include <DataChunk.hpp>\n";
-    outputStringStream << "\n";
-    outputStringStream << "DataChunk compute(";
+    // Generate the function
+    std::stringstream functionStringStream;
+    functionStringStream << "    void compute(";
 
     context.variableNamesInUse.clear();
     
     for (int i = 0; i < numInputDatasets_; i++) {
         std::string inputVariableName = "in" + std::to_string(i);
-        outputStringStream << "const DataChunk& " << inputVariableName;
+        functionStringStream << "const float* " << inputVariableName;
         context.variableNamesInUse.emplace(inputVariableName);
-
-        if (i < numInputDatasets_ - 1) {
-            outputStringStream << ", ";
-        } else {
-            outputStringStream << ") {\n";
-        }
+        functionStringStream << ", ";
     }
+
+    functionStringStream << "float* outputBuf, int width, int height, int num) {" ;
+    context.variableNamesInUse.emplace("width");
+    context.variableNamesInUse.emplace("height");
+    context.variableNamesInUse.emplace("num");
+
+    int tmpBufferSize
 
     std::stack<int> indexesToGenerate;
     std::queue<int> queue;
@@ -248,19 +249,64 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
             }
         }
 
-        outputStringStream << "////////////////////////////////////////////////////\n";
-        outputStringStream << genes_[geneIndexToGenerate]->generateCode(context);
-        outputStringStream << "\n";
+        auto replaceAllFxn = [](std::string str, const std::string& from, const std::string& to) -> std::string {
+            size_t startPos = 0;
+            while((startPos = str.find(from, startPos)) != std::string::npos) {
+                str.replace(startPos, from.length(), to);
+                startPos += to.length(); // Handles case where 'to' is a substring of 'from'
+            }
+            return str;
+        };  
+
+        functionStringStream << "    ////////////////////////////////////////////////////\n";
+        std::string generatedSnippet = genes_[geneIndexToGenerate]->generateCode(context);
+        functionStringStream << "    " << replaceAllFxn(generatedSnippet, "\n", "\n    ");
+        functionStringStream << "\n";
 
         generatedIndexes.emplace(geneIndexToGenerate);
     }
     
-    outputStringStream << "////////////////////////////////////////////////////\n";
-    outputStringStream 
+    functionStringStream << "////////////////////////////////////////////////////\n";
+    functionStringStream 
         << 
         "return tmp" 
         << std::to_string(outputBufferIndex_ - numInputDatasets_)
         << ";\n}\n";
+
+    std::stringstream constructorStringStream;
+    constructorStringStream << "GeneratedFunction() {\n";
+
+    std::stringstream variableDeclarationStringStream;
+    
+    constexpr int numFloats = buffers_[0].getSize();
+    for (const std::string& variable : context.variableNamesInUse) {
+        constructorStringStream 
+            << "    " 
+            << variable 
+            << ".resize(" 
+            << std::to_string(numFloats)
+            << ", 0);\n";
+
+        variableDeclarationStringStream << "    std::vector<float> " << variable << ";\n";
+    }
+
+    constructorStringStream << "}\n";
+
+    std::string output = 
+        "#include <vector>\n"
+    +   "\n"
+    +   "class GeneratedFunction {\n" 
+    +   "  public:\n"
+    +   constructorStringStream.str();
+    +   "\n"
+    +   functionStringStream.str();
+    +   "\n"
+    +   "  private:"
+    +   variableDeclarationStringStream.str()
+    +   "\n"
+    +   "};";
+
+    return output;
 }
 
 void cc::Genotype::initializeRandomly() {
