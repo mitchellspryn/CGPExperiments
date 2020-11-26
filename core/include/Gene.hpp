@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <string>
-#include <type_traits>
 #include <unordered_map>
 
 #include "DataChunk.hpp"
@@ -12,12 +11,10 @@
 namespace cgpExperiments {
 namespace core {
 
-template <typename NumInputs>
+template <int NumInputs>
 class Gene {
     public:
         Gene() {
-            static_assert(std::is_integral<NumInputs>::value, "Integral NumInputs required.");
-
             inputBufferIndices_.resize(NumInputs, 0);
         }
 
@@ -28,6 +25,7 @@ class Gene {
 
         virtual void evaluate(std::vector<std::shared_ptr<DataChunk>>& buffers) = 0;
         virtual std::string generateCode(CodeGenerationContext_t& context) const = 0;
+        virtual bool isParameterFree() const = 0;
 
         int getNumInputs() { return NumInputs; }
         const std::vector<int>& getInputBufferIndices() { return inputBufferIndices_; }

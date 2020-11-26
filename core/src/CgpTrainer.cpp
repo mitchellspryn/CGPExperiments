@@ -11,6 +11,8 @@ cc::CgpTrainer::CgpTrainer(
 
     fillParametersFromMap(fitnessFunctionFactory_->getTrainerParameters());
 
+    cc::randomNumberGenerator::seedRng(rngSeed_);
+
     genePool_ = std::make_shared<cc::GenePool>(
         experimentConfiguration_,
         geneFactory_);
@@ -83,6 +85,7 @@ void cc::CgpTrainer::fillParametersFromMap(
         const std::unordered_map<std::string, std::string>& parameters) {
     maxNumThreads_ = std::stoi(parameters["maxNumThreads"]);
     numIslands_ = std::stoi(parameters["numIslands"]);
+    rngSeed_ = std::stoi(parameters["rngSeed"]);
     terminationFitness_ = std::stod(parameters["terminationFitness"]);
     terminationNumIterations_ = std::stod(paramters["terminationNumIterations"]);
 }

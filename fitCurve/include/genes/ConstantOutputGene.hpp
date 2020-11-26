@@ -19,6 +19,10 @@ class ConstantOutputGene : public cgpExperiments::fitCurve::Gene<0> {
         virtual void evaluate(std::vector<std::shared_ptr<cgpExperiments::core::DataChunk>>& buffers) override;
         std::string generateCode(cgpExperiments::core::DataChunk>>& buffers) override;
         std::unordered_map<std::string, std::string> serialize() override;
+    private:
+        float minValue_;
+        float maxValue_;
+        float value_;
 };
 
 }

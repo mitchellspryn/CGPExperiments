@@ -1,37 +1,37 @@
-#include "../../include/genes/AddGene.hpp"
+#include "../../include/genes/MultiplyGene.hpp"
 
 namespace cc = cgpExperiments::core;
 namespace cf = cgpExperiments::fitCurve;
 
-void cf::AddGene::initializeFromParameters(
+void cf::MultiplyGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }
 
-void cf::AddGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+void cf::MultiplyGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
     // Nothing to initialize!
 }
 
-void cf::AddGene::mutateParameters() {
+void cf::MultiplyGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string cf::AddGene::getGeneName() {
-    return "add";
+std::string cf::MultiplyGene::getGeneName() {
+    return "multiply";
 }
 
-void cf::AddGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void cf::MultiplyGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
 
     int numExamples = buffers[inputBufferIndices_[0]]->getNum();
     for (int i = 0; i < numExamples; i++) {
-        outputBuf[i] = firstBuf[i] + secondBuf[i];
+        outputBuf[i] = firstBuf[i] * secondBuf[i];
     }
 }
 
-std::string cf::AddGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string cf::MultiplyGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string line = 
         context.outputVariableName 
         + "[i] = " 
@@ -48,7 +48,7 @@ std::string cf::AddGene::generateCode(cc::CodeGenerationContext_t& context) {
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::AddGene::serializeInternal() {
+std::unordered_map<std::string, std::string> cf::MultiplyGene::serializeInternal() {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

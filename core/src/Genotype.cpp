@@ -259,6 +259,8 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
         };  
 
         functionStringStream << "    ////////////////////////////////////////////////////\n";
+        functionStringStream << "    //" << genes_[geneIndexToGenerate]->getGeneName() << ": " << geneIndexToGenerate << "\n";
+        functionStringStream << "    ////////////////////////////////////////////////////\n";
         std::string generatedSnippet = genes_[geneIndexToGenerate]->generateCode(context);
         functionStringStream << "    " << replaceAllFxn(generatedSnippet, "\n", "\n    ");
         functionStringStream << "\n";
@@ -271,7 +273,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
         << 
         "return tmp" 
         << std::to_string(outputBufferIndex_ - numInputDatasets_)
-        << ";\n}\n";
+        << ".data();\n}\n";
 
     std::stringstream constructorStringStream;
     constructorStringStream << "GeneratedFunction() {\n";
@@ -292,8 +294,9 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
 
     constructorStringStream << "}\n";
 
-    std::string output = 
-        "#include <vector>\n"
+    std::string output = ""
+    +   "#include <cmath>\n"
+    +   "#include <vector>\n"
     +   "\n"
     +   "class GeneratedFunction {\n" 
     +   "  public:\n"
@@ -382,12 +385,29 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
         return;
     }
 
-    // 0 => completely new random gene
-    // 1 => reconnect an input
+    // 0 => reconnect an input
+    // 1 => completely new random gene
     // 2 => mutate a parameter
-    int typeOfMutation = cc::RandomNumberGenerator::getRandomInt(0, 2);
+    int upperBound = 2;
+    int lowerBound = 0;
+
+    // Do not mutate a gene's parameters if it has none.
+    if (genes_[geneIndex]->isParamterFree()) {
+        upperBound = 1;
+    }
+
+    // Do not try to reconnect an input if it has none (e.g. constant node)
+    if (genes_[geneIndex]->getNumInputs() == 0) {
+        lowerBound = 1;
+    }
+
+    int typeOfMutation = cc::RandomNumberGenerator::getRandomInt(lowerBound, upperBound);
     
     if (typeOfMutation == 0) {
+        int inputToReconnect = 
+            cc::RandomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
+        randomlyReconnectGeneInput(inputToReconnect, geneIndex);
+    } else if (typeOfMutation == 1) {
         genes_[geneIndex] = genePool_->getRandomGeneFromPool();
         genes_[geneIndex]->initializeFromParameters(
             experimentConfiguration_->getGeneParameters(
@@ -397,10 +417,6 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
         for (int i = 0; i < numInputs; i++) {
             randomlyReconnectGeneInput(i, geneIndex);
         }
-    } else if (typeOfMutation == 1) {
-        int inputToReconnect = 
-            cc::RandomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
-        randomlyReconnectGeneInput(inputToReconnect, geneIndex);
     } else if (typeOfMutation == 2) {
         genes_[geneIndex]->mutateParameters();
     }

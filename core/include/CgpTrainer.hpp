@@ -32,6 +32,7 @@ class CgpTrainer {
     private:
         int maxNumThreads_;
         int numIslands_;
+        int rngSeed_;
         double terminationFitness_;
         double terminationNumIterations_;
 

@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace fitCurve {
 
-class SinGene : public cgpExperiments::fitCurve::Gene<2> {
+class SinGene : public cgpExperiments::fitCurve::Gene<1> {
     public:
         virtual ~SinGene() {};
         virtual void initializeFromParameters(const std::unordered_map<std::string, std::string>& geneParameters) override;
