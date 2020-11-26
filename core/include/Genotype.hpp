@@ -37,6 +37,7 @@ class Genotype {
         std::vector<std::unordered_set<std::string, std::string>> serialize() const;
         void deserialize(const std::vector<std::unordered_set<std::string, std::string>>& data);
         std::string generateCode(CodeGenerationContext_t& context) const;
+        std::string generateDotFile(bool includeUnusedNodes) const;
         void initializeRandomly();
         void randomlyReconnectGeneInput(int inputNumber, int geneIndex);
 

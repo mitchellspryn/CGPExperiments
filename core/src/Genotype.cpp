@@ -85,7 +85,7 @@ const cc::DataChunk& cc::Genotype::evaluate(std::vector<std::shared_ptr<DataChun
             indicesToEvaluate_.push(nextIndex);
             
             const std::vector<int>& dependencies = 
-                genes_[nextIndex-numInputDatasets_]->getInputBufferIndexes();
+                genes_[nextIndex-numInputDatasets_]->getInputBufferIndices();
 
             for (size_t i = 0; i < dependencies.size(); i++) {
                 queue.push(dependencies[i]);
@@ -218,7 +218,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
             indexesToGenerate.push(nextIndex);
             
             const std::vector<int>& dependencies = 
-                genes_[nextIndex-numInputDatasets_]->getInputBufferIndexes();
+                genes_[nextIndex-numInputDatasets_]->getInputBufferIndices();
 
             for (size_t i = 0; i < dependencies.size(); i++) {
                 queue.push(dependencies[i]);
@@ -310,6 +310,60 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
     +   "};";
 
     return output;
+}
+
+std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
+    std::stringstream outputStream;
+    outputStream << "digraph graph {\n";
+    outputStream << "  size=\"10, 10\";\n";
+
+    for (size_t i = 0; i < numInputDatasets_; i++) {
+        outputStream 
+            << "  "
+            << std::to_string(i)
+            << " [label=\"in_"
+            << std::to_string(i)
+            << " \", shape=\"ellipse\", color=\"azure\"];\n";
+    }
+
+    for (size_t i = 0; i < genes_.size(); i++) {
+        bool isActive = (activeGenes_.count(i) > 0);
+
+        if (includeUnusedNodes || isActive) {
+            std::string color = "beige";
+            if (isActive) {
+                if (i == outputIndex_ - numInputDatasets_) {
+                    color = "darkOliveGreen2";
+                } else {
+                    color = "bisque2";
+                }
+            }
+
+            outputStream
+                << "  "
+                << std::to_string(i + numInputDatasets_)
+                << " [label=\""
+                << genes_[i]->getGeneName()
+                << ": "
+                << i
+                << "\", shape=\"box\", color=\""
+                << (isActive ? "bisque3" : "beige")
+                << "];\n";
+
+            const std::vector<int>& inputs = genes_[i]->getInputBufferIndices();
+            for (size_t j = 0; j < inputs.size(); j++) {
+                outputStream 
+                    << std::to_string(j)
+                    << " -> "
+                    << std::to_string(i)
+                    << ";";
+            }
+        }
+    }
+
+    outputStream << "}";
+    
+    return outputStream.str();
 }
 
 void cc::Genotype::initializeRandomly() {
