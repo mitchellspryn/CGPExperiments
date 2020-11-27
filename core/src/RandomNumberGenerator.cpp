@@ -9,16 +9,16 @@ namespace {
     std::uniform_real_distribution<float> floatDistribution(0, 1);
 }
 
-ccr::seedRng(int seed) {
+void ccr::seedRng(int seed) {
     generator.seed(seed);
 }
 
 float ccr::getRandomFloat() {
-    return distribution(generator);
+    return floatDistribution(generator);
 }
 
 int ccr::getRandomInt(int lowerBoundInclusive, int upperBoundInclusive) {
-    float f = distribution(generator);
+    float f = floatDistribution(generator);
 
     int range = upperBoundInclusive - lowerBoundInclusive;
     

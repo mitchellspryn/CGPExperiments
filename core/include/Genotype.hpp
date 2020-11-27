@@ -33,8 +33,8 @@ class Genotype {
         void setGenes(
                 const std::vector<std::unique_ptr<Gene>>& modelGenes, 
                 const std::unordered_set<int>& activeGenes);
-        const std::vector<std::unique_ptr<Gene>>& getGenes();
-        const std::unordered_set<int> getActiveGenes();
+        const std::vector<std::unique_ptr<Gene>>& getGenes() const;
+        const std::unordered_set<int> getActiveGenes() const;
         const DataChunk& evaluate(std::vector<std::shared_ptr<DataChunk>>& inputs);
         std::vector<std::unordered_map<std::string, std::string>> serialize() const;
         void deserialize(const std::vector<std::unordered_map<std::string, std::string>>& data);

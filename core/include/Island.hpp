@@ -12,6 +12,7 @@
 #include "FitnessFunctionFactory.hpp"
 #include "Genotype.hpp"
 #include "GeneFactory.hpp"
+#include "GenePool.hpp"
 #include "RandomNumberGenerator.hpp"
 
 namespace cgpExperiments {
@@ -43,11 +44,12 @@ class Island {
 
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
         std::unique_ptr<FitnessFunction> fitnessFunction_;
-        std::vector<Genotype> residents_;
+        std::vector<std::unique_ptr<Genotype>> residents_;
         std::vector<std::shared_ptr<DataChunkProvider>> inputDataChunkProviders_;
         std::shared_ptr<DataChunkProvider> labelDataChunkProvider_;
-        std::vector<std::unique_ptr<DataChunk>> inputDataChunkBuffers_;
-        std::unique_ptr<DataChunk> labelDataChunkBuffer_;
+        std::shared_ptr<GenePool> genePool_;
+        std::vector<std::shared_ptr<DataChunk>> inputDataChunkBuffers_;
+        std::shared_ptr<DataChunk> labelDataChunkBuffer_;
 
         void fillParametersFromMap(
                 const std::unordered_map<std::string, std::string>& params);

@@ -17,21 +17,23 @@ cc::Island::Island(
 
     fillParametersFromMap(experimentConfiguration_->getIslandParameters());
 
-    for (int i = 0; i < island.numGenotypes_; i++) {
-        residents_.emplace_back(experimentConfiguration_, genePool_);
+    for (int i = 0; i < numGenotypes_; i++) {
+        std::unique_ptr<cc::Genotype> resident =
+            std::make_unique<cc::Genotype>(experimentConfiguration_, genePool);
+        residents_.emplace_back(std::move(resident));
         residents_[i]->initializeRandomly();
     }
 
     for (size_t i = 0; i < inputDataChunkProviders_.size(); i++) {
         inputDataChunkBuffers_[i].reset(new cc::DataChunk(
-            inputDataChunkProviders_[i]->getSampleWidth(),
-            inputDataChunkProviders_[i]->getSampleHeight(),
+            inputDataChunkProviders_[i]->getChunkWidth(),
+            inputDataChunkProviders_[i]->getChunkHeight(),
             numEvaluationSamples_));
     }
 
-    labelDataChunkBuffer_->reset(new cc::DataChunk(
-            labelDataChunkProvider_->getSampleWidth(),
-            labelDataChunkProvider_->getSampleHeight(),
+    labelDataChunkBuffer_.reset(new cc::DataChunk(
+            labelDataChunkProvider_->getChunkWidth(),
+            labelDataChunkProvider_->getChunkHeight(),
             numEvaluationSamples_));
 }
 
@@ -48,13 +50,13 @@ void cc::Island::runEpoch() {
     int chunkStartIndex = evalStartIndex_;
     if (chunkStartIndex < 0) {
         chunkStartIndex = 
-            cc::RandomNumberGenerator::getRandomInt(
+            cc::randomNumberGenerator::getRandomInt(
                 0, 
                 inputDataChunkProviders_[0]->getNumSamplesInDataset() - 1);
     }
 
-    for (size_t j = 0; j < inputDataChunkBuffers_[i].size(); j++) {
-        inputDataChunkProviders_[j]->getRandomChunk(*inputDataChunkBuffers_[i], chunkStartIndex);
+    for (size_t i = 0; i < inputDataChunkBuffers_.size(); i++) {
+        inputDataChunkProviders_[i]->getRandomChunk(*inputDataChunkBuffers_[i], chunkStartIndex);
     }
 
     labelDataChunkProvider_->getRandomChunk(*labelDataChunkBuffer_, chunkStartIndex);
@@ -66,7 +68,7 @@ void cc::Island::runEpoch() {
 
             double fitness = fitnessFunction_->evaluate(
                 predictions,
-                *labelDataChunkProvider_,
+                *labelDataChunkBuffer_,
                 *residents_[i]);
 
             if (fitness <= bestFitness_) {
@@ -85,9 +87,12 @@ void cc::Island::runEpoch() {
 
                 residents_[i]->mutate();
 
+                const cc::DataChunk& predictions =
+                    residents_[i]->evaluate(inputDataChunkBuffers_);
+
                 double fitness = fitnessFunction_->evaluate(
                     predictions,
-                    *labelDataChunkProvider_,
+                    *labelDataChunkBuffer_,
                     *residents_[i]);
 
                 if (fitness <= bestFitness_) {
@@ -104,12 +109,12 @@ double cc::Island::getBestFitness() {
 }
 
 const cc::Genotype& cc::Island::getBestGenotype() {
-    return residents_[bestFitnessIndex_];
+    return *(residents_[bestFitnessIndex_]);
 }
 
 void cc::Island::setResidentGenotypes(const cc::Genotype& genotype, double fitness) {
     for (int i = 0; i < numGenotypes_; i++) {
-        residents[i]->setGenes(
+        residents_[i]->setGenes(
                 genotype.getGenes(),
                 genotype.getActiveGenes());
     }
