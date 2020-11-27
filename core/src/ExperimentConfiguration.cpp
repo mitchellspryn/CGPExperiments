@@ -13,7 +13,7 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
     genotypeParameters_.clear();
     geneParameters_.clear();
 
-    nlohmann::json::json j;
+    nlohmann::json j;
     std::ifstream stream(inputJsonFilePath);
     if (!stream.good()) {
         throw std::runtime_error(
@@ -24,12 +24,17 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
 
     stream >> j;
 
-    geneSet_ = j["geneset"];
+    // For some reason, template deduction in nlohmann::json fails with class member variables
+    // Create dummy variables to allow type inference to work.
+    std::string tmp1 = j["geneset"];
+    geneset_ = tmp1;
 
     auto fillFromKeyValue = 
-        [](json::json jobj, std::unordered_map<std::string, std::string>& map) {
-        for (json::iterator it = jobj.begin(); it != jobj.end(); ++it) {
-            map[it.key().get<std::string>()] = it.value().get<std::string>();
+        [](nlohmann::json jobj, std::unordered_map<std::string, std::string>& map) {
+        for (nlohmann::json::iterator it = jobj.begin(); it != jobj.end(); ++it) {
+            std::string key = it.key();
+            std::string value = it.value();
+            map[key] = value;
         }
     };
 
@@ -40,16 +45,16 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
     fillFromKeyValue(j["genePoolParameters"], genePoolParameters_);
     fillFromKeyValue(j["checkpointSaverParameters"], checkpointSaverParameters_);
 
-    json::object geneParametersObj = j["geneParameters"];
-    for (json::iterator it = geneParametersObj.begin(); it != geneParametersObj.end(); ++it) {
-        std::string geneName = it.key().get<std::string>();
+    nlohmann::json geneParametersObj = j["geneParameters"];
+    for (nlohmann::json::iterator it = geneParametersObj.begin(); it != geneParametersObj.end(); ++it) {
+        std::string geneName = it.key();
         fillFromKeyValue(geneParametersObj[geneName], geneParameters_[geneName]);
     }
 
-    json::array arr = j["inputDataChunkParameters"];
-    for (json::iterator it = arr.begin(); it != arr.end(); ++it) {
-        std::map<std::string, std::string> tmp;
-        fillFromKeyValue(json::object(*it), tmp);
+    nlohmann::json arr = j["inputDataChunkParameters"];
+    for (nlohmann::json::iterator it = arr.begin(); it != arr.end(); ++it) {
+        std::unordered_map<std::string, std::string> tmp;
+        fillFromKeyValue(*it, tmp);
         inputDataChunkProviderParameters_.emplace_back(tmp);
     }
 

@@ -37,7 +37,7 @@ class Genotype {
         const std::unordered_set<int> getActiveGenes();
         const DataChunk& evaluate(std::vector<std::shared_ptr<DataChunk>>& inputs);
         std::vector<std::unordered_map<std::string, std::string>> serialize() const;
-        void deserialize(const std::vector<std::unordered_set<std::string, std::string>>& data);
+        void deserialize(const std::vector<std::unordered_map<std::string, std::string>>& data);
         std::string generateCode(CodeGenerationContext_t& context) const;
         std::string generateDotFile(bool includeUnusedNodes) const;
         void initializeRandomly();

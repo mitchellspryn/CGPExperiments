@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <strings.h>
 #include <sstream>
 #include <queue>
 
@@ -35,12 +36,6 @@ void cc::Genotype::mutate() {
 void cc::Genotype::setGenes(
         const std::vector<std::unique_ptr<cc::Gene>>& modelGenes,
         const std::unordered_set<int>& activeGenes) {
-    // TODO: This is a bit sketchy, as we'll be constantly cycling through allocations.
-    // Potentially, we could solve this with a pooling implementation 
-    //      (gene pool. heh)
-    // However, the pool would have to be thread safe, which would hurt parallelism.
-    // Elide it for now.
-    const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& geneParams = 
     for (size_t i = 0; i < genes_.size(); i++) {
         genePool_->returnToPool(std::move(genes_[i]));
         genes_[i] = genePool_->getFromPool(modelGenes[i]->getGeneName());
@@ -64,7 +59,7 @@ const cc::DataChunk& cc::Genotype::evaluate(std::vector<std::shared_ptr<DataChun
             "Attempted to evaluate function with "
             + std::to_string(inputs.size())
             + " inputs, but expected "
-            + numInputDatasets_
+            + std::to_string(numInputDatasets_)
             + " inputs.");
     }
 
@@ -72,7 +67,6 @@ const cc::DataChunk& cc::Genotype::evaluate(std::vector<std::shared_ptr<DataChun
         buffers_[i] = inputs[i];
     }
 
-    indicesToEvaluate_.clear();
     activeGenes_.clear();
 
     std::queue<int> queue;
@@ -97,22 +91,22 @@ const cc::DataChunk& cc::Genotype::evaluate(std::vector<std::shared_ptr<DataChun
         int geneIndexToEvaluate = indicesToEvaluate_.top() - numInputDatasets_;
         indicesToEvaluate_.pop();
         
-        if (activeGenes.count(geneIndexToEvaluate) != 0) {
+        if (activeGenes_.count(geneIndexToEvaluate) != 0) {
             genes_[geneIndexToEvaluate]->evaluate(buffers_);
-            activeGenes.emplace(geneIndexToEvaluate);
+            activeGenes_.emplace(geneIndexToEvaluate);
         }
     }
 
-    return buffers_[outputBufferIndex_];
+    return *(buffers_[outputBufferIndex_]);
 }
 
-std::vector<std::unordered_set<std::string, std::string>> cc::Genotype::serialize() const {
-    std::vector<std::unordered_set<std::string, std::string>> result;
+std::vector<std::unordered_map<std::string, std::string>> cc::Genotype::serialize() const {
+    std::vector<std::unordered_map<std::string, std::string>> result;
     result.reserve((genes_.size()) + 1);
 
     std::unordered_map<std::string, std::string> genotypeParameters;
     genotypeParameters["geneGridWidth"] = std::to_string(geneGridWidth_);
-    genotypeParameters["geneGridHeight"] = std::to_string(geneGridHeght_);
+    genotypeParameters["geneGridHeight"] = std::to_string(geneGridHeight_);
     genotypeParameters["maxLookback"] = std::to_string(maxLookback_);
     genotypeParameters["numInputDatasets"] = std::to_string(numInputDatasets_);
     genotypeParameters["inputDataWidth"] = std::to_string(inputDataWidth_);
@@ -144,30 +138,30 @@ std::vector<std::unordered_set<std::string, std::string>> cc::Genotype::serializ
     return result;
 }
 
-void cc::Genotype::deserialize(const std::vector<std::unordered_set<std::string, std::string>>& data) {
+void cc::Genotype::deserialize(const std::vector<std::unordered_map<std::string, std::string>>& data) {
     if (data.size() == 0) {
         throw std::runtime_error("Attempted to deserialize an empty genotype.");
     }   
 
-    std::unordered_set<std::string, std::string> genomeParameters = data[0]; 
+    std::unordered_map<std::string, std::string> genomeParameters = data[0]; 
     fillParametersFromMap(genomeParameters);
 
-    int expectedNumberOfGenes = geneGridWidth_ * geneGridHeght_;
+    int expectedNumberOfGenes = geneGridWidth_ * geneGridHeight_;
     if (data.size() != expectedNumberOfGenes + 1) {
         throw std::runtime_error(
                 "Unexpected genome size when deserializing. Expected "
                 + std::to_string(expectedNumberOfGenes+1)
                 + ", but got "
-                + data.size());
+                + std::to_string(data.size()));
     }
 
     for (int i = 1; i < data.size(); i++) {
-        const std::string& geneName = genomeParameters[i]["geneName"];
+        const std::string& geneName = data.at(i).at("geneName");
         genes_[i-1] = genePool_->getFromPool(geneName);
-        genes_[i-1]->initializeFromParameters(genomeParameters[i]);
+        genes_[i-1]->initializeFromParameters(data.at(i));
 
         // connect inputs
-        std::stringstream stream(genomeParameters[i]["inputBufferIndexes"]);
+        std::stringstream stream(data.at(i).at("inputBufferIndexes"));
         int inputNumber = 0;
         while (stream.good()) {
             std::string indexStr;
@@ -182,7 +176,7 @@ void cc::Genotype::deserialize(const std::vector<std::unordered_set<std::string,
 }
 
 // TODO: elimination of dead nodes.
-std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
+std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) const {
     if (context.generationLanguage != GenerationLanguage::CPP) {
         throw std::runtime_error("Only c++ code generation is currently supported.");
     }
@@ -205,8 +199,6 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
     context.variableNamesInUse.emplace("height");
     context.variableNamesInUse.emplace("num");
 
-    int tmpBufferSize
-
     std::stack<int> indexesToGenerate;
     std::queue<int> queue;
     queue.push(outputBufferIndex_);
@@ -226,17 +218,17 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
         }
     }
 
-    std::unordered_map<int> generatedIndexes;
+    std::unordered_set<int> generatedIndexes;
     while (!indexesToGenerate.empty()) {
-        int geneIndexToGenerate = indicesToEvaluate_.top() - numInputDatasets_;
-        indicesToEvaluate_.pop();
+        int geneIndexToGenerate = indexesToGenerate.top() - numInputDatasets_;
+        indexesToGenerate.pop();
 
         if (generatedIndexes.count(geneIndexToGenerate) != 0) {
             continue;
         }
         
         context.inputVariableNames.clear();
-        context.outputVariableName = "tmp" + geneIndexToGenerate;
+        context.outputVariableName = "tmp" + std::to_string(geneIndexToGenerate);
         context.variableNamesInUse.emplace(context.outputVariableName);
 
         const std::vector<int>& geneBufferIndices = genes_[geneIndexToGenerate]->getInputBufferIndices();
@@ -280,7 +272,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
 
     std::stringstream variableDeclarationStringStream;
     
-    constexpr int numFloats = buffers_[0].getSize();
+    int numFloats = buffers_[0]->getSize();
     for (const std::string& variable : context.variableNamesInUse) {
         constructorStringStream 
             << "    " 
@@ -294,22 +286,23 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) {
 
     constructorStringStream << "}\n";
 
-    std::string output = ""
-    +   "#include <cmath>\n"
-    +   "#include <vector>\n"
-    +   "\n"
-    +   "class GeneratedFunction {\n" 
-    +   "  public:\n"
-    +   constructorStringStream.str();
-    +   "\n"
-    +   functionStringStream.str();
-    +   "\n"
-    +   "  private:"
-    +   variableDeclarationStringStream.str()
-    +   "\n"
-    +   "};";
+    std::stringstream outputStream;
+    outputStream << ""
+    <<   "#include <cmath>\n"
+    <<   "#include <vector>\n"
+    <<   "\n"
+    <<   "class GeneratedFunction {\n" 
+    <<   "  public:\n"
+    <<   constructorStringStream.str()
+    <<   "\n"
+    <<   functionStringStream.str()
+    <<   "\n"
+    <<   "  private:"
+    <<   variableDeclarationStringStream.str()
+    <<   "\n"
+    <<   "};";
 
-    return output;
+    return outputStream.str();
 }
 
 std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
@@ -332,7 +325,7 @@ std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
         if (includeUnusedNodes || isActive) {
             std::string color = "beige";
             if (isActive) {
-                if (i == outputIndex_ - numInputDatasets_) {
+                if (i == outputBufferIndex_ - numInputDatasets_) {
                     color = "darkOliveGreen2";
                 } else {
                     color = "bisque2";
@@ -368,18 +361,18 @@ std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
 
 void cc::Genotype::initializeRandomly() {
     for (size_t i = 0; i < genes_.size(); i++) {
-        genes[i] = genePool_->getRandomGeneFromPool();
-        genes[i]->initializeFromParameters(
+        genes_[i] = genePool_->getRandomGeneFromPool();
+        genes_[i]->initializeFromParameters(
             experimentConfiguration_->getGeneParameters(
-                genes[i]->getGeneName()));
-        genes[i]->setOutputIndex(numInputDatasets_ + i);
-        for (int j = 0; j < genes[i]->getNumInputs(); j++) {
+                genes_[i]->getGeneName()));
+        genes_[i]->setOutputIndex(numInputDatasets_ + i);
+        for (int j = 0; j < genes_[i]->getNumInputs(); j++) {
             randomlyReconnectGeneInput(j, i);
         }
     }
 
-    outputIndex = 
-        numInputDatasets_ + cc::RandomNumberGenerator::getRandomInt(0, genes_.size() - 1);
+    outputBufferIndex_ = 
+        numInputDatasets_ + cc::randomNumberGenerator::getRandomInt(0, genes_.size() - 1);
 }
 
 void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
@@ -387,14 +380,15 @@ void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
     int endColumn = (geneIndex / geneGridHeight_) - 1;
     int startColumn = std::max(0, endColumn - maxLookback_);
 
-    int columnNumber = cc::RandomNumberGenerator::getRandomInt(endColumn, startColumn);
+    int columnNumber = cc::randomNumberGenerator::getRandomInt(endColumn, startColumn);
 
     int connectIndex = 0;
     if (columnNumber == 0) {
-        connectIndex = cc::RandomNumberGenerator::getRandomInt(0, numInputDatasets_); 
+        connectIndex = cc::randomNumberGenerator::getRandomInt(0, numInputDatasets_); 
     } else {
-        connectIndex = (cc::RandomNumberGenerator::getRandomInt(0, endColumn-1) * geneGridHeight_)
-            + (columnNumber * geneGridHeght)
+        connectIndex = 
+            (cc::randomNumberGenerator::getRandomInt(0, endColumn-1) * geneGridWidth_)
+            + (columnNumber * geneGridHeight_)
             + numInputDatasets_;
     }
 
@@ -404,17 +398,17 @@ void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
 void cc::Genotype::mutateUntilPercentage() {
     std::unordered_set<int> mutatedGenes;
     while (mutatedGenes.size() < mutationPercentageNumGenes_) {
-        int geneIndex = cc::RandomNumberGenerator::getRandomInt(0, genes_.size());
+        int geneIndex = cc::randomNumberGenerator::getRandomInt(0, genes_.size());
         if (mutatedGenes.count(geneIndex) == 0) {
             mutateSingleGene(geneIndex);
-            mutatedGenes.add(geneIndex);
+            mutatedGenes.emplace(geneIndex);
         }
     }
 }
 
 void cc::Genotype::mutateByProbability() {
     for (size_t i = 0; i <= genes_.size(); i++) {
-        if (cc::RandomNumberGenerator::getRandomFloat() < mutationProbability_) {
+        if (cc::randomNumberGenerator::getRandomFloat() < mutationProbability_) {
             mutateSingleGene(i);
         }
     }
@@ -423,7 +417,7 @@ void cc::Genotype::mutateByProbability() {
 void cc::Genotype::mutateUntilSingleActive() {
     bool mutatedActiveGene = false;
     while (!mutatedActiveGene) {
-        int geneIndex = cc::RandomNumberGenerator::getRandomInt(0, genes_.size());
+        int geneIndex = cc::randomNumberGenerator::getRandomInt(0, genes_.size());
         mutateSingleGene(geneIndex);
         mutatedActiveGene = (
                 (geneIndex == genes_.size())
@@ -434,8 +428,8 @@ void cc::Genotype::mutateUntilSingleActive() {
 void cc::Genotype::mutateSingleGene(int geneIndex) {
     // Special case - change the output to point somewhere else
     if (geneIndex == genes_.size()) {
-        outputIndex_ = 
-            numInputDatasets_ + cc::RandomNumberGenerator::getRandomInt(0, genes_.size() - 1);
+        outputBufferIndex_ = 
+            numInputDatasets_ + cc::randomNumberGenerator::getRandomInt(0, genes_.size() - 1);
         return;
     }
 
@@ -446,7 +440,7 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
     int lowerBound = 0;
 
     // Do not mutate a gene's parameters if it has none.
-    if (genes_[geneIndex]->isParamterFree()) {
+    if (genes_[geneIndex]->isParameterFree()) {
         upperBound = 1;
     }
 
@@ -455,11 +449,11 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
         lowerBound = 1;
     }
 
-    int typeOfMutation = cc::RandomNumberGenerator::getRandomInt(lowerBound, upperBound);
+    int typeOfMutation = cc::randomNumberGenerator::getRandomInt(lowerBound, upperBound);
     
     if (typeOfMutation == 0) {
         int inputToReconnect = 
-            cc::RandomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
+            cc::randomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
         randomlyReconnectGeneInput(inputToReconnect, geneIndex);
     } else if (typeOfMutation == 1) {
         genes_[geneIndex] = genePool_->getRandomGeneFromPool();
@@ -479,7 +473,7 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
 void cc::Genotype::fillParametersFromMap(
         const std::unordered_map<std::string, std::string>& params) {
     geneGridWidth_ = std::stoi(params.at("geneGridWidth"));
-    geneGridHeght_ = std::stoi(params.at("geneGridHeight"));
+    geneGridHeight_ = std::stoi(params.at("geneGridHeight"));
     maxLookback_ = std::stoi(params.at("maxLookback"));
     numInputDatasets_ = std::stoi(params.at("numInputDatasets"));
     inputDataWidth_ = std::stoi(params.at("inputDataWidth"));
@@ -506,7 +500,7 @@ void cc::Genotype::fillParametersFromMap(
                     + ". Expected number on the range (0, 1).");
         }
     } else if (strncasecmp(params.at("mutationType").c_str(), "singleActive", 20) == 0) { 
-        mutationType = MutationType::SingleActive;
+        mutationType_ = MutationType::SingleActive;
     } else {
         throw std::runtime_error(
                 "Invalid mutation type: " 
@@ -515,14 +509,27 @@ void cc::Genotype::fillParametersFromMap(
     }
 
     if (params.count("outputIndex") > 0) {
-        outputIndex_ = std::stoi(params.at("outputIndex"));
+        outputBufferIndex_ = std::stoi(params.at("outputIndex"));
     }
 
-    genes_.resize(geneGridHeght_ * geneGridWidth_, nullptr);
+    genes_.reserve(geneGridWidth_ * geneGridHeight_);
+    for (size_t i = 0; i < (geneGridWidth_ * geneGridHeight_); i++) {
+        std::unique_ptr<cc::Gene> gp(nullptr);
+
+        genes_.emplace_back(std::move(gp));
+    }
 
     buffers_.reserve(genes_.size() + numInputDatasets_);
     for (int i = 0; i < genes_.size() + numInputDatasets_; i++) {
-        buffers.emplace_back(inputdataWidth_, inputDataHeight_, inputDataNumSamples_);
+        std::unique_ptr<cc::DataChunk> dc = 
+            std::make_unique<cc::DataChunk>(
+                inputDataWidth_, 
+                inputDataHeight_, 
+                inputDataNumSamples_);
+
+        buffers_.emplace_back(
+            std::make_unique<cc::DataChunk>(
+                inputDataWidth_, inputDataHeight_, inputDataNumSamples_));
     }
 }
 

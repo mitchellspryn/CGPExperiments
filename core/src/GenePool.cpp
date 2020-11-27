@@ -14,13 +14,13 @@ cc::GenePool::GenePool(
 
     fillParametersFromMap(experimentConfiguration->getGenePoolParameters());
 
-    initializeCaches();
+    initializePools();
 }
 
 std::unique_ptr<cc::Gene> cc::GenePool::getFromPool(const std::string& geneName) {
     std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
     std::stack<std::unique_ptr<Gene>>& currentPool = pools_.at(geneName);
-    if (currentStack.empty()) {
+    if (currentPool.empty()) {
         fillPool(geneName, currentPool);
     }
 
@@ -36,6 +36,7 @@ std::unique_ptr<cc::Gene> cc::GenePool::getRandomGeneFromPool() {
 }
 
 void cc::GenePool::returnToPool(std::unique_ptr<cc::Gene> gene) {
+    std::string geneName = gene->getGeneName();
     std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
     pools_.at(geneName).push(std::move(gene));
 }
@@ -43,17 +44,16 @@ void cc::GenePool::returnToPool(std::unique_ptr<cc::Gene> gene) {
 void cc::GenePool::fillParametersFromMap(
         const std::unordered_map<std::string, std::string>& params) {
     initialPoolSize_ = std::stoi(params.at("initialPoolSize"));
-    poolSizeMultiplier_ = std::stod(params.at("poolSizeMultiplier"));
 }
 
 void cc::GenePool::initializePools() {
-    std::unordered_map<std::string, std::unordered_map<std::string, std::string>> allGeneParameters = experimentConfig->getAllGeneParameters();
+    std::unordered_map<std::string, std::unordered_map<std::string, std::string>> allGeneParameters = experimentConfiguration_->getAllGeneParameters();
 
     for (auto it = allGeneParameters.begin(); it != allGeneParameters.end(); ++it) {
-        std::string& geneName = it->first;
+        const std::string& geneName = it->first;
         
         // Use [] to default-construct mutex in place
-        std::mutex dummy = mutexes_[geneName];
+        std::mutex& dummy = mutexes_[geneName];
         std::stack<std::unique_ptr<cc::Gene>>& pool = pools_[geneName];
 
         fillPool(geneName, pool);

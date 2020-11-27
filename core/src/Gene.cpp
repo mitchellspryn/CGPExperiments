@@ -5,14 +5,14 @@
 
 namespace cc = cgpExperiments::core;
 
-void initializeFromParameters(
+void cc::Gene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     inputBufferIndices_.resize(getNumInputs(), 0);
 
     initializeParametersFromConfig(geneParameters);
 }
 
-void initializeFromTemplateGene(const cc::Gene* other) {
+void cc::Gene::initializeFromTemplateGene(const cc::Gene* other) {
     inputBufferIndices_.resize(other->inputBufferIndices_.size());
     for (size_t i = 0; i < inputBufferIndices_.size(); i++) {
         inputBufferIndices_[i] = other->inputBufferIndices_[i];
@@ -23,8 +23,8 @@ void initializeFromTemplateGene(const cc::Gene* other) {
     initializeParametersFromTemplateGene(other);
 }
 
-std::unordered_set<std::string, std::string> cc::Gene::serialize() {
-    std::unordered_set<std::string, std::string> serializedGene = serializeInternal();
+std::unordered_map<std::string, std::string> cc::Gene::serialize() const {
+    std::unordered_map<std::string, std::string> serializedGene = serializeInternal();
     serializedGene["geneName"] = getGeneName();
 
     std::string inputBufferIndicesStr = "";
@@ -59,7 +59,7 @@ void cc::Gene::setOutputIndex(int outputBufferIndex) {
     outputBufferIndex_ = outputBufferIndex;
 }
 
-std::string cc::Gene::generateUnusedVariableName(cc::CodeGenerationContext_t& context) {
+std::string cc::Gene::generateUnusedVariableName(cc::CodeGenerationContext_t& context) const {
     // Don't use the same RandomNumberGenerator as the experiment.
     // Serialization should not affect determinism.
     auto randchar = []() -> char
@@ -72,13 +72,13 @@ std::string cc::Gene::generateUnusedVariableName(cc::CodeGenerationContext_t& co
 
     bool generatedUnique = false;
     constexpr int variableLength = 8;
-    std::string variableName(length,0);
+    std::string variableName(variableLength,0);
 
     while (!generatedUnique) {
         std::generate_n(variableName.begin(), variableLength, randchar);
         generatedUnique = (context.variableNamesInUse.count(variableName) == 0);
     }
 
-    context.variableNamesInUse.emplace(generatedUnique);
-    return generatedUnique;
+    context.variableNamesInUse.emplace(variableName);
+    return variableName;
 }
