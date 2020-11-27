@@ -42,8 +42,8 @@ void cc::GenePool::returnToPool(std::unique_ptr<cc::Gene> gene) {
 
 void cc::GenePool::fillParametersFromMap(
         const std::unordered_map<std::string, std::string>& params) {
-    initialPoolSize_ = std::stoi(params["initialPoolSize"]);
-    poolSizeMultiplier_ = std::stod(params["poolSizeMultiplier"]);
+    initialPoolSize_ = std::stoi(params.at("initialPoolSize"));
+    poolSizeMultiplier_ = std::stod(params.at("poolSizeMultiplier"));
 }
 
 void cc::GenePool::initializePools() {

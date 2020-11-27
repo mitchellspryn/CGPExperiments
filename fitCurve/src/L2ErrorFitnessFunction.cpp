@@ -18,11 +18,11 @@ double fc::L2ErrorFitnessFunction::evaluate(
 
     float err = 0;
 
-    for (int i = 0; i < predictions.getNum(); i++) {
-        float p = predictions.getVal(i, 0, 0);
-        float l = labels.getVal(i, 0, 0);
+    float* p = predictions.getDataPtr();
+    float* l = labels.getDataPtr();
 
-        err += (p-l)*(p-l);
+    for (int i = 0; i < predictions.getNum(); i++) {
+        err += (p[i]-l[i]) * (p[i]-l[i]);
     }
     
     return std::sqrt(err);

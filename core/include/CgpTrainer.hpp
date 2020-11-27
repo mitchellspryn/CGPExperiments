@@ -11,7 +11,6 @@
 #include "GenePool.hpp"
 #include "Genotype.hpp"
 #include "Island.hpp"
-#include "ProgressPrinter.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "Types.hpp"
 

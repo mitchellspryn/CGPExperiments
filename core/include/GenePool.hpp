@@ -24,7 +24,7 @@ class GenePool {
         void returnToPool(std::unique_ptr<Gene> gene);
 
     private:
-        std::unordered_map<std::string, std::stack<std::unique_ptr<Gene>> genePoolParameters_;
+        std::unordered_map<std::string, std::stack<std::unique_ptr<Gene>>> genePoolParameters_;
         std::unordered_map<std::string, std::mutex> mutexes_;
 
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;

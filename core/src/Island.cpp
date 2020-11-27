@@ -122,8 +122,8 @@ void cc::Island::setResidentGenotypes(const cc::Genotype& genotype, double fitne
 
 void cc::Island::fillParametersFromMap(
         const std::unordered_map<std::string, std::string>& params) {
-    numGenotypes_ = std::stoi(params["numGenotypes"]);
-    numIterationsPerEpoch_ = std::stoi(params["numIterationsPerEpoch"]);
-    numEvaluationSamples_ = std::stoi(params["numEvaluationSamples"]);
-    evalStartIndex_ = std::stoi(params["evalStartIndex"]);
+    numGenotypes_ = std::stoi(params.at("numGenotypes"));
+    numIterationsPerEpoch_ = std::stoi(params.at("numIterationsPerEpoch"));
+    numEvaluationSamples_ = std::stoi(params.at("numEvaluationSamples"));
+    evalStartIndex_ = std::stoi(params.at("evalStartIndex"));
 }

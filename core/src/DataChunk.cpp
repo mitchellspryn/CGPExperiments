@@ -13,13 +13,13 @@ cc::DataChunk::DataChunk(int width, int height, int num) {
     data_.resize(size_, 0);
 }
 
-cc::DataChunk::setNum(int num) {
+void cc::DataChunk::setNum(int num) {
     num_ = num;
-    size_ = width * height * num;
+    size_ = width_ * height_ * num;
 
     if (num > maxNum_) {
         maxNum_ = num;
-        capacity_ = size;
+        capacity_ = size_;
         data_.resize(size_, 0);
     }
 }

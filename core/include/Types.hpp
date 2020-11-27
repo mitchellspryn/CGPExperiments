@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+#include <unordered_set>
+#include <vector>
+
 namespace cgpExperiments {
 namespace core {
 

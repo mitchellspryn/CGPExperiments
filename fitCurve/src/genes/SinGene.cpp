@@ -5,7 +5,7 @@
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
 
-void fc::SinGene::initializeFromParameters(
+void fc::SinGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }

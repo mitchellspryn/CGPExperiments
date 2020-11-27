@@ -7,14 +7,14 @@
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
 
-void fc::ConstantOutputGene::initializeFromParameters(
+void fc::ConstantOutputGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {
 
-    minValue_ = std::stof(geneParameters["minValue"]);
-    maxValue_ = std::stof(geneParameters["maxValue"]);
+    minValue_ = std::stof(geneParameters.at("minValue"));
+    maxValue_ = std::stof(geneParameters.at("maxValue"));
 
     if (geneParameters.count("value") > 0) {
-        value_ = std::stof(geneParameters["value"]);
+        value_ = std::stof(geneParameters.at("value"));
     } else {
         mutateParameters();
     }

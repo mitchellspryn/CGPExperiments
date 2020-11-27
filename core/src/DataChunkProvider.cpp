@@ -1,30 +1,34 @@
 #include "../include/DataChunkProvider.hpp"
 
+#include <cstring>
+#include <fcntl.h>
 #include <filesystem>
+#include <iostream>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 namespace cc = cgpExperiments::core;
 
 cc::DataChunkProvider::DataChunkProvider(
         const std::unordered_map<std::string, std::string>& parameters) {
 
-    sampleWidth_ = std::stoi(parameters["sampleWidth"]);
-    sampleHeight_ = std::stoi(parameters["sampleHeight"]);
-    fileName_ = parameters["fileName"];
+    sampleWidth_ = std::stoi(parameters.at("sampleWidth"));
+    sampleHeight_ = std::stoi(parameters.at("sampleHeight"));
+    fileName_ = parameters.at("fileName");
     fileSizeInBytes_ = std::filesystem::file_size(fileName_);
 
     sampleSizeInBytes_ = sampleWidth_ * sampleHeight_ * sizeof(float);
     if ((fileSizeInBytes_ % sampleSizeInBytes_) != 0) {
         throw std::runtime_error(
                 "Provided input file '" 
-                + fileName 
+                + fileName_ 
                 + "' has a size of " 
-                + fileSizeInBytes_ 
+                + std::to_string(fileSizeInBytes_)
                 + " bytes, which is not divisible by " 
-                + std::to_string(divisor) 
+                + std::to_string(sampleSizeInBytes_) 
                 + " as it should be.");
     }
 
@@ -34,10 +38,10 @@ cc::DataChunkProvider::DataChunkProvider(
 }
 
 cc::DataChunkProvider::~DataChunkProvider() {
-    releaseMappedFile();
+    releaseMappedFile(false);
 }
 
-void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex = -1) {
+void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex) {
     if (startIndex >= numSamples_) {
         throw std::runtime_error(
                 "Attempted to grab data at (zero-based) index "
@@ -72,7 +76,7 @@ void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex = -1
 }
 
 void cc::DataChunkProvider::mapFileIntoMemory(const std::string& fileName) {
-    fileDescriptor_ = open(fileName, O_RDONLY);
+    fileDescriptor_ = open(fileName.c_str(), O_RDONLY);
     if (fileDescriptor_ < 0) {
         throw std::runtime_error(
                 "Cannot open '" 
@@ -84,7 +88,9 @@ void cc::DataChunkProvider::mapFileIntoMemory(const std::string& fileName) {
             NULL, // let kernel decide mapping address
             fileSizeInBytes_,
             PROT_READ,
-            MAP_SHARED_VALIDATE,
+            // TODO: should use MAP_SHARED_VALIDATE, but apparently my glibc is too old
+            //MAP_SHARED_VALIDATE,
+            MAP_SHARED,
             fileDescriptor_,
             0); // offset
 
@@ -96,7 +102,7 @@ void cc::DataChunkProvider::mapFileIntoMemory(const std::string& fileName) {
                 "Cannot map '"
                 + fileName
                 + "' into memory. Mmap returns '"
-                + std::stoi(error)
+                + std::to_string(error)
                 + "', which is error code '"
                 + std::string(strerror(error))
                 + "'.");
@@ -111,17 +117,17 @@ void cc::DataChunkProvider::releaseMappedFile(bool allowThrow) {
 
     std::string errorMessage = "";
     if (baseAddress_) {
-        ret = munmap(reinterpret_cast<float*>(baseAddress__, fileSizeInBytes_));
+        ret = munmap(static_cast<void*>(baseAddress_), fileSizeInBytes_);
 
-        if ((ret != 0) && allowThrow) {
+        if (ret != 0) {
             errorMessage += 
                     "Cannot unmap '"
                     + fileName_
                     + "' from memory. Munmap returns '"
-                    + std::stoi(error)
+                    + std::to_string(error)
                     + "', which is error code '"
                     + std::string(strerror(error))
-                    + "'.";
+                    + "'.\n";
         }
 
         baseAddress_ = nullptr;
@@ -136,17 +142,21 @@ void cc::DataChunkProvider::releaseMappedFile(bool allowThrow) {
                     "Cannot close file descriptor for '"
                     + fileName_
                     + "'. Close returns '"
-                    + std::stoi(error)
+                    + std::to_string(error)
                     + "', which is error code '"
                     + std::string(strerror(error))
-                    + "'.";
+                    + "'.\n";
         }
     }
 
-    // This can be called from dtor, which cannot safely throw exceptions.
-    // If that is the case, it's likely the program is getting torn down, 
-    //     so the resources will be freed shortly anyways.
-    if (allowThrow && (errorMessage.size() > 0)) {
-        throw std::runtime_error(errorMessage);
+    if (errorMessage.size() > 0) {
+        // This function can be called from dtor, which cannot safely throw exceptions.
+        // If that is the case, it's likely the program is getting torn down, 
+        //     so the resources will be freed shortly anyways.
+        if (allowThrow) {
+            throw std::runtime_error(errorMessage);
+        } else {
+            std::cerr << errorMessage << std::endl;
+        }
     }
 }

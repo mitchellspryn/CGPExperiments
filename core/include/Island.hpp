@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "DataChunkProvider.hpp"
 #include "ExperimentConfiguration.hpp"
 #include "FitnessFunction.hpp"
 #include "FitnessFunctionFactory.hpp"

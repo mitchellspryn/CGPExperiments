@@ -478,17 +478,17 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
 
 void cc::Genotype::fillParametersFromMap(
         const std::unordered_map<std::string, std::string>& params) {
-    geneGridWidth_ = std::stoi(params["geneGridWidth"]);
-    geneGridHeght_ = std::stoi(params["geneGridHeight"]);
-    maxLookback_ = std::stoi(params["maxLookback"]);
-    numInputDatasets_ = std::stoi(params["numInputDatasets"]);
-    inputDataWidth_ = std::stoi(params["inputDataWidth"]);
-    inputDataHeight_ = std::stoi(params["inputDataHeight"]);
-    inputDataNumSamples_ = std::stoi(params["inputDataNumSamples"]);
+    geneGridWidth_ = std::stoi(params.at("geneGridWidth"));
+    geneGridHeght_ = std::stoi(params.at("geneGridHeight"));
+    maxLookback_ = std::stoi(params.at("maxLookback"));
+    numInputDatasets_ = std::stoi(params.at("numInputDatasets"));
+    inputDataWidth_ = std::stoi(params.at("inputDataWidth"));
+    inputDataHeight_ = std::stoi(params.at("inputDataHeight"));
+    inputDataNumSamples_ = std::stoi(params.at("inputDataNumSamples"));
 
-    if (strncasecmp(params["mutationType"].c_str(), "percentage", 20) == 0) {
+    if (strncasecmp(params.at("mutationType").c_str(), "percentage", 20) == 0) {
         mutationType_ = MutationType::Percentage;
-        mutationPercentage_ = std::stod(params["mutationPercentage"]);
+        mutationPercentage_ = std::stod(params.at("mutationPercentage"));
         if (mutationPercentage_ >= 1.0 || mutationPercentage_ <= 0) {
             throw std::runtime_error(
                     "Invalid mutation percentage: " 
@@ -496,26 +496,26 @@ void cc::Genotype::fillParametersFromMap(
                     + ". Expected number on the range (0, 1).");
         }
         mutationPercentageNumGenes_ = std::ceil(genes_.size() * mutationPercentage_);
-    } else if (strncasecmp(params["mutationType"].c_str(), "probability", 20) == 0) {
+    } else if (strncasecmp(params.at("mutationType").c_str(), "probability", 20) == 0) {
         mutationType_ = MutationType::Probability;
-        mutationProbability_ = std::stod(params["mutationProbability"]);
+        mutationProbability_ = std::stod(params.at("mutationProbability"));
         if (mutationProbability_ >= 1.0 || mutationProbability_ < 0) {
             throw std::runtime_error(
                     "Invalid mutation probability: "
                     + std::to_string(mutationProbability_)
                     + ". Expected number on the range (0, 1).");
         }
-    } else if (strncasecmp(params["mutationType"].c_str(), "singleActive", 20) == 0) { 
+    } else if (strncasecmp(params.at("mutationType").c_str(), "singleActive", 20) == 0) { 
         mutationType = MutationType::SingleActive;
     } else {
         throw std::runtime_error(
                 "Invalid mutation type: " 
-                + params["mutationType"]
+                + params.at("mutationType")
                 + ".");
     }
 
     if (params.count("outputIndex") > 0) {
-        outputIndex_ = std::stoi(params["outputIndex"]);
+        outputIndex_ = std::stoi(params.at("outputIndex"));
     }
 
     genes_.resize(geneGridHeght_ * geneGridWidth_, nullptr);

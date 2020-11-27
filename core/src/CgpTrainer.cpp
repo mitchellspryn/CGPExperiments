@@ -14,22 +14,22 @@ cc::CgpTrainer::CgpTrainer(
     experimentConfiguration_ = experimentConfiguration;
     fitnessFunctionFactory_ = fitnessFunctionFactory;
 
-    fillParametersFromMap(fitnessFunctionFactory_->getTrainerParameters());
+    fillParametersFromMap(experimentConfiguration_->getTrainerParameters());
 
     cc::randomNumberGenerator::seedRng(rngSeed_);
 
     genePool_ = std::make_shared<cc::GenePool>(
         experimentConfiguration_,
-        geneFactory_);
+        geneFactory);
 
     std::vector<std::unordered_map<std::string, std::string>> inputDataChunkParameters =
         experimentConfiguration_->getInputDataChunkProviderParameters();
-    inputDataChunkProviderParameters_.reserve(inputDataChunkParameters.size());
+    inputDataChunkProviders_.reserve(inputDataChunkParameters.size());
 
     for (size_t i = 0; i < inputDataChunkParameters.size(); i++) {
         inputDataChunkProviders_.emplace_back(
             std::make_shared<cc::DataChunkProvider>(
-                inputDataChunkProviderParameters_[i]));
+                inputDataChunkParameters[i]));
     }
 
     labelDataChunkProvider_ = 
@@ -39,8 +39,8 @@ cc::CgpTrainer::CgpTrainer(
     for (size_t i = 0; i < numIslands_; i++) {
         islands_.emplace_back(
             fitnessFunctionFactory_,
-            geneFactory_,
-            inputdDataChunkProviders_,
+            genePool_,
+            inputDataChunkProviders_,
             labelDataChunkProvider_,
             experimentConfiguration);
     }
@@ -49,9 +49,13 @@ cc::CgpTrainer::CgpTrainer(
             experimentConfiguration->getCheckpointSaverParameters());
 }
 
-cc::CgpTrainer::run() {
+void cc::CgpTrainer::run() {
+    if (islands_.size() == 0) {
+        throw std::runtime_error("There are no islands. Check the configuration.");
+    }
+
     long numEpochsRun = 0;
-    int numIterationsPerEpoch = islands_[i]->getNumIterationsPerEpoch();
+    int numIterationsPerEpoch = islands_[0].getNumIterationsPerEpoch();
     bestIslandIndex_ = -1;
     bestFitnessScore_ = std::numeric_limits<double>::max();
 
@@ -65,24 +69,24 @@ cc::CgpTrainer::run() {
     }
 
     while ((numEpochsRun < terminationNumEpochs_)
-            && (bestFitnessScore > terminationFitness_)) {
+            && (bestFitnessScore_ > terminationFitness_)) {
         // TODO: parallelize this loop with openMP
         for (size_t i = 0; i < islands_.size(); i++) {
-            islands_[i]->runEpoch();
+            islands_[i].runEpoch();
         }
 
         for (size_t i = 0; i < islands_.size(); i++) {
-            double islandFitness = islands_[i]->getBestFitness();
+            double islandFitness = islands_[i].getBestFitness();
             if (islandFitness < bestFitnessScore_) {
-                bestFitnessScore = islandFitness;
+                bestFitnessScore_ = islandFitness;
                 bestIslandIndex_ = i;
             }
         }
 
-        const cc::Genotype& bestGenotype = islands[bestIslandIndex_]->getBestGenotype();
+        const cc::Genotype& bestGenotype = islands_[bestIslandIndex_].getBestGenotype();
         for (size_t i = 0; i < islands_.size(); i++) {
             if (i != bestIslandIndex_) {
-                islands_[i]->setResidentGenotypes(bestGenotype, bestFitnessScore_);
+                islands_[i].setResidentGenotypes(bestGenotype, bestFitnessScore_);
             }
         }
 
@@ -93,7 +97,7 @@ cc::CgpTrainer::run() {
             std::chrono::high_resolution_clock::time_point now = clk.now();
 
             cc::CheckpointLogInformation_t checkpointInformation;
-            checkpointInformation.cumulativeNumberOfIterations = numEpochsRun;
+            checkpointInformation.cumulativeNumberOfEpochs = numEpochsRun;
             checkpointInformation.cumulativeElapsedTimeUs = 
                 std::chrono::duration_cast<std::chrono::microseconds>(now - startTime).count();
             checkpointInformation.bestFitness = bestFitnessScore_;
@@ -112,27 +116,27 @@ cc::CgpTrainer::run() {
                 << " | "
                 << std::to_string(elapsedUs)
                 << " | " 
-                << std::to_string(bestFitness_)
+                << std::to_string(bestFitnessScore_)
                 << std::endl;
         }
     }
 }
 
 const cc::Genotype& cc::CgpTrainer::getBestGenotype() {
-    return islands_[bestIslandIndex_]->getBestGenotype();
+    return islands_[bestIslandIndex_].getBestGenotype();
 }
 
 double cc::CgpTrainer::getBestGenotypeFitness() {
-    return bestFitness_;
+    return bestFitnessScore_;
 }
 
 void cc::CgpTrainer::fillParametersFromMap(
         const std::unordered_map<std::string, std::string>& parameters) {
-    maxNumThreads_ = std::stoi(parameters["maxNumThreads"]);
-    numIslands_ = std::stoi(parameters["numIslands"]);
-    rngSeed_ = std::stoi(parameters["rngSeed"]);
-    terminationFitness_ = std::stod(parameters["terminationFitness"]);
-    terminationNumIterations_ = std::stod(paramters["terminationNumEpochs"]);
-    checkpointFrequency_ = std::stoi(parameters["checkpointFrequency"]);
-    printProgressToConsole_ = std::stoi(parameters["consoleFrequency_"]);
+    maxNumThreads_ = std::stoi(parameters.at("maxNumThreads"));
+    numIslands_ = std::stoi(parameters.at("numIslands"));
+    rngSeed_ = std::stoi(parameters.at("rngSeed"));
+    terminationFitness_ = std::stod(parameters.at("terminationFitness"));
+    terminationNumEpochs_ = std::stod(parameters.at("terminationNumEpochs"));
+    checkpointFrequency_ = std::stoi(parameters.at("checkpointFrequency"));
+    consoleFrequency_ = std::stoi(parameters.at("consoleFrequency_"));
 }

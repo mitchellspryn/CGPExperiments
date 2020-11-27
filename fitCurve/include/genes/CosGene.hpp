@@ -9,16 +9,18 @@
 namespace cgpExperiments {
 namespace fitCurve {
 
-class CosGene : public cgpExperiments::fitCurve::Gene<1> {
+class CosGene : public cgpExperiments::fitCurve::Gene {
     public:
         virtual ~CosGene() {};
-        virtual void initializeFromParameters(const std::unordered_map<std::string, std::string>& geneParameters) override;
+        virtual void initializeParametersFromConfig(const std::unordered_map<std::string, std::string>& geneParameters) override;
         virtual void initializeParametersFromTemplateGene(const cgpExperiments::core::Gene* other) override;
         virtual void mutateParameters() override;
         virtual std::string getGeneName() const = 0;
         virtual void evaluate(std::vector<std::shared_ptr<cgpExperiments::core::DataChunk>>& buffers) override;
-        std::string generateCode(cgpExperiments::core::DataChunk>>& buffers) override;
-        std::unordered_map<std::string, std::string> serialize() override;
+        virtual std::string generateCode(cgpExperiments::core::DataChunk>>& buffers) override;
+        virtual bool isParameterFree() override { return true; }
+        virtual int getNumInputs() { return 1; }
+        virtual std::unordered_map<std::string, std::string> serialize() override;
 };
 
 }

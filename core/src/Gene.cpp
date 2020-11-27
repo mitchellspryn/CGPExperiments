@@ -5,6 +5,13 @@
 
 namespace cc = cgpExperiments::core;
 
+void initializeFromParameters(
+        const std::unordered_map<std::string, std::string>& geneParameters) {
+    inputBufferIndices_.resize(getNumInputs(), 0);
+
+    initializeParametersFromConfig(geneParameters);
+}
+
 void initializeFromTemplateGene(const cc::Gene* other) {
     inputBufferIndices_.resize(other->inputBufferIndices_.size());
     for (size_t i = 0; i < inputBufferIndices_.size(); i++) {

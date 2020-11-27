@@ -24,15 +24,15 @@ class ExperimentConfiguration {
         }
 
         inline const std::unordered_map<std::string, std::string>& getGenotypeParameters() const {
-            return genotypeParameters,
+            return genotypeParameters_;
         }
 
         inline const std::unordered_map<std::string, std::string>& getFitnessFunctionParameters() const {
             return fitnessFunctionParameters_;
         }
         
-        inline const std::unordered_map<std:string, std::string>& getGenePoolParameters() const {
-            return getGenePoolParameters_;
+        inline const std::unordered_map<std::string, std::string>& getGenePoolParameters() const {
+            return genePoolParameters_;
         }
 
         inline const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& getAllGeneParameters() const {
@@ -40,7 +40,7 @@ class ExperimentConfiguration {
         }
 
         inline const std::unordered_map<std::string, std::string>& getGeneParameters(const std::string& geneName) const {
-            return geneParameters_[geneName];
+            return geneParameters_.at(geneName);
         }
 
         inline const std::vector<std::unordered_map<std::string, std::string>>& getInputDataChunkProviderParameters() const {
@@ -62,7 +62,7 @@ class ExperimentConfiguration {
         std::unordered_map<std::string, std::string> genotypeParameters_;
         std::unordered_map<std::string, std::string> fitnessFunctionParameters_;
         std::unordered_map<std::string, std::string> genePoolParameters_;
-        std::unordered_map<std::string, std::unordered_map<std::string, std::string> geneParameters_;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> geneParameters_;
         std::vector<std::unordered_map<std::string, std::string>> inputDataChunkProviderParameters_;
         std::unordered_map<std::string, std::string> labelDataChunkProviderParameters_;
         std::unordered_map<std::string, std::string> checkpointSaverParameters_;

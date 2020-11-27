@@ -9,7 +9,7 @@
 #include "../core/include/FitnessFunctionFactory.hpp"
 #include "../core/include/GeneFactory.hpp"
 
-#include "../fitCurve/include/FitCurveGeneFactory.hpp"
+#include "../fitCurve/include/FitCurveFitnessFunctionFactory.hpp"
 #include "../fitCurve/include/FitCurveGeneFactory.hpp"
 
 namespace cc = cgpExperiments::core;
@@ -32,7 +32,7 @@ std::shared_ptr<cc::GeneFactory> createGeneFactory(
         + "'.");
 }
 
-std::shared_Ptr<cc::FitnessFunctionFactory> createFitnessFunctionFactory(
+std::shared_ptr<cc::FitnessFunctionFactory> createFitnessFunctionFactory(
         const std::string& geneSet) {
     if (strncasecmp(geneSet.c_str(), "fitcurve", 9) == 0) {
         return std::make_shared<fc::FitCurveFitnessFunctionFactory>();
@@ -69,6 +69,6 @@ int main(int argc, char** argv) {
 
     trainer.run();
 
-    std::cout << "Best fitness: " << grainer.getBestGenotypeFitness() << std::endl;
+    std::cout << "Best fitness: " << trainer.getBestGenotypeFitness() << std::endl;
     return EXIT_SUCCESS;
 }

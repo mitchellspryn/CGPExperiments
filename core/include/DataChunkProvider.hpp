@@ -44,7 +44,7 @@ class DataChunkProvider {
         float* baseAddress_ = nullptr;
 
         void mapFileIntoMemory(const std::string& fileName);
-        void releaseMappedFile();
+        void releaseMappedFile(bool allowThrow);
 };
 
 }

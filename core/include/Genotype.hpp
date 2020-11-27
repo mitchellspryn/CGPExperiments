@@ -4,11 +4,13 @@
 #include <stack>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "DataChunk.hpp"
 #include "ExperimentConfiguration.hpp"
 #include "Gene.hpp"
+#include "GenePool.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "Types.hpp"
 

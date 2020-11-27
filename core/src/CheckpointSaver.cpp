@@ -38,7 +38,7 @@ void cc::CheckpointSaver::saveCheckpoint(
     std::string iterationDirectory = 
         outputRootDirectory_ 
         + "/" 
-        + std::to_string(checkpointLogInformation.cumulativeNumberOfIterations);
+        + std::to_string(checkpointLogInformation.cumulativeNumberOfEpochs);
 
     std::filesystem::create_directory(iterationDirectory);
 
@@ -57,11 +57,11 @@ void cc::CheckpointSaver::appendLogInformation(
         const cc::CheckpointLogInformation_t& checkpointLogInformation) {
     std::ofstream logFile(logFileName_, std::ios_base::app);
     logFile 
-        << std::to_string(cumulativeNumberOfEpochs)
+        << std::to_string(checkpointLogInformation.cumulativeNumberOfEpochs)
         << ","
-        << cumulativeElapsedTimeUs
+        << checkpointLogInformation.cumulativeElapsedTimeUs
         << ","
-        << std::to_string(bestFitness)
+        << std::to_string(checkpointLogInformation.bestFitness)
         << "\n";
 }
 
@@ -86,9 +86,9 @@ void cc::CheckpointSaver::saveGenotypeToCode(
 
     // TODO: make language configurable when more than one type is supported.
     cc::CodeGenerationContext_t context;
-    context.generationLanguage = "cpp";
+    context.generationLanguage = cc::GenerationLanguage::CPP;
 
-    std::string generatedCode = genotype.generateCode();
+    std::string generatedCode = genotype.generateCode(context);
 
     std::ofstream stream(outputFileName);
     stream << generatedCode;
@@ -96,8 +96,7 @@ void cc::CheckpointSaver::saveGenotypeToCode(
 
 void cc::CheckpointSaver::saveGenotypeImage(
         const std::string& outputDirectory, 
-        const Genotype& genotype,
-        bool saveUnusedNodes) {
+        const Genotype& genotype) {
     // TODO: should we allow active visibility to be togglable?
     std::string activeDotFilePath = outputDirectory + "/activeGenes.gv";
     std::string allDotFilePath = outputDirectory + "/allGenes.gv";
@@ -113,17 +112,26 @@ void cc::CheckpointSaver::saveGenotypeImage(
     activeStream << activeDotFileText;
     allStream << allDotFileText;
 
+    // TODO: this is probably a security risk.
     std::string cmd = 
         "dot -Tpng " + activeDotFilePath + " -o " + activeImagePath
     +   " && "
     +   "dot -Tpng " + allDotFilePath + " -o " + allImagePath;
 
-    std::system(cmd);
+    std::system(cmd.c_str());
 }
 
 void cc::CheckpointSaver::parseParameters(
         const std::unordered_map<std::string, std::string>& checkpointSaverParameters) {
-    outputRootDirectory_ = checkpointSaverParameters["outputDirectory"];
-    generateCode_ = (!strncasecmp("true", checkpointSaverParameters["generateCode"].c_str(), 5));
-    generateImage_ = (!strncasecmp("true", checkpointSaverParameters["generateImage"].c_str(), 5));
+    outputRootDirectory_ = checkpointSaverParameters.at("outputDirectory");
+    generateCode_ = (
+            !strncasecmp(
+                "true", 
+                checkpointSaverParameters.at("generateCode").c_str(), 
+                5));
+    generateImage_ = (
+            !strncasecmp(
+                "true", 
+                checkpointSaverParameters.at("generateImage").c_str(), 
+                5));
 }

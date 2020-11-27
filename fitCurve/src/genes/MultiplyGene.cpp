@@ -3,7 +3,7 @@
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
 
-void fc::MultiplyGene::initializeFromParameters(
+void fc::MultiplyGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }
