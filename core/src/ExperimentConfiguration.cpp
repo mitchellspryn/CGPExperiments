@@ -36,6 +36,7 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
     fillFromKeyValue(j["genotypeParameters"], genotypeParameters_);
     fillFromKeyValue(j["fitnessFunctionParameters"], fitnessFunctionParameters_);
     fillFromKeyValue(j["genePoolParameters"], genePoolParameters_);
+    fillFromKeyValue(j["checkpointSaverParameters"], checkpointSaverParameters_);
 
     json::object geneParametersObj = j["geneParameters"];
     for (json::iterator it = geneParametersObj.begin(); it != geneParametersObj.end(); ++it) {

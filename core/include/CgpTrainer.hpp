@@ -34,7 +34,9 @@ class CgpTrainer {
         int numIslands_;
         int rngSeed_;
         double terminationFitness_;
-        double terminationNumIterations_;
+        double terminationNumEpochs_;
+        int checkpointFrequency_;
+        int consoleFrequency_;
 
         int bestIslandIndex_;
         double bestFitnessScore_;
@@ -46,6 +48,8 @@ class CgpTrainer {
 
         std::vector<std::shared_ptr<DataChunkProvider>> inputDataChunkProviders_;
         std::shared_ptr<DataChunkProvider> labelDataChunkProvider_;
+
+        std::unique_ptr<CheckpointSaver> checkpointSaver_;
 
         void fillParametersFromMap(const std::unordered_map<std::string, std::string>& parameters);
 };

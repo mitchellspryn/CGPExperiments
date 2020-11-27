@@ -125,5 +125,5 @@ void cc::Island::fillParametersFromMap(
     numGenotypes_ = std::stoi(params["numGenotypes"]);
     numIterationsPerEpoch_ = std::stoi(params["numIterationsPerEpoch"]);
     numEvaluationSamples_ = std::stoi(params["numEvaluationSamples"]);
-    evalStartIndex_ = std::stoi(parames["evalStartIndex"]);
+    evalStartIndex_ = std::stoi(params["evalStartIndex"]);
 }

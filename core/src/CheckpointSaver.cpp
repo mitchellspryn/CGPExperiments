@@ -1,0 +1,129 @@
+#include "../include/CheckpointSaver.hpp"
+
+#include <cstdlib>
+#include <fstream>
+#include <filesystem>
+#include <strings.h>
+#include <vector>
+
+#include <nlohmann/json.hpp>
+
+namespace cc = cgpExperiments::core;
+
+cc::CheckpointSaver::CheckpointSaver(
+        const std::unordered_map<std::string, std::string>& checkpointSaverParameters) {
+    parseParameters(checkpointSaverParameters);
+
+    // If the directory exists, does nothing.
+    std::filesystem::create_directory(outputRootDirectory_);
+
+    // Write log header.
+    std::string logFileName_ = outputRootDirectory_ + "/log.txt";
+    std::ofstream logFile(logFileName_);
+    if (!logFile.good()) {
+        throw std::runtime_error(
+            "Attempted to open log file at '"
+            + logFileName_
+            + "', but it could not be opened.");
+    }
+
+    logFile << "cumulativeNumberOfEpochs,cumulativeElapsedTimeUs,bestFitness\n";
+}
+
+void cc::CheckpointSaver::saveCheckpoint(
+        const cc::CheckpointLogInformation_t& checkpointLogInformation,
+        const cc::Genotype& bestGenotype) {
+    appendLogInformation(checkpointLogInformation);
+
+    std::string iterationDirectory = 
+        outputRootDirectory_ 
+        + "/" 
+        + std::to_string(checkpointLogInformation.cumulativeNumberOfIterations);
+
+    std::filesystem::create_directory(iterationDirectory);
+
+    saveGenotypeToJson(iterationDirectory, bestGenotype);
+
+    if (generateCode_) {
+        saveGenotypeToCode(iterationDirectory, bestGenotype);
+    }
+
+    if (generateImage_) {
+        saveGenotypeImage(iterationDirectory, bestGenotype);
+    }
+}
+
+void cc::CheckpointSaver::appendLogInformation(
+        const cc::CheckpointLogInformation_t& checkpointLogInformation) {
+    std::ofstream logFile(logFileName_, std::ios_base::app);
+    logFile 
+        << std::to_string(cumulativeNumberOfEpochs)
+        << ","
+        << cumulativeElapsedTimeUs
+        << ","
+        << std::to_string(bestFitness)
+        << "\n";
+}
+
+void cc::CheckpointSaver::saveGenotypeToJson(
+        const std::string& outputDirectory,
+        const cc::Genotype& genotype) {
+    std::string outputFileName = outputDirectory + "/genotype.json";
+    std::vector<std::unordered_map<std::string, std::string>> serialized = genotype.serialize();
+
+    nlohmann::json json(serialized);
+    std::string jsonStr = json.dump(4);
+
+    std::ofstream stream(outputFileName);
+    stream << jsonStr;
+}
+
+void cc::CheckpointSaver::saveGenotypeToCode(
+        const std::string& outputDirectory,
+        const cc::Genotype& genotype) {
+
+    std::string outputFileName = outputDirectory + "/genotype.cpp";
+
+    // TODO: make language configurable when more than one type is supported.
+    cc::CodeGenerationContext_t context;
+    context.generationLanguage = "cpp";
+
+    std::string generatedCode = genotype.generateCode();
+
+    std::ofstream stream(outputFileName);
+    stream << generatedCode;
+}
+
+void cc::CheckpointSaver::saveGenotypeImage(
+        const std::string& outputDirectory, 
+        const Genotype& genotype,
+        bool saveUnusedNodes) {
+    // TODO: should we allow active visibility to be togglable?
+    std::string activeDotFilePath = outputDirectory + "/activeGenes.gv";
+    std::string allDotFilePath = outputDirectory + "/allGenes.gv";
+    std::string activeImagePath = outputDirectory + "/activeGenes.png";
+    std::string allImagePath = outputDirectory + "/allGenes.png";
+
+    std::string activeDotFileText = genotype.generateDotFile(false);
+    std::string allDotFileText = genotype.generateDotFile(true);
+
+    std::ofstream activeStream(activeDotFilePath);
+    std::ofstream allStream(allDotFilePath);
+
+    activeStream << activeDotFileText;
+    allStream << allDotFileText;
+
+    std::string cmd = 
+        "dot -Tpng " + activeDotFilePath + " -o " + activeImagePath
+    +   " && "
+    +   "dot -Tpng " + allDotFilePath + " -o " + allImagePath;
+
+    std::system(cmd);
+}
+
+void cc::CheckpointSaver::parseParameters(
+        const std::unordered_map<std::string, std::string>& checkpointSaverParameters) {
+    outputRootDirectory_ = checkpointSaverParameters["outputDirectory"];
+    generateCode_ = (!strncasecmp("true", checkpointSaverParameters["generateCode"].c_str(), 5));
+    generateImage_ = (!strncasecmp("true", checkpointSaverParameters["generateImage"].c_str(), 5));
+}

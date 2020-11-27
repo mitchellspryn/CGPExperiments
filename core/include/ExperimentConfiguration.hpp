@@ -39,12 +39,16 @@ class ExperimentConfiguration {
             return geneParameters_[geneName];
         }
 
-        inline const std::vector<std::unordered_map<std::string, std::string>> getInputDataChunkProviderParameters() const {
+        inline const std::vector<std::unordered_map<std::string, std::string>>& getInputDataChunkProviderParameters() const {
             return inputDataChunkProviderParameters_;
         }
 
-        inline const std::unordered_map<std::string, std::string> getLabelDataChunkProviderParameters() const {
+        inline const std::unordered_map<std::string, std::string>& getLabelDataChunkProviderParameters() const {
             return labelDataChunkProviderParameters_;
+        }
+
+        inline const std::unordered_map<std::string, std::string>& getCheckpointSaverParameters() const {
+           return checkpointSaverParameters_; 
         }
 
     private:
@@ -56,6 +60,7 @@ class ExperimentConfiguration {
         std::unordered_map<std::string, std::unordered_map<std::string, std::string> geneParameters_;
         std::vector<std::unordered_map<std::string, std::string>> inputDataChunkProviderParameters_;
         std::unordered_map<std::string, std::string> labelDataChunkProviderParameters_;
+        std::unordered_map<std::string, std::string> checkpointSaverParameters_;
 
 };
 

@@ -36,6 +36,7 @@ class Island {
         int numIterationsPerEpoch_;
         int numEvaluationSamples_;
         int evalStartIndex_;
+        int checkpointFrequency_;
         double bestFitness_ = std::numeric_limits<double>::max();
         int bestFitnessIndex_ = -1;
 
