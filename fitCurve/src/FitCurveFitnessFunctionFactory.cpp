@@ -5,9 +5,9 @@
 #include <strings.h>
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-std::unique_ptr<cc::FitnessFunction> cf::FitCurveFitnessFunctionFactory::create(
+std::unique_ptr<cc::FitnessFunction> fc::FitCurveFitnessFunctionFactory::create(
         const std::unordered_map<std::string, std::string>& fitnessFunctionParameters) {
     if (fitnessFunctionParameters.count("name") == 0) { 
         throw std::runtime_error("Missing parameter 'name' in FitnessFunction definition.");
@@ -16,7 +16,7 @@ std::unique_ptr<cc::FitnessFunction> cf::FitCurveFitnessFunctionFactory::create(
     std::string fitnessFunctionName = fitnessFunctionParameters.at(name);
     const char* name = fitnessFunctionName.c_str();
     if (strncasecmp(name, "l2", 3) == 0) {
-        return std::make_unique<cf::L2ErrorFitnessFunction>();
+        return std::make_unique<fc::L2ErrorFitnessFunction>();
     }
 
     throw std::runtime_error(

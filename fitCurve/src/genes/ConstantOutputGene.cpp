@@ -5,9 +5,9 @@
 #include "../../../core/include/RandomNumberGenerator.hpp"
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-void cf::ConstantOutputGene::initializeFromParameters(
+void fc::ConstantOutputGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
 
     minValue_ = std::stof(geneParameters["minValue"]);
@@ -20,8 +20,8 @@ void cf::ConstantOutputGene::initializeFromParameters(
     }
 }
 
-void cf::ConstantOutputGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
-    cf::ConstantOutputGene* gene = dynamic_cast<cf::ConstantOutputGene*> other;
+void fc::ConstantOutputGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+    fc::ConstantOutputGene* gene = dynamic_cast<fc::ConstantOutputGene*> other;
     if (gene == nullptr) {
         throw std::runtime_error(
             "Attempting to initialize ConstantOutputGene with something that isn't of the correct type.");
@@ -32,15 +32,15 @@ void cf::ConstantOutputGene::initializeParametersFromTemplateGene(const cc::Gene
     value_ = gene_->value;
 }
 
-void cf::ConstantOutputGene::mutateParameters() {
+void fc::ConstantOutputGene::mutateParameters() {
     value_ = minValue_ + ((maxValue_-minValue_) * cc::randomNumberGenerator::getRandomFloat());
 }
 
-std::string cf::ConstantOutputGene::getGeneName() {
+std::string fc::ConstantOutputGene::getGeneName() {
     return "constantOutput";
 }
 
-void cf::ConstantOutputGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void fc::ConstantOutputGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
 
     int numExamples = buffers[outputBufferIndex_]->getNum();
@@ -49,7 +49,7 @@ void cf::ConstantOutputGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>
     }
 }
 
-std::string cf::ConstantOutputGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::ConstantOutputGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string line = 
         context.outputVariableName 
         + "[i] = " 
@@ -64,7 +64,7 @@ std::string cf::ConstantOutputGene::generateCode(cc::CodeGenerationContext_t& co
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::ConstantOutputGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::ConstantOutputGene::serializeInternal() {
     std::unordered_map<std::string, std::string> tmp;
 
     tmp["maxValue"] = std::to_string(maxValue_);

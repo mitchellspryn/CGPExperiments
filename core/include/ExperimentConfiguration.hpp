@@ -11,6 +11,10 @@ class ExperimentConfiguration {
     public:
         ExperimentConfiguration(const std::string& inputJsonFilePath); 
 
+        inline const std::string& getGeneset() const {
+            return geneset_;
+        }
+
         inline const std::unordered_map<std::string, std::string>& getTrainerParameters() const {
             return trainerParameters_;
         }
@@ -52,6 +56,7 @@ class ExperimentConfiguration {
         }
 
     private:
+        std::string geneset_;
         std::unordered_map<std::string, std::string> trainerParameters_;
         std::unordered_map<std::string, std::string> islandParameters_;
         std::unordered_map<std::string, std::string> genotypeParameters_;

@@ -1,26 +1,26 @@
 #include "../../include/genes/DivideProtectedGene.hpp"
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-void cf::DivideProtectedGene::initializeFromParameters(
+void fc::DivideProtectedGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }
 
-void cf::DivideProtectedGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+void fc::DivideProtectedGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
     // Nothing to initialize!
 }
 
-void cf::DivideProtectedGene::mutateParameters() {
+void fc::DivideProtectedGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string cf::DivideProtectedGene::getGeneName() {
+std::string fc::DivideProtectedGene::getGeneName() {
     return "divideProtected";
 }
 
-void cf::DivideProtectedGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void fc::DivideProtectedGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
@@ -35,7 +35,7 @@ void cf::DivideProtectedGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk
     }
 }
 
-std::string cf::DivideProtectedGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::DivideProtectedGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string addLine = 
         context.outputVariableName 
         + "[i] = " 
@@ -55,7 +55,7 @@ std::string cf::DivideProtectedGene::generateCode(cc::CodeGenerationContext_t& c
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::DivideProtectedGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::DivideProtectedGene::serializeInternal() {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

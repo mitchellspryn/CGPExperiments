@@ -1,26 +1,26 @@
 #include "../../include/genes/MultiplyGene.hpp"
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-void cf::MultiplyGene::initializeFromParameters(
+void fc::MultiplyGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }
 
-void cf::MultiplyGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+void fc::MultiplyGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
     // Nothing to initialize!
 }
 
-void cf::MultiplyGene::mutateParameters() {
+void fc::MultiplyGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string cf::MultiplyGene::getGeneName() {
+std::string fc::MultiplyGene::getGeneName() {
     return "multiply";
 }
 
-void cf::MultiplyGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void fc::MultiplyGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
@@ -31,7 +31,7 @@ void cf::MultiplyGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buf
     }
 }
 
-std::string cf::MultiplyGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::MultiplyGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string line = 
         context.outputVariableName 
         + "[i] = " 
@@ -48,7 +48,7 @@ std::string cf::MultiplyGene::generateCode(cc::CodeGenerationContext_t& context)
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::MultiplyGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::MultiplyGene::serializeInternal() {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

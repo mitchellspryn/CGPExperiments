@@ -12,9 +12,9 @@
 #include <strings.h>
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-std::unique_ptr<cc::Gene> cf::FitCurveGeneFactory::createGene(
+std::unique_ptr<cc::Gene> fc::FitCurveGeneFactory::createGene(
         const std::string& geneName) {
     const char* name = geneName.c_str();
     if (strncasecmp(name, "add") == 0) {

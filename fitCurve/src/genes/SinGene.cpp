@@ -3,26 +3,26 @@
 #include <cmath>
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-void cf::SinGene::initializeFromParameters(
+void fc::SinGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }
 
-void cf::SinGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+void fc::SinGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
     // Nothing to initialize!
 }
 
-void cf::SinGene::mutateParameters() {
+void fc::SinGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string cf::SinGene::getGeneName() {
+std::string fc::SinGene::getGeneName() {
     return "add";
 }
 
-void cf::SinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void fc::SinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
 
@@ -32,7 +32,7 @@ void cf::SinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers)
     }
 }
 
-std::string cf::SinGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::SinGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string line = 
         context.outputVariableName 
         + "[i] = std::sin(" 
@@ -47,7 +47,7 @@ std::string cf::SinGene::generateCode(cc::CodeGenerationContext_t& context) {
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::SinGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::SinGene::serializeInternal() {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

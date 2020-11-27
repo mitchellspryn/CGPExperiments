@@ -4,9 +4,9 @@
 #include <assert.h>
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-double cf::L2ErrorFitnessFunction::evaluate(
+double fc::L2ErrorFitnessFunction::evaluate(
         const cc::DataChunk& predictions,
         const cc::DataChunk& labels,
         const cc::Genotype& genotype) {

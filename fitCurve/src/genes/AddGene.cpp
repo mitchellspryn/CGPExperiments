@@ -1,26 +1,26 @@
 #include "../../include/genes/AddGene.hpp"
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-void cf::AddGene::initializeFromParameters(
+void fc::AddGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }
 
-void cf::AddGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+void fc::AddGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
     // Nothing to initialize!
 }
 
-void cf::AddGene::mutateParameters() {
+void fc::AddGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string cf::AddGene::getGeneName() {
+std::string fc::AddGene::getGeneName() {
     return "add";
 }
 
-void cf::AddGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void fc::AddGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
@@ -31,7 +31,7 @@ void cf::AddGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers)
     }
 }
 
-std::string cf::AddGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::AddGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string line = 
         context.outputVariableName 
         + "[i] = " 
@@ -48,7 +48,7 @@ std::string cf::AddGene::generateCode(cc::CodeGenerationContext_t& context) {
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::AddGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::AddGene::serializeInternal() {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

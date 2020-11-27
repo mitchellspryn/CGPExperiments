@@ -3,26 +3,26 @@
 #include <cmath>
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-void cf::CosGene::initializeFromParameters(
+void fc::CosGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // No parameters to initialize!
 }
 
-void cf::CosGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+void fc::CosGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
     // No parameters to initialize!
 }
 
-void cf::CosGene::mutateParameters() {
+void fc::CosGene::mutateParameters() {
     // Nothing to mutate!
 }
 
-std::string cf::CosGene::getGeneName() {
+std::string fc::CosGene::getGeneName() {
     return "cos";
 }
 
-void cf::CosGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void fc::CosGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
 
@@ -32,7 +32,7 @@ void cf::CosGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers)
     }
 }
 
-std::string cf::CosGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::CosGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string line = 
         context.outputVariableName 
         + "[i] = std::cos(" 
@@ -47,7 +47,7 @@ std::string cf::CosGene::generateCode(cc::CodeGenerationContext_t& context) {
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::CosGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::CosGene::serializeInternal() {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

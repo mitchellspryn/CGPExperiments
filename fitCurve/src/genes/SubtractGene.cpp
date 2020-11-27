@@ -1,26 +1,26 @@
 #include "../../include/genes/SubtractGene.hpp"
 
 namespace cc = cgpExperiments::core;
-namespace cf = cgpExperiments::fitCurve;
+namespace fc = cgpExperiments::fitCurve;
 
-void cf::SubtractGene::initializeFromParameters(
+void fc::SubtractGene::initializeFromParameters(
         const std::unordered_map<std::string, std::string>& geneParameters) {
     // Nothing to initialize!
 }
 
-void cf::SubtractGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
+void fc::SubtractGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
     // Nothing to initialize!
 }
 
-void cf::SubtractGene::mutateParameters() {
+void fc::SubtractGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string cf::SubtractGene::getGeneName() {
+std::string fc::SubtractGene::getGeneName() {
     return "subtract";
 }
 
-void cf::SubtractGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
+void fc::SubtractGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
@@ -31,7 +31,7 @@ void cf::SubtractGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buf
     }
 }
 
-std::string cf::SubtractGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::SubtractGene::generateCode(cc::CodeGenerationContext_t& context) {
     std::string line = 
         context.outputVariableName 
         + "[i] = " 
@@ -48,7 +48,7 @@ std::string cf::SubtractGene::generateCode(cc::CodeGenerationContext_t& context)
     return codeTemplate;
 }
 
-std::unordered_map<std::string, std::string> cf::SubtractGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::SubtractGene::serializeInternal() {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

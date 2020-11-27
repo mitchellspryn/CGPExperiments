@@ -24,6 +24,8 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
 
     stream >> j;
 
+    geneSet_ = j["geneset"];
+
     auto fillFromKeyValue = 
         [](json::json jobj, std::unordered_map<std::string, std::string>& map) {
         for (json::iterator it = jobj.begin(); it != jobj.end(); ++it) {
