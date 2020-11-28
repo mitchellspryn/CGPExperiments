@@ -15,10 +15,8 @@ namespace cc = cgpExperiments::core;
 cc::DataChunkProvider::DataChunkProvider(
         const std::unordered_map<std::string, std::string>& parameters) {
 
-    sampleWidth_ = std::stoi(parameters.at("sampleWidth"));
-    sampleHeight_ = std::stoi(parameters.at("sampleHeight"));
-    fileName_ = parameters.at("fileName");
-    fileSizeInBytes_ = std::filesystem::file_size(fileName_);
+    fillParametersFromMap(parameters);
+   fileSizeInBytes_ = std::filesystem::file_size(fileName_);
 
     sampleSizeInBytes_ = sampleWidth_ * sampleHeight_ * sizeof(float);
     if ((fileSizeInBytes_ % sampleSizeInBytes_) != 0) {
@@ -159,4 +157,11 @@ void cc::DataChunkProvider::releaseMappedFile(bool allowThrow) {
             std::cerr << errorMessage << std::endl;
         }
     }
+}
+
+void cc::DataChunkProvider::fillParametersFromMap(
+        const std::unordered_map<std::string, std::string>& parameters) {
+    sampleWidth_ = std::stoi(parameters.at("sampleWidth"));
+    sampleHeight_ = std::stoi(parameters.at("sampleHeight"));
+    fileName_ = parameters.at("fileName");
 }

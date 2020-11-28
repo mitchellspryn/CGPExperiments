@@ -14,7 +14,7 @@ namespace core {
 class DataChunkProvider {
     public:
         DataChunkProvider(
-            const std::unordered_map<std::string, std::string>& dataChunkParameters);
+            const std::unordered_map<std::string, std::string>& parameters);
         ~DataChunkProvider();
 
         inline int getChunkWidth() {
@@ -45,6 +45,8 @@ class DataChunkProvider {
 
         void mapFileIntoMemory(const std::string& fileName);
         void releaseMappedFile(bool allowThrow);
+        void fillParametersFromMap(
+            const std::unordered_map<std::string, std::string>& parameters);
 };
 
 }

@@ -1,0 +1,68 @@
+{
+    "geneset": "fitcurve",
+    "trainerParameters": {
+        "maxNumThreads": 1,
+        "numIslands": 1,
+        "rngSeed": 42,
+        "terminationFitness": 0.001,
+        "termiationNumEpochs": 10,
+        "checkpointFrequency": 2,
+        "consoleFrequency": 1
+    },
+    "islandParameters": {
+        "numGenotypes": 5,
+        "numIterationsPerEpoch": 100,
+        "numEvaluationSamples": 200,
+        "evalStartIndex": 0
+    },
+    "genotypeParameters": {
+        "geneGridWidth": 100,
+        "geneGridHeight": 1,
+        "maxLookback": 100,
+        "numInputDatasets": 1,
+        "inputDataWidth": 1,
+        "inputDataHeight": 1,
+        "inputDataNumSamples": 200
+    },
+    "fitnessFunctionParameters": {
+        "name": "l2"
+    },
+    "genePoolParameters": {
+        "initialPoolSize": 50
+    },
+    "checkpointSaverParameters": {
+        "outputDirectory": "ckpt",
+        "generateCode": true,
+        "generateImage": true
+    },
+    "geneParameters": {
+        "add": {
+        },
+        "constantOutput": {
+            "maxValue": 3,
+            "minValue": -3
+        },
+        "cosGene": {
+        },
+        "divideProtected": {
+        },
+        "multiply": {
+        },
+        "sin": {
+        },
+        "subtract": {
+        }
+    },
+    "labelDataChunkParameters": {
+        "sampleWidth": 1,
+        "sampleHeight": 1,
+        "fileName": "y.dat"
+    },
+    "inputDataChunkParameters": [
+        {
+            "sampleWidth": 1,
+            "sampleHeight": 1,
+            "fileName": "x.dat"
+        }
+    ]
+}

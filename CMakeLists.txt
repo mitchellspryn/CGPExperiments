@@ -32,3 +32,6 @@ add_executable(TrainCgp
     ${fitCurve_SRC}
 )
 
+add_executable(GenerateCurve
+    application/generateCurve.cpp
+)

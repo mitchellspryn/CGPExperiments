@@ -138,5 +138,5 @@ void cc::CgpTrainer::fillParametersFromMap(
     terminationFitness_ = std::stod(parameters.at("terminationFitness"));
     terminationNumEpochs_ = std::stod(parameters.at("terminationNumEpochs"));
     checkpointFrequency_ = std::stoi(parameters.at("checkpointFrequency"));
-    consoleFrequency_ = std::stoi(parameters.at("consoleFrequency_"));
+    consoleFrequency_ = std::stoi(parameters.at("consoleFrequency"));
 }
