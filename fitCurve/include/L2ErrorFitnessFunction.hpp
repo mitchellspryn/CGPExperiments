@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../include/core/include/FitnessFunction.hpp"
-#include "../../include/core/include/Genotype.hpp"
+#include "../../core/include/FitnessFunction.hpp"
+#include "../../core/include/Genotype.hpp"
 
 namespace cgpExperiments {
 namespace fitCurve {

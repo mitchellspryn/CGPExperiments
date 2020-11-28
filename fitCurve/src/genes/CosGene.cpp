@@ -1,6 +1,7 @@
 #include "../../include/genes/CosGene.hpp"
 
 #include <cmath>
+#include <sstream>
 
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
@@ -18,7 +19,7 @@ void fc::CosGene::mutateParameters() {
     // Nothing to mutate!
 }
 
-std::string fc::CosGene::getGeneName() {
+std::string fc::CosGene::getGeneName() const {
     return "cos";
 }
 
@@ -32,22 +33,23 @@ void fc::CosGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers)
     }
 }
 
-std::string fc::CosGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::CosGene::generateCode(cc::CodeGenerationContext_t& context) const {
     std::string line = 
         context.outputVariableName 
         + "[i] = std::cos(" 
         + context.inputVariableNames[0]
         + "[i]);";
     
-    std::string codeTemplate = 
+    std::stringstream codeTemplate;
+    codeTemplate <<
         "for (int i = 0; i < num; i++) {\n"
-    +   "   " + line + "\n"
-    +   "}\n";
+    <<  "   " << line << "\n"
+    <<  "}\n";
 
-    return codeTemplate;
+    return codeTemplate.str();
 }
 
-std::unordered_map<std::string, std::string> fc::CosGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::CosGene::serializeInternal() const {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

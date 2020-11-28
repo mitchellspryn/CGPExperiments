@@ -18,8 +18,8 @@ double fc::L2ErrorFitnessFunction::evaluate(
 
     float err = 0;
 
-    float* p = predictions.getDataPtr();
-    float* l = labels.getDataPtr();
+    const float* p = predictions.getConstDataPtr();
+    const float* l = labels.getConstDataPtr();
 
     for (int i = 0; i < predictions.getNum(); i++) {
         err += (p[i]-l[i]) * (p[i]-l[i]);

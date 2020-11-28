@@ -10,12 +10,13 @@ class DataChunk {
     public:
         DataChunk(int width, int height, int num);
 
-        inline int getWidth() { return width_; }
-        inline int getHeight() { return height_; }
-        inline int getNum() { return num_; }
-        inline int getSize() { return size_; }
-        inline int getCapacity() { return capacity_; }
+        inline int getWidth() const { return width_; }
+        inline int getHeight() const { return height_; }
+        inline int getNum() const { return num_; }
+        inline int getSize() const { return size_; }
+        inline int getCapacity() const { return capacity_; }
         inline float* getDataPtr() { return data_.data(); }
+        inline const float* getConstDataPtr() const { return data_.data(); }
         inline void setNum(int num);
 
     private:

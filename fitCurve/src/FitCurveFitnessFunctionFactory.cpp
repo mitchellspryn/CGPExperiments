@@ -13,7 +13,7 @@ std::unique_ptr<cc::FitnessFunction> fc::FitCurveFitnessFunctionFactory::create(
         throw std::runtime_error("Missing parameter 'name' in FitnessFunction definition.");
     }
 
-    std::string fitnessFunctionName = fitnessFunctionParameters.at(name);
+    std::string fitnessFunctionName = fitnessFunctionParameters.at("name");
     const char* name = fitnessFunctionName.c_str();
     if (strncasecmp(name, "l2", 3) == 0) {
         return std::make_unique<fc::L2ErrorFitnessFunction>();

@@ -18,19 +18,19 @@ std::unique_ptr<cc::Gene> fc::FitCurveGeneFactory::createGene(
         const std::string& geneName) {
     const char* name = geneName.c_str();
     if (strncasecmp(name, "add", 4) == 0) {
-        return std::make_unique<cf::AddGene>();
+        return std::make_unique<fc::AddGene>();
     } else if (strncasecmp(name, "constantOutput", 15) == 0) {
-        return std::make_unique<cf::ConstantOutputGene>();
+        return std::make_unique<fc::ConstantOutputGene>();
     } else if (strncasecmp(name, "cos", 4) == 0) {
-        return std::make_unique<cf::CosGene>();
+        return std::make_unique<fc::CosGene>();
     } else if (strncasecmp(name, "divideProtected", 16) == 0) {
-        return std::make_unique<cf::DivideProtectedGene>();
+        return std::make_unique<fc::DivideProtectedGene>();
     } else if (strncasecmp(name, "multiply", 9) == 0) {
-        return std::make_unique<cf::MultiplyGene>();
+        return std::make_unique<fc::MultiplyGene>();
     } else if (strncasecmp(name, "sin", 4) == 0) {
-        return std::make_unique<cf::SinGene>();
+        return std::make_unique<fc::SinGene>();
     } else if (strncasecmp(name, "subtract", 9) == 0) {
-        return std::make_unique<cf::SubtractGene>();
+        return std::make_unique<fc::SubtractGene>();
     }
 
     throw std::runtime_error(

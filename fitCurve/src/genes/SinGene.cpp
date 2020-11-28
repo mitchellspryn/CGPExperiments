@@ -1,6 +1,7 @@
 #include "../../include/genes/SinGene.hpp"
 
 #include <cmath>
+#include <sstream>
 
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
@@ -18,7 +19,7 @@ void fc::SinGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string fc::SinGene::getGeneName() {
+std::string fc::SinGene::getGeneName() const {
     return "add";
 }
 
@@ -32,22 +33,23 @@ void fc::SinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers)
     }
 }
 
-std::string fc::SinGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::SinGene::generateCode(cc::CodeGenerationContext_t& context) const {
     std::string line = 
         context.outputVariableName 
         + "[i] = std::sin(" 
         + context.inputVariableNames[0]
         + "[i]);";
     
-    std::string codeTemplate = 
+    std::stringstream codeTemplate;
+    codeTemplate <<
         "for (int i = 0; i < num; i++) {\n"
-    +   "   " + line + "\n"
-    +   "}\n";
+    <<  "   " << line << "\n"
+    <<  "}\n";
 
-    return codeTemplate;
+    return codeTemplate.str();
 }
 
-std::unordered_map<std::string, std::string> fc::SinGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::SinGene::serializeInternal() const {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;

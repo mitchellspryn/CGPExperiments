@@ -1,5 +1,7 @@
 #include "../../include/genes/AddGene.hpp"
 
+#include <sstream>
+
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
 
@@ -16,7 +18,7 @@ void fc::AddGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string fc::AddGene::getGeneName() {
+std::string fc::AddGene::getGeneName() const {
     return "add";
 }
 
@@ -31,7 +33,7 @@ void fc::AddGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers)
     }
 }
 
-std::string fc::AddGene::generateCode(cc::CodeGenerationContext_t& context) {
+std::string fc::AddGene::generateCode(cc::CodeGenerationContext_t& context) const {
     std::string line = 
         context.outputVariableName 
         + "[i] = " 
@@ -40,15 +42,16 @@ std::string fc::AddGene::generateCode(cc::CodeGenerationContext_t& context) {
         + context.inputVariableNames[1]
         + "[i];";
     
-    std::string codeTemplate = 
+    std::stringstream codeTemplate;
+    codeTemplate << 
         "for (int i = 0; i < num; i++) {\n"
-    +   "   " + line + "\n"
-    +   "}\n";
+    <<  "   " << line << "\n"
+    <<  "}\n";
 
-    return codeTemplate;
+    return codeTemplate.str();
 }
 
-std::unordered_map<std::string, std::string> fc::AddGene::serializeInternal() {
+std::unordered_map<std::string, std::string> fc::AddGene::serializeInternal() const {
     // No parameters to serialize here!
     std::unordered_map<std::string, std::string> tmp;
     return tmp;
