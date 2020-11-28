@@ -385,6 +385,9 @@ void cc::Genotype::initializeRandomly() {
 
 void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
     // Compute the candidate range
+    if (geneIndex == 0) {
+        int k = 0;
+    }
     int endColumn = std::max(0, ((geneIndex / geneGridHeight_) - 1));
     int startColumn = std::max(0, endColumn - maxLookback_);
 
@@ -392,7 +395,7 @@ void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
 
     int connectIndex = 0;
     if (columnNumber == 0) {
-        connectIndex = cc::randomNumberGenerator::getRandomInt(0, numInputDatasets_); 
+        connectIndex = cc::randomNumberGenerator::getRandomInt(0, numInputDatasets_ - 1); 
     } else {
         connectIndex = 
             (cc::randomNumberGenerator::getRandomInt(0, geneGridHeight_ - 1))
@@ -406,7 +409,7 @@ void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
 void cc::Genotype::mutateUntilPercentage() {
     std::unordered_set<int> mutatedGenes;
     while (mutatedGenes.size() < mutationPercentageNumGenes_) {
-        int geneIndex = cc::randomNumberGenerator::getRandomInt(0, genes_.size());
+        int geneIndex = cc::randomNumberGenerator::getRandomInt(0, genes_.size() - 1);
         if (mutatedGenes.count(geneIndex) == 0) {
             mutateSingleGene(geneIndex);
             mutatedGenes.emplace(geneIndex);
@@ -425,7 +428,7 @@ void cc::Genotype::mutateByProbability() {
 void cc::Genotype::mutateUntilSingleActive() {
     bool mutatedActiveGene = false;
     while (!mutatedActiveGene) {
-        int geneIndex = cc::randomNumberGenerator::getRandomInt(0, genes_.size());
+        int geneIndex = cc::randomNumberGenerator::getRandomInt(0, genes_.size() - 1);
         mutateSingleGene(geneIndex);
         mutatedActiveGene = (
                 (geneIndex == genes_.size())
@@ -463,7 +466,7 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
     if (typeOfMutation == 0) {
         if (genes_[geneIndex]->getNumInputs() > 0) {
             int inputToReconnect = 
-                cc::randomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
+                cc::randomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs() - 1);
             randomlyReconnectGeneInput(inputToReconnect, geneIndex);
         }
     } else if (typeOfMutation == 1) {

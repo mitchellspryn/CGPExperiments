@@ -1,13 +1,13 @@
 {
     "geneset": "fitcurve",
     "trainerParameters": {
-        "maxNumThreads": 1,
-        "numIslands": 1,
+        "maxNumThreads": 8,
+        "numIslands": 24,
         "rngSeed": 42,
         "terminationFitness": 0.001,
-        "terminationNumEpochs": 10,
-        "checkpointFrequency": 1,
-        "consoleFrequency": 1
+        "terminationNumEpochs": 1000,
+        "checkpointFrequency": 100,
+        "consoleFrequency": 10
     },
     "islandParameters": {
         "numGenotypes": 5,

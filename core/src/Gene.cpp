@@ -35,7 +35,7 @@ std::unordered_map<std::string, std::string> cc::Gene::serialize() const {
         }
     }
     serializedGene["inputBufferIndexes"] = inputBufferIndicesStr;
-    serializedGene["numInputs"] = inputBufferIndices_.size();
+    serializedGene["numInputs"] = std::to_string(inputBufferIndices_.size());
 
     return serializedGene;
 }

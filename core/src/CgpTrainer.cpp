@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
+#include <omp.h>
 #include <strings.h>
 
 namespace cc = cgpExperiments::core;
@@ -63,14 +64,17 @@ void cc::CgpTrainer::run() {
 
     std::chrono::high_resolution_clock::time_point startTime = clk.now();
 
+    omp_set_num_threads(maxNumThreads_);
+
     if (consoleFrequency_ > 0) {
         int result = std::system("clear");
-        std::cout << "Number of epochs | Elapsed time (us) | best fitness score" << std::endl;
+        std::cout << "Number of epochs | best fitness score | Elapsed time (us)" << std::endl;
     }
 
     while ((numEpochsRun < terminationNumEpochs_)
             && (bestFitnessScore_ > terminationFitness_)) {
-        // TODO: parallelize this loop with openMP
+
+        #pragma omp parallel for default(none) shared(islands_)
         for (size_t i = 0; i < islands_.size(); i++) {
             islands_[i].runEpoch();
         }
@@ -114,9 +118,9 @@ void cc::CgpTrainer::run() {
             std::cout << 
                 numEpochsRun
                 << " | "
-                << std::to_string(elapsedUs)
-                << " | " 
                 << std::to_string(bestFitnessScore_)
+                << " | " 
+                << std::to_string(elapsedUs)
                 << std::endl;
         }
     }

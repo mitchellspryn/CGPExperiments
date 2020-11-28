@@ -27,7 +27,7 @@ cc::CheckpointSaver::CheckpointSaver(
             + "', but it could not be opened.");
     }
 
-    logFile << "cumulativeNumberOfEpochs,cumulativeElapsedTimeUs,bestFitness\n";
+    logFile << "cumulativeNumberOfEpochs,bestFitness,cumulativeElapsedTimeUs\n";
 }
 
 void cc::CheckpointSaver::saveCheckpoint(
@@ -59,9 +59,9 @@ void cc::CheckpointSaver::appendLogInformation(
     logFile 
         << std::to_string(checkpointLogInformation.cumulativeNumberOfEpochs)
         << ","
-        << checkpointLogInformation.cumulativeElapsedTimeUs
-        << ","
         << std::to_string(checkpointLogInformation.bestFitness)
+        << ","
+        << std::to_string(checkpointLogInformation.cumulativeElapsedTimeUs)
         << "\n";
 }
 
