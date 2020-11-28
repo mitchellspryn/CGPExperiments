@@ -18,9 +18,13 @@ float ccr::getRandomFloat() {
 }
 
 int ccr::getRandomInt(int lowerBoundInclusive, int upperBoundInclusive) {
+    if (lowerBoundInclusive == upperBoundInclusive) {
+        return lowerBoundInclusive;
+    }
+
     float f = floatDistribution(generator);
 
     int range = upperBoundInclusive - lowerBoundInclusive;
-    
+
     return ((static_cast<int>(f * (range))) % range) + lowerBoundInclusive;
 }

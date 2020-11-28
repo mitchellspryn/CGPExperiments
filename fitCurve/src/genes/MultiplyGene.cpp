@@ -38,7 +38,7 @@ std::string fc::MultiplyGene::generateCode(cc::CodeGenerationContext_t& context)
         context.outputVariableName 
         + "[i] = " 
         + context.inputVariableNames[0]
-        + "[i] + "
+        + "[i] * "
         + context.inputVariableNames[1]
         + "[i];";
     

@@ -5,8 +5,8 @@
         "numIslands": 1,
         "rngSeed": 42,
         "terminationFitness": 0.001,
-        "termiationNumEpochs": 10,
-        "checkpointFrequency": 2,
+        "terminationNumEpochs": 10,
+        "checkpointFrequency": 1,
         "consoleFrequency": 1
     },
     "islandParameters": {
@@ -22,7 +22,8 @@
         "numInputDatasets": 1,
         "inputDataWidth": 1,
         "inputDataHeight": 1,
-        "inputDataNumSamples": 200
+        "inputDataNumSamples": 200,
+        "mutationType": "singleActive"
     },
     "fitnessFunctionParameters": {
         "name": "l2"
@@ -42,7 +43,7 @@
             "maxValue": 3,
             "minValue": -3
         },
-        "cosGene": {
+        "cos": {
         },
         "divideProtected": {
         },

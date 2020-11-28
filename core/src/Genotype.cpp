@@ -91,7 +91,7 @@ const cc::DataChunk& cc::Genotype::evaluate(std::vector<std::shared_ptr<DataChun
         int geneIndexToEvaluate = indicesToEvaluate_.top() - numInputDatasets_;
         indicesToEvaluate_.pop();
         
-        if (activeGenes_.count(geneIndexToEvaluate) != 0) {
+        if (activeGenes_.count(geneIndexToEvaluate) == 0) {
             genes_[geneIndexToEvaluate]->evaluate(buffers_);
             activeGenes_.emplace(geneIndexToEvaluate);
         }
@@ -186,15 +186,17 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     functionStringStream << "    void compute(";
 
     context.variableNamesInUse.clear();
-    
+    std::unordered_set<std::string> inputVariableNames;
+
     for (int i = 0; i < numInputDatasets_; i++) {
         std::string inputVariableName = "in" + std::to_string(i);
+        inputVariableNames.emplace(inputVariableName);
         functionStringStream << "const float* " << inputVariableName;
         context.variableNamesInUse.emplace(inputVariableName);
         functionStringStream << ", ";
     }
 
-    functionStringStream << "float* outputBuf, int width, int height, int num) {" ;
+    functionStringStream << "float* outputBuf, int width, int height, int num) {\n" ;
     context.variableNamesInUse.emplace("width");
     context.variableNamesInUse.emplace("height");
     context.variableNamesInUse.emplace("num");
@@ -235,9 +237,9 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
         for (size_t i = 0; i < geneBufferIndices.size(); i++) {
             int geneBufferIndex = geneBufferIndices[i];
             if (geneBufferIndex < numInputDatasets_) {
-                context.inputVariableNames.emplace_back("in" + std::to_string(i));
+                context.inputVariableNames.emplace_back("in" + std::to_string(geneBufferIndex));
             } else {
-                context.inputVariableNames.emplace_back("tmp" + std::to_string(i-numInputDatasets_));
+                context.inputVariableNames.emplace_back("tmp" + std::to_string(geneBufferIndex));
             }
         }
 
@@ -248,43 +250,48 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
                 startPos += to.length(); // Handles case where 'to' is a substring of 'from'
             }
             return str;
-        };  
+        }; 
 
-        functionStringStream << "    ////////////////////////////////////////////////////\n";
-        functionStringStream << "    //" << genes_[geneIndexToGenerate]->getGeneName() << ": " << geneIndexToGenerate << "\n";
-        functionStringStream << "    ////////////////////////////////////////////////////\n";
+        functionStringStream << "      ////////////////////////////////////////////////////\n";
+        functionStringStream << "      //" << genes_[geneIndexToGenerate]->getGeneName() << ": " << geneIndexToGenerate << "\n";
+        functionStringStream << "      ////////////////////////////////////////////////////\n";
         std::string generatedSnippet = genes_[geneIndexToGenerate]->generateCode(context);
-        functionStringStream << "    " << replaceAllFxn(generatedSnippet, "\n", "\n    ");
+        functionStringStream << "      " << replaceAllFxn(generatedSnippet, "\n", "\n      ");
         functionStringStream << "\n";
 
         generatedIndexes.emplace(geneIndexToGenerate);
     }
     
-    functionStringStream << "////////////////////////////////////////////////////\n";
+    functionStringStream << "    ////////////////////////////////////////////////////\n";
     functionStringStream 
         << 
-        "return tmp" 
+        "    return tmp" 
         << std::to_string(outputBufferIndex_ - numInputDatasets_)
-        << ".data();\n}\n";
+        << ".data();\n  }\n";
 
     std::stringstream constructorStringStream;
-    constructorStringStream << "GeneratedFunction() {\n";
+    constructorStringStream << "    GeneratedFunction() {\n";
 
     std::stringstream variableDeclarationStringStream;
     
     int numFloats = buffers_[0]->getSize();
     for (const std::string& variable : context.variableNamesInUse) {
-        constructorStringStream 
-            << "    " 
-            << variable 
-            << ".resize(" 
-            << std::to_string(numFloats)
-            << ", 0);\n";
+        if ((variable != "width")
+            && (variable != "height")
+            && (variable != "num")
+            && (inputVariableNames.count(variable) == 0)) {
+            constructorStringStream 
+                << "      " 
+                << variable 
+                << ".resize(" 
+                << std::to_string(numFloats)
+                << ", 0);\n";
 
-        variableDeclarationStringStream << "    std::vector<float> " << variable << ";\n";
+            variableDeclarationStringStream << "    std::vector<float> " << variable << ";\n";
+        }
     }
 
-    constructorStringStream << "}\n";
+    constructorStringStream << "    }\n";
 
     std::stringstream outputStream;
     outputStream << ""
@@ -297,7 +304,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     <<   "\n"
     <<   functionStringStream.str()
     <<   "\n"
-    <<   "  private:"
+    <<   "  private:\n"
     <<   variableDeclarationStringStream.str()
     <<   "\n"
     <<   "};";
@@ -307,16 +314,16 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
 
 std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
     std::stringstream outputStream;
-    outputStream << "digraph graph {\n";
-    outputStream << "  size=\"10, 10\";\n";
+    outputStream << "digraph graphname {\n";
+    outputStream << "  size=\"1000, 1000\";\n";
 
     for (size_t i = 0; i < numInputDatasets_; i++) {
         outputStream 
             << "  "
             << std::to_string(i)
-            << " [label=\"in_"
+            << " [label=\"in:"
             << std::to_string(i)
-            << " \", shape=\"ellipse\", color=\"azure\"];\n";
+            << "\", shape=\"ellipse\", style=\"filled\", fillcolor=\"azure\"];\n";
     }
 
     for (size_t i = 0; i < genes_.size(); i++) {
@@ -326,7 +333,7 @@ std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
             std::string color = "beige";
             if (isActive) {
                 if (i == outputBufferIndex_ - numInputDatasets_) {
-                    color = "darkOliveGreen2";
+                    color = "darkgreen";
                 } else {
                     color = "bisque2";
                 }
@@ -339,17 +346,18 @@ std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
                 << genes_[i]->getGeneName()
                 << ": "
                 << i
-                << "\", shape=\"box\", color=\""
-                << (isActive ? "bisque3" : "beige")
-                << "];\n";
+                << "\", shape=\"box\", style=\"filled\", fillcolor=\""
+                << color
+                << "\"];\n";
 
             const std::vector<int>& inputs = genes_[i]->getInputBufferIndices();
             for (size_t j = 0; j < inputs.size(); j++) {
                 outputStream 
-                    << std::to_string(j)
+                    << "  "
+                    << std::to_string(inputs[j])
                     << " -> "
-                    << std::to_string(i)
-                    << ";";
+                    << std::to_string(i + numInputDatasets_)
+                    << ";\n";
             }
         }
     }
@@ -387,7 +395,7 @@ void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
         connectIndex = cc::randomNumberGenerator::getRandomInt(0, numInputDatasets_); 
     } else {
         connectIndex = 
-            (cc::randomNumberGenerator::getRandomInt(0, endColumn-1) * geneGridWidth_)
+            (cc::randomNumberGenerator::getRandomInt(0, geneGridHeight_ - 1))
             + (columnNumber * geneGridHeight_)
             + numInputDatasets_;
     }
@@ -461,6 +469,7 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
             experimentConfiguration_->getGeneParameters(
                 genes_[geneIndex]->getGeneName()));
         
+        genes_[geneIndex]->setOutputIndex(numInputDatasets_ + geneIndex);
         int numInputs = genes_[geneIndex]->getNumInputs();
         for (int i = 0; i < numInputs; i++) {
             randomlyReconnectGeneInput(i, geneIndex);
@@ -508,10 +517,6 @@ void cc::Genotype::fillParametersFromMap(
                 + ".");
     }
 
-    if (params.count("outputIndex") > 0) {
-        outputBufferIndex_ = std::stoi(params.at("outputIndex"));
-    }
-
     genes_.reserve(geneGridWidth_ * geneGridHeight_);
     for (size_t i = 0; i < (geneGridWidth_ * geneGridHeight_); i++) {
         std::unique_ptr<cc::Gene> gp(nullptr);
@@ -530,6 +535,14 @@ void cc::Genotype::fillParametersFromMap(
         buffers_.emplace_back(
             std::make_unique<cc::DataChunk>(
                 inputDataWidth_, inputDataHeight_, inputDataNumSamples_));
+    }
+
+    if (params.count("outputIndex") > 0) {
+        outputBufferIndex_ = std::stoi(params.at("outputIndex"));
+    } else {
+        outputBufferIndex_ = cc::randomNumberGenerator::getRandomInt(
+                numInputDatasets_,
+                numInputDatasets_ + genes_.size() - 1);
     }
 }
 

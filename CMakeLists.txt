@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
-set(CMAKE_C_COMPILER "/usr/bin/clang")
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+#set(CMAKE_C_COMPILER "/usr/bin/clang")
+#set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 project(CgpExperiments)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17 -O0 -g")
 
 find_package(OpenMP REQUIRED)
 
-SET(CMAKE_BUILD_TYPE "Debug")
+#SET(CMAKE_BUILD_TYPE "Debug")
 #SET(CMAKE_BUILD_TYPE "Release")
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 

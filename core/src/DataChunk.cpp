@@ -6,7 +6,7 @@ cc::DataChunk::DataChunk(int width, int height, int num) {
     width_ = width;
     height_ = height;
     num_ = num;
-    num_ = maxNum_;
+    maxNum_ = num;
     size_ = width * height * num;
     widthHeight_ = width * height;
 

@@ -10,10 +10,10 @@ double fc::L2ErrorFitnessFunction::evaluate(
         const cc::DataChunk& predictions,
         const cc::DataChunk& labels,
         const cc::Genotype& genotype) {
-    assert(predictions.getWidth() == 0);
-    assert(predictions.getHeight() == 0);
-    assert(labels.getWidth() == 0);
-    assert(labels.getHeight() == 0);
+    assert(predictions.getWidth() == 1);
+    assert(predictions.getHeight() == 1);
+    assert(labels.getWidth() == 1);
+    assert(labels.getHeight() == 1);
     assert(predictions.getNum() == labels.getNum());
 
     float err = 0;

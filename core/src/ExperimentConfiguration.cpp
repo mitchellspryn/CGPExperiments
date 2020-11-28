@@ -33,8 +33,14 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
         [](nlohmann::json jobj, std::unordered_map<std::string, std::string>& map) {
         for (nlohmann::json::iterator it = jobj.begin(); it != jobj.end(); ++it) {
             std::string key = it.key();
-            std::string value = it.value();
-            map[key] = value;
+
+            // Calling .dump() on a string will escape quotes
+            if (it.value().type() == nlohmann::json::value_t::string) {
+                map[key] = it.value().get<std::string>();
+            } else {
+                map[key] = it.value().dump();
+
+            }
         }
     };
 

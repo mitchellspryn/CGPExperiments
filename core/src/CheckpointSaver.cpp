@@ -98,19 +98,21 @@ void cc::CheckpointSaver::saveGenotypeImage(
         const std::string& outputDirectory, 
         const Genotype& genotype) {
     // TODO: should we allow active visibility to be togglable?
-    std::string activeDotFilePath = outputDirectory + "/activeGenes.gv";
-    std::string allDotFilePath = outputDirectory + "/allGenes.gv";
-    std::string activeImagePath = outputDirectory + "/activeGenes.png";
-    std::string allImagePath = outputDirectory + "/allGenes.png";
+    std::string activeDotFilePath = outputDirectory + "/dotActiveGenes.gv";
+    std::string allDotFilePath = outputDirectory + "/dotAllGenes.gv";
+    std::string activeImagePath = outputDirectory + "/picActiveGenes.png";
+    std::string allImagePath = outputDirectory + "/picAllGenes.png";
 
     std::string activeDotFileText = genotype.generateDotFile(false);
     std::string allDotFileText = genotype.generateDotFile(true);
 
-    std::ofstream activeStream(activeDotFilePath);
-    std::ofstream allStream(allDotFilePath);
+    {
+        std::ofstream activeStream(activeDotFilePath);
+        std::ofstream allStream(allDotFilePath);
 
-    activeStream << activeDotFileText;
-    allStream << allDotFileText;
+        activeStream << activeDotFileText;
+        allStream << allDotFileText;
+    }
 
     // TODO: this is probably a security risk.
     std::string cmd = 

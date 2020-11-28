@@ -32,6 +32,9 @@ std::unique_ptr<cc::Gene> cc::GenePool::getFromPool(const std::string& geneName)
 
 std::unique_ptr<cc::Gene> cc::GenePool::getRandomGeneFromPool() {
     int randomNameIndex = cc::randomNumberGenerator::getRandomInt(0, geneNames_.size() - 1);
+    if (geneNames_[randomNameIndex] == "constantOutput") {
+        int kk = 0;
+    }
     return getFromPool(geneNames_[randomNameIndex]);
 }
 

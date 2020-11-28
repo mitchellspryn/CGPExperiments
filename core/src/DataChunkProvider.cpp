@@ -14,9 +14,9 @@ namespace cc = cgpExperiments::core;
 
 cc::DataChunkProvider::DataChunkProvider(
         const std::unordered_map<std::string, std::string>& parameters) {
-
+    
     fillParametersFromMap(parameters);
-   fileSizeInBytes_ = std::filesystem::file_size(fileName_);
+    fileSizeInBytes_ = std::filesystem::file_size(fileName_);
 
     sampleSizeInBytes_ = sampleWidth_ * sampleHeight_ * sizeof(float);
     if ((fileSizeInBytes_ % sampleSizeInBytes_) != 0) {

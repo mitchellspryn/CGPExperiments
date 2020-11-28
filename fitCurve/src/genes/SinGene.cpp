@@ -20,7 +20,7 @@ void fc::SinGene::mutateParameters() {
 }
 
 std::string fc::SinGene::getGeneName() const {
-    return "add";
+    return "sin";
 }
 
 void fc::SinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {

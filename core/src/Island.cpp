@@ -19,28 +19,30 @@ cc::Island::Island(
 
     for (int i = 0; i < numGenotypes_; i++) {
         std::unique_ptr<cc::Genotype> resident =
-            std::make_unique<cc::Genotype>(experimentConfiguration_, genePool);
+            std::make_unique<cc::Genotype>(experimentConfiguration_, genePool_);
         residents_.emplace_back(std::move(resident));
         residents_[i]->initializeRandomly();
     }
 
     for (size_t i = 0; i < inputDataChunkProviders_.size(); i++) {
-        inputDataChunkBuffers_[i].reset(new cc::DataChunk(
-            inputDataChunkProviders_[i]->getChunkWidth(),
-            inputDataChunkProviders_[i]->getChunkHeight(),
-            numEvaluationSamples_));
+        inputDataChunkBuffers_.emplace_back(
+            std::make_shared<cc::DataChunk>(
+                inputDataChunkProviders_[i]->getChunkWidth(),
+                inputDataChunkProviders_[i]->getChunkHeight(),
+                numEvaluationSamples_));
     }
 
-    labelDataChunkBuffer_.reset(new cc::DataChunk(
+    labelDataChunkBuffer_ = std::make_shared<cc::DataChunk>(
             labelDataChunkProvider_->getChunkWidth(),
             labelDataChunkProvider_->getChunkHeight(),
-            numEvaluationSamples_));
+            numEvaluationSamples_);
 }
 
 int cc::Island::getNumIterationsPerEpoch() {
     return numIterationsPerEpoch_;
 }
 
+#include <iostream>
 void cc::Island::runEpoch() {
     // TODO: technically, this should be inside the loops. 
     // But, if the genes do not modify the input buffers (as they should not),
