@@ -120,7 +120,7 @@ void cc::CheckpointSaver::saveGenotypeImage(
     +   " && "
     +   "dot -Tpng " + allDotFilePath + " -o " + allImagePath;
 
-    std::system(cmd.c_str());
+    int result = std::system(cmd.c_str());
 }
 
 void cc::CheckpointSaver::parseParameters(

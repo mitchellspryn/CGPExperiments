@@ -14,7 +14,8 @@ void ccr::seedRng(int seed) {
 }
 
 float ccr::getRandomFloat() {
-    return floatDistribution(generator);
+    float f = floatDistribution(generator);
+    return f;
 }
 
 int ccr::getRandomInt(int lowerBoundInclusive, int upperBoundInclusive) {
@@ -24,7 +25,8 @@ int ccr::getRandomInt(int lowerBoundInclusive, int upperBoundInclusive) {
 
     float f = floatDistribution(generator);
 
-    int range = upperBoundInclusive - lowerBoundInclusive;
+    int range = upperBoundInclusive - lowerBoundInclusive + 1;
+    int randomResult = (static_cast<int>(f * (range))) + lowerBoundInclusive;
 
-    return ((static_cast<int>(f * (range))) % range) + lowerBoundInclusive;
+    return randomResult;
 }

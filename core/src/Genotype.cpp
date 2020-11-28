@@ -385,10 +385,10 @@ void cc::Genotype::initializeRandomly() {
 
 void cc::Genotype::randomlyReconnectGeneInput(int inputNumber, int geneIndex) {
     // Compute the candidate range
-    int endColumn = (geneIndex / geneGridHeight_) - 1;
+    int endColumn = std::max(0, ((geneIndex / geneGridHeight_) - 1));
     int startColumn = std::max(0, endColumn - maxLookback_);
 
-    int columnNumber = cc::randomNumberGenerator::getRandomInt(endColumn, startColumn);
+    int columnNumber = cc::randomNumberGenerator::getRandomInt(startColumn, endColumn);
 
     int connectIndex = 0;
     if (columnNumber == 0) {
@@ -447,22 +447,25 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
     int upperBound = 2;
     int lowerBound = 0;
 
-    // Do not mutate a gene's parameters if it has none.
-    if (genes_[geneIndex]->isParameterFree()) {
-        upperBound = 1;
-    }
+    // TODO: is this a good idea?
+    //// Do not mutate a gene's parameters if it has none.
+    //if (genes_[geneIndex]->isParameterFree()) {
+    //    upperBound = 1;
+    //}
 
-    // Do not try to reconnect an input if it has none (e.g. constant node)
-    if (genes_[geneIndex]->getNumInputs() == 0) {
-        lowerBound = 1;
-    }
+    //// Do not try to reconnect an input if it has none (e.g. constant node)
+    //if (genes_[geneIndex]->getNumInputs() == 0) {
+    //    lowerBound = 1;
+    //}
 
     int typeOfMutation = cc::randomNumberGenerator::getRandomInt(lowerBound, upperBound);
     
     if (typeOfMutation == 0) {
-        int inputToReconnect = 
-            cc::randomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
-        randomlyReconnectGeneInput(inputToReconnect, geneIndex);
+        if (genes_[geneIndex]->getNumInputs() > 0) {
+            int inputToReconnect = 
+                cc::randomNumberGenerator::getRandomInt(0, genes_[geneIndex]->getNumInputs());
+            randomlyReconnectGeneInput(inputToReconnect, geneIndex);
+        }
     } else if (typeOfMutation == 1) {
         genes_[geneIndex] = genePool_->getRandomGeneFromPool();
         genes_[geneIndex]->initializeFromParameters(

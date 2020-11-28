@@ -64,7 +64,7 @@ void cc::CgpTrainer::run() {
     std::chrono::high_resolution_clock::time_point startTime = clk.now();
 
     if (consoleFrequency_ > 0) {
-        std::system("clear");
+        int result = std::system("clear");
         std::cout << "Number of epochs | Elapsed time (us) | best fitness score" << std::endl;
     }
 

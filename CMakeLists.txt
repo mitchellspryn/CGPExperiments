@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(CgpExperiments)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17 -O0 -g")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17 -O3 -g")
 
 find_package(OpenMP REQUIRED)
 
@@ -34,4 +35,9 @@ add_executable(TrainCgp
 
 add_executable(GenerateCurve
     application/generateCurve.cpp
+)
+
+add_executable(TestRng
+    application/testRng.cpp
+    ${core_SRC}
 )
