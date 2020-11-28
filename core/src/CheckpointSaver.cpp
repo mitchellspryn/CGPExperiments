@@ -35,10 +35,13 @@ void cc::CheckpointSaver::saveCheckpoint(
         const cc::Genotype& bestGenotype) {
     appendLogInformation(checkpointLogInformation);
 
-    std::string iterationDirectory = 
-        outputRootDirectory_ 
-        + "/" 
-        + std::to_string(checkpointLogInformation.cumulativeNumberOfEpochs);
+    std::string iterationDirectory = outputRootDirectory_ + "/";
+    if (checkpointLogInformation.isFinal) {
+        iterationDirectory += "final";
+    } else {
+        iterationDirectory += 
+            std::to_string(checkpointLogInformation.cumulativeNumberOfEpochs);
+    }
 
     std::filesystem::create_directory(iterationDirectory);
 

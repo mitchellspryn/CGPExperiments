@@ -12,6 +12,7 @@ typedef struct CheckpointLogInformation {
     int cumulativeNumberOfEpochs;
     double cumulativeElapsedTimeUs;
     float bestFitness;
+    bool isFinal;
 } CheckpointLogInformation_t;
 
 class CheckpointSaver {

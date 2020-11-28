@@ -25,5 +25,5 @@ double fc::L2ErrorFitnessFunction::evaluate(
         err += (p[i]-l[i]) * (p[i]-l[i]);
     }
     
-    return std::sqrt(err);
+    return std::sqrt(err) / static_cast<double>(predictions.getNum());
 }

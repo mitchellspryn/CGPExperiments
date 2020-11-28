@@ -105,6 +105,7 @@ void cc::CgpTrainer::run() {
             checkpointInformation.cumulativeElapsedTimeUs = 
                 std::chrono::duration_cast<std::chrono::microseconds>(now - startTime).count();
             checkpointInformation.bestFitness = bestFitnessScore_;
+            checkpointInformation.isFinal = false;
 
             checkpointSaver_->saveCheckpoint(checkpointInformation, bestGenotype);
         }
@@ -124,6 +125,17 @@ void cc::CgpTrainer::run() {
                 << std::endl;
         }
     }
+
+    const cc::Genotype& endingGenotype = islands_[bestIslandIndex_].getBestGenotype();
+
+    cc::CheckpointLogInformation_t finalCpInformation;
+    finalCpInformation.cumulativeNumberOfEpochs = numEpochsRun;
+    finalCpInformation.cumulativeElapsedTimeUs = 
+        std::chrono::duration_cast<std::chrono::microseconds>(clk.now() - startTime).count();
+    finalCpInformation.bestFitness = bestFitnessScore_;
+    finalCpInformation.isFinal = true;
+
+    checkpointSaver_->saveCheckpoint(finalCpInformation, endingGenotype);
 }
 
 const cc::Genotype& cc::CgpTrainer::getBestGenotype() {
