@@ -18,30 +18,34 @@ cc::GenePool::GenePool(
 }
 
 std::unique_ptr<cc::Gene> cc::GenePool::getFromPool(const std::string& geneName) {
-    std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
-    std::stack<std::unique_ptr<Gene>>& currentPool = pools_.at(geneName);
-    if (currentPool.empty()) {
-        fillPool(geneName, currentPool);
-    }
+    //std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
+    //std::stack<std::unique_ptr<Gene>>& currentPool = pools_.at(geneName);
+    //if (currentPool.empty()) {
+    //    fillPool(geneName, currentPool);
+    //}
 
-    std::unique_ptr<cc::Gene> output = std::move(currentPool.top());
-    currentPool.pop();
+    //std::unique_ptr<cc::Gene> output = std::move(currentPool.top());
+    //currentPool.pop();
 
-    return output;
+    //return output;
+    
+    // OK, this gene pool thing turned out to be a terrible idea. 
+    // Valgrind shows that a ton of time is spent in the hashsets.
+    // Also, the threads frequently block on each other waiting for locks to be released.
+    // It can probably be optimized further, but for now just creating a new one seems fast enough.
+    // Premature optimization...
+    return std::move(geneFactory_->createGene(geneName));
 }
 
 std::unique_ptr<cc::Gene> cc::GenePool::getRandomGeneFromPool() {
     int randomNameIndex = cc::randomNumberGenerator::getRandomInt(0, geneNames_.size() - 1);
-    if (geneNames_[randomNameIndex] == "constantOutput") {
-        int kk = 0;
-    }
     return getFromPool(geneNames_[randomNameIndex]);
 }
 
 void cc::GenePool::returnToPool(std::unique_ptr<cc::Gene> gene) {
-    std::string geneName = gene->getGeneName();
-    std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
-    pools_.at(geneName).push(std::move(gene));
+    //std::string geneName = gene->getGeneName();
+    //std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
+    //pools_.at(geneName).push(std::move(gene));
 }
 
 void cc::GenePool::fillParametersFromMap(

@@ -5,13 +5,13 @@
         "numIslands": 16,
         "rngSeed": 42,
         "terminationFitness": 0.00001,
-        "terminationNumEpochs": 10000,
+        "terminationNumEpochs": 100,
         "checkpointFrequency": 100,
         "consoleFrequency": 10
     },
     "islandParameters": {
         "numGenotypes": 5,
-        "numIterationsPerEpoch": 1000,
+        "numIterationsPerEpoch": 100,
         "numEvaluationSamples": 200,
         "evalStartIndex": 0
     },
