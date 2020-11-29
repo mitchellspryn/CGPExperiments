@@ -14,7 +14,9 @@ class GeneFactory {
     public:
         virtual ~GeneFactory() {};
         virtual std::unique_ptr<Gene> createGene(
-            const std::string& geneTypeName) = 0;
+            int typeId) = 0;
+        virtual int getTypeId(
+            const std::string& geneName) = 0;
 };
 
 }

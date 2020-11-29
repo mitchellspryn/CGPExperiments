@@ -15,6 +15,8 @@ class FitCurveGeneFactory : public cgpExperiments::core::GeneFactory {
     public:
         virtual ~FitCurveGeneFactory() override {};
         virtual std::unique_ptr<cgpExperiments::core::Gene> createGene(
+            int typeId) override;
+        virtual int getTypeId(
             const std::string& geneName) override;
 };
 

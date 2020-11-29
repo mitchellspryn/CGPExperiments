@@ -17,11 +17,11 @@ cc::GenePool::GenePool(
     initializePools();
 }
 
-std::unique_ptr<cc::Gene> cc::GenePool::getFromPool(const std::string& geneName) {
-    //std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
-    //std::stack<std::unique_ptr<Gene>>& currentPool = pools_.at(geneName);
+std::unique_ptr<cc::Gene> cc::GenePool::getFromPool(int geneTypeId) {
+    //std::lock_guard<std::mutex> guard(mutexes_.at(geneTypeId));
+    //std::stack<std::unique_ptr<Gene>>& currentPool = pools_.at(geneTypeId);
     //if (currentPool.empty()) {
-    //    fillPool(geneName, currentPool);
+    //    fillPool(geneTypeId, currentPool);
     //}
 
     //std::unique_ptr<cc::Gene> output = std::move(currentPool.top());
@@ -30,22 +30,23 @@ std::unique_ptr<cc::Gene> cc::GenePool::getFromPool(const std::string& geneName)
     //return output;
     
     // OK, this gene pool thing turned out to be a terrible idea. 
-    // Valgrind shows that a ton of time is spent in the hashsets.
-    // Also, the threads frequently block on each other waiting for locks to be released.
-    // It can probably be optimized further, but for now just creating a new one seems fast enough.
-    // Premature optimization...
-    return std::move(geneFactory_->createGene(geneName));
+    // The threads frequently block on each other waiting for locks to be released.
+    // Also, manipulating the stack seems to take more time than doing the malloc.
+    //
+    // Lots of time is spent in malloc / free, but to make it faster, 
+    //     we'd have to give up the class hierarchy. Which might be worse for flexability.
+    return std::move(geneFactory_->createGene(geneTypeId));
 }
 
 std::unique_ptr<cc::Gene> cc::GenePool::getRandomGeneFromPool() {
-    int randomNameIndex = randomNumberGenerator_->getRandomInt(0, geneNames_.size() - 1);
-    return getFromPool(geneNames_[randomNameIndex]);
+    int randomNameIndex = randomNumberGenerator_->getRandomInt(0, activeGenes_.size() - 1);
+    return getFromPool(activeGenes_[randomNameIndex]);
 }
 
 void cc::GenePool::returnToPool(std::unique_ptr<cc::Gene> gene) {
-    //std::string geneName = gene->getGeneName();
-    //std::lock_guard<std::mutex> guard(mutexes_.at(geneName));
-    //pools_.at(geneName).push(std::move(gene));
+    //int geneTypeId = gene->getTypeId();
+    //std::lock_guard<std::mutex> guard(mutexes_.at(geneTypeId));
+    //pools_.at(geneTypeId).push(std::move(gene));
 }
 
 void cc::GenePool::fillParametersFromMap(
@@ -56,23 +57,30 @@ void cc::GenePool::fillParametersFromMap(
 void cc::GenePool::initializePools() {
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> allGeneParameters = experimentConfiguration_->getAllGeneParameters();
 
+    int maxTypeId = std::numeric_limits<int>::min();
     for (auto it = allGeneParameters.begin(); it != allGeneParameters.end(); ++it) {
         const std::string& geneName = it->first;
-        
-        // Use [] to default-construct mutex in place
-        std::mutex& dummy = mutexes_[geneName];
-        std::stack<std::unique_ptr<cc::Gene>>& pool = pools_[geneName];
+        int geneTypeId = geneFactory_->getTypeId(geneName);
+        maxTypeId = std::max(geneTypeId, maxTypeId);
+    }
 
-        fillPool(geneName, pool);
-        geneNames_.emplace_back(geneName);
+    mutexes_ = std::vector<std::mutex>(maxTypeId+1);
+    pools_ = std::vector<std::stack<std::unique_ptr<cc::Gene>>>(maxTypeId+1);
+
+    for (auto it = allGeneParameters.begin(); it != allGeneParameters.end(); ++it) {
+        const std::string& geneName = it->first;
+        int geneTypeId = geneFactory_->getTypeId(geneName);
+        
+        fillPool(geneTypeId, pools_[geneTypeId]);
+        activeGenes_.emplace_back(geneTypeId);
     }
 }
 
 void cc::GenePool::fillPool(
-        const std::string& geneName,
+        int geneTypeId,
         std::stack<std::unique_ptr<cc::Gene>>& poolToExpand) {
     while (poolToExpand.size() < initialPoolSize_) {
-        poolToExpand.push(std::move(geneFactory_->createGene(geneName)));
+        poolToExpand.push(std::move(geneFactory_->createGene(geneTypeId)));
     }
 }
 

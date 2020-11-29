@@ -17,6 +17,7 @@ class Gene {
         virtual void mutateParameters() = 0;
         virtual std::string getGeneName() const = 0;
 
+        virtual int getTypeId() const = 0;
         virtual void evaluate(std::vector<std::shared_ptr<DataChunk>>& buffers) = 0;
         virtual std::string generateCode(CodeGenerationContext_t& context) const = 0;
         virtual bool isParameterFree() const = 0;

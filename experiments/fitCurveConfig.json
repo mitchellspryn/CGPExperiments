@@ -1,24 +1,24 @@
 {
     "geneset": "fitcurve",
     "trainerParameters": {
-        "maxNumThreads": 8,
+        "maxNumThreads": 16,
         "numIslands": 16,
         "rngSeed": 42,
         "terminationFitness": 0.00001,
-        "terminationNumEpochs": 100,
+        "terminationNumEpochs": 10000,
         "checkpointFrequency": 100,
         "consoleFrequency": 10
     },
     "islandParameters": {
         "numGenotypes": 5,
-        "numIterationsPerEpoch": 100,
+        "numIterationsPerEpoch": 1000,
         "numEvaluationSamples": 200,
         "evalStartIndex": 0
     },
     "genotypeParameters": {
-        "geneGridWidth": 200,
+        "geneGridWidth": 100,
         "geneGridHeight": 1,
-        "maxLookback": 200,
+        "maxLookback": 100,
         "numInputDatasets": 1,
         "inputDataWidth": 1,
         "inputDataHeight": 1,
@@ -29,7 +29,7 @@
         "name": "l2"
     },
     "genePoolParameters": {
-        "initialPoolSize": 1000
+        "initialPoolSize": 1
     },
     "checkpointSaverParameters": {
         "outputDirectory": "ckpt",

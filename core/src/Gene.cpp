@@ -13,9 +13,9 @@ void cc::Gene::initializeFromParameters(
 }
 
 void cc::Gene::initializeFromTemplateGene(const cc::Gene* other) {
-    inputBufferIndices_.resize(other->inputBufferIndices_.size());
-    for (size_t i = 0; i < inputBufferIndices_.size(); i++) {
-        inputBufferIndices_[i] = other->inputBufferIndices_[i];
+    inputBufferIndices_.reserve(other->inputBufferIndices_.size());
+    for (size_t i = 0; i < other->inputBufferIndices_.size(); i++) {
+        inputBufferIndices_.emplace_back(other->inputBufferIndices_[i]);
     }
 
     outputBufferIndex_ = other->outputBufferIndex_;
@@ -36,6 +36,7 @@ std::unordered_map<std::string, std::string> cc::Gene::serialize() const {
     }
     serializedGene["inputBufferIndexes"] = inputBufferIndicesStr;
     serializedGene["numInputs"] = std::to_string(inputBufferIndices_.size());
+    serializedGene["geneTypeId"] = std::to_string(getTypeId());
 
     return serializedGene;
 }

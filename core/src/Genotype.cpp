@@ -40,9 +40,9 @@ void cc::Genotype::setGenes(
         const std::unordered_set<int>& activeGenes) {
     for (size_t i = 0; i < genes_.size(); i++) {
         genePool_->returnToPool(std::move(genes_[i]));
-        genes_[i] = genePool_->getFromPool(modelGenes[i]->getGeneName());
-        genes_[i]->initializeFromTemplateGene(modelGenes[i].get());
+        genes_[i] = genePool_->getFromPool(modelGenes[i]->getTypeId());
         genes_[i]->setRandomNumberGenerator(randomNumberGenerator_.get());
+        genes_[i]->initializeFromTemplateGene(modelGenes[i].get());
     }
 
     activeGenes_ = activeGenes;
@@ -159,10 +159,10 @@ void cc::Genotype::deserialize(const std::vector<std::unordered_map<std::string,
     }
 
     for (int i = 1; i < data.size(); i++) {
-        const std::string& geneName = data.at(i).at("geneName");
-        genes_[i-1] = genePool_->getFromPool(geneName);
-        genes_[i-1]->initializeFromParameters(data.at(i));
+        int geneTypeId = std::stoi(data.at(i).at("geneTypeId"));
+        genes_[i-1] = genePool_->getFromPool(geneTypeId);
         genes_[i-1]->setRandomNumberGenerator(randomNumberGenerator_.get());
+        genes_[i-1]->initializeFromParameters(data.at(i));
 
         // connect inputs
         std::stringstream stream(data.at(i).at("inputBufferIndexes"));
@@ -374,10 +374,10 @@ std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
 void cc::Genotype::initializeRandomly() {
     for (size_t i = 0; i < genes_.size(); i++) {
         genes_[i] = genePool_->getRandomGeneFromPool();
+        genes_[i]->setRandomNumberGenerator(randomNumberGenerator_.get());
         genes_[i]->initializeFromParameters(
             experimentConfiguration_->getGeneParameters(
                 genes_[i]->getGeneName()));
-        genes_[i]->setRandomNumberGenerator(randomNumberGenerator_.get());
         genes_[i]->setOutputIndex(numInputDatasets_ + i);
         for (int j = 0; j < genes_[i]->getNumInputs(); j++) {
             randomlyReconnectGeneInput(j, i);
@@ -476,10 +476,10 @@ void cc::Genotype::mutateSingleGene(int geneIndex) {
         }
     } else if (typeOfMutation == 1) {
         genes_[geneIndex] = genePool_->getRandomGeneFromPool();
+        genes_[geneIndex]->setRandomNumberGenerator(randomNumberGenerator_.get());
         genes_[geneIndex]->initializeFromParameters(
             experimentConfiguration_->getGeneParameters(
                 genes_[geneIndex]->getGeneName()));
-        genes_[geneIndex]->setRandomNumberGenerator(randomNumberGenerator_.get());
         genes_[geneIndex]->setOutputIndex(numInputDatasets_ + geneIndex);
 
         int numInputs = genes_[geneIndex]->getNumInputs();

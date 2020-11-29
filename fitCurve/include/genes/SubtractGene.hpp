@@ -9,9 +9,12 @@
 namespace cgpExperiments {
 namespace fitCurve {
 
+static constexpr int kSubtractGeneTypeId = 6;
+
 class SubtractGene : public cgpExperiments::core::Gene {
     public:
         virtual ~SubtractGene() {};
+        virtual int getTypeId() const override { return kSubtractGeneTypeId; }
         virtual void initializeParametersFromConfig(const std::unordered_map<std::string, std::string>& geneParameters) override;
         virtual void initializeParametersFromTemplateGene(const cgpExperiments::core::Gene* other) override;
         virtual void mutateParameters() override;
