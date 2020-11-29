@@ -117,7 +117,10 @@ void cc::CgpTrainer::run() {
             checkpointInformation.bestFitness = bestFitnessScore_;
             checkpointInformation.isFinal = false;
 
-            checkpointSaver_->saveCheckpoint(checkpointInformation, bestGenotype);
+            checkpointSaver_->saveCheckpoint(
+                checkpointInformation, 
+                bestGenotype, 
+                islands_[0].getBestPredictions());
         }
 
         if ((consoleFrequency_ > 0)
@@ -145,7 +148,10 @@ void cc::CgpTrainer::run() {
     finalCpInformation.bestFitness = bestFitnessScore_;
     finalCpInformation.isFinal = true;
 
-    checkpointSaver_->saveCheckpoint(finalCpInformation, endingGenotype);
+    checkpointSaver_->saveCheckpoint(
+        finalCpInformation, 
+        endingGenotype,
+        islands_[0].getBestPredictions());
 }
 
 const cc::Genotype& cc::CgpTrainer::getBestGenotype() {

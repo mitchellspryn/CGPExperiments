@@ -32,7 +32,8 @@ cc::CheckpointSaver::CheckpointSaver(
 
 void cc::CheckpointSaver::saveCheckpoint(
         const cc::CheckpointLogInformation_t& checkpointLogInformation,
-        const cc::Genotype& bestGenotype) {
+        const cc::Genotype& bestGenotype,
+        const cc::DataChunk& predictions) {
     appendLogInformation(checkpointLogInformation);
 
     std::string iterationDirectory = outputRootDirectory_ + "/";
@@ -53,6 +54,10 @@ void cc::CheckpointSaver::saveCheckpoint(
 
     if (generateImage_) {
         saveGenotypeImage(iterationDirectory, bestGenotype);
+    }
+
+    if (generatePredictions_) {
+        savePredictions(iterationDirectory, predictions);
     }
 }
 
@@ -99,7 +104,7 @@ void cc::CheckpointSaver::saveGenotypeToCode(
 
 void cc::CheckpointSaver::saveGenotypeImage(
         const std::string& outputDirectory, 
-        const Genotype& genotype) {
+        const cc::Genotype& genotype) {
     // TODO: should we allow active visibility to be togglable?
     std::string activeDotFilePath = outputDirectory + "/dotActiveGenes.gv";
     std::string allDotFilePath = outputDirectory + "/dotAllGenes.gv";
@@ -126,17 +131,36 @@ void cc::CheckpointSaver::saveGenotypeImage(
     int result = std::system(cmd.c_str());
 }
 
+void cc::CheckpointSaver::savePredictions(
+        const std::string& outputDirectory,
+        const cc::DataChunk& predictions) {
+    std::string outputFilePath = outputDirectory + "/predictions.dat";
+
+    std::ofstream stream(outputFilePath, std::ios::out | std::ios::binary);
+    const float* data = predictions.getConstDataPtr();
+    int size = predictions.getSize();
+
+    stream.write(
+        reinterpret_cast<const char*>(data), size*sizeof(float));
+}
+
 void cc::CheckpointSaver::parseParameters(
         const std::unordered_map<std::string, std::string>& checkpointSaverParameters) {
     outputRootDirectory_ = checkpointSaverParameters.at("outputDirectory");
     generateCode_ = (
-            !strncasecmp(
-                "true", 
-                checkpointSaverParameters.at("generateCode").c_str(), 
-                5));
+        !strncasecmp(
+            "true", 
+            checkpointSaverParameters.at("generateCode").c_str(), 
+            5));
     generateImage_ = (
-            !strncasecmp(
-                "true", 
-                checkpointSaverParameters.at("generateImage").c_str(), 
-                5));
+        !strncasecmp(
+            "true", 
+            checkpointSaverParameters.at("generateImage").c_str(), 
+            5));
+    generatePredictions_ = (
+        !strncasecmp(
+            "true", 
+            checkpointSaverParameters.at("generatePredictions").c_str(), 
+            5));
+
 }

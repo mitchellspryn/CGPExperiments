@@ -32,6 +32,7 @@ class Island {
         void runEpoch();
         double getBestFitness();
         const Genotype& getBestGenotype();
+        const DataChunk& getBestPredictions();
         void setResidentGenotypes(const Genotype& genotype, double fitness);
 
     private:
@@ -42,6 +43,7 @@ class Island {
         int checkpointFrequency_;
         double bestFitness_ = std::numeric_limits<double>::max();
         int bestFitnessIndex_ = -1;
+        
 
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
         std::unique_ptr<FitnessFunction> fitnessFunction_;
