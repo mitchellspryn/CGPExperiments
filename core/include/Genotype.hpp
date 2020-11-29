@@ -27,7 +27,8 @@ class Genotype {
     public:
         Genotype(
                 std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
-                std::shared_ptr<GenePool> genePool);
+                std::shared_ptr<GenePool> genePool,
+                std::shared_ptr<RandomNumberGenerator> randomNumberGenerator);
 
         void mutate();
         void setGenes(
@@ -68,6 +69,7 @@ class Genotype {
 
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
         std::shared_ptr<GenePool> genePool_;
+        std::shared_ptr<RandomNumberGenerator> randomNumberGenerator_;
 
         void mutateUntilPercentage();
         void mutateByProbability();

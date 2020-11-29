@@ -82,3 +82,7 @@ std::string cc::Gene::generateUnusedVariableName(cc::CodeGenerationContext_t& co
     context.variableNamesInUse.emplace(variableName);
     return variableName;
 }
+
+void cc::Gene::setRandomNumberGenerator(cc::RandomNumberGenerator* randomNumberGenerator) {
+    randomNumberGenerator_ = randomNumberGenerator;
+}

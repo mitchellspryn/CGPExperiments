@@ -34,7 +34,7 @@ void fc::ConstantOutputGene::initializeParametersFromTemplateGene(const cc::Gene
 }
 
 void fc::ConstantOutputGene::mutateParameters() {
-    value_ = minValue_ + ((maxValue_-minValue_) * cc::randomNumberGenerator::getRandomFloat());
+    value_ = minValue_ + ((maxValue_-minValue_) * randomNumberGenerator_->getRandomFloat());
 }
 
 std::string fc::ConstantOutputGene::getGeneName() const {

@@ -17,11 +17,12 @@ cc::CgpTrainer::CgpTrainer(
 
     fillParametersFromMap(experimentConfiguration_->getTrainerParameters());
 
-    cc::randomNumberGenerator::seedRng(rngSeed_);
-
     genePool_ = std::make_shared<cc::GenePool>(
         experimentConfiguration_,
-        geneFactory);
+        geneFactory,
+        std::make_unique<cc::RandomNumberGenerator>(rngSeed_));
+
+    rngSeed_++;
 
     std::vector<std::unordered_map<std::string, std::string>> inputDataChunkParameters =
         experimentConfiguration_->getInputDataChunkProviderParameters();
@@ -30,12 +31,18 @@ cc::CgpTrainer::CgpTrainer(
     for (size_t i = 0; i < inputDataChunkParameters.size(); i++) {
         inputDataChunkProviders_.emplace_back(
             std::make_shared<cc::DataChunkProvider>(
-                inputDataChunkParameters[i]));
+                inputDataChunkParameters[i],
+                std::make_shared<cc::RandomNumberGenerator>(rngSeed_)));
+        
+        rngSeed_++;
     }
 
     labelDataChunkProvider_ = 
         std::make_shared<cc::DataChunkProvider>(
-            experimentConfiguration_->getLabelDataChunkProviderParameters());
+            experimentConfiguration_->getLabelDataChunkProviderParameters(),
+            std::make_shared<cc::RandomNumberGenerator>(rngSeed_));
+
+    rngSeed_++;
 
     for (size_t i = 0; i < numIslands_; i++) {
         islands_.emplace_back(
@@ -43,7 +50,10 @@ cc::CgpTrainer::CgpTrainer(
             genePool_,
             inputDataChunkProviders_,
             labelDataChunkProvider_,
-            experimentConfiguration);
+            experimentConfiguration,
+            std::make_shared<cc::RandomNumberGenerator>(rngSeed_));
+
+        rngSeed_++;
     }
 
     checkpointSaver_ = std::make_unique<cc::CheckpointSaver>(

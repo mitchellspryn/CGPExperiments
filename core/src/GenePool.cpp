@@ -2,15 +2,15 @@
 
 #include <utility>
 
-#include "../include/RandomNumberGenerator.hpp"
-
 namespace cc = cgpExperiments::core;
 
 cc::GenePool::GenePool(
-        std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
-        std::shared_ptr<GeneFactory> geneFactory) {
+        std::shared_ptr<cc::ExperimentConfiguration> experimentConfiguration,
+        std::shared_ptr<cc::GeneFactory> geneFactory,
+        std::unique_ptr<cc::RandomNumberGenerator> randomNumberGenerator) {
     experimentConfiguration_ = experimentConfiguration;
     geneFactory_ = geneFactory;
+    randomNumberGenerator_ = std::move(randomNumberGenerator);
 
     fillParametersFromMap(experimentConfiguration->getGenePoolParameters());
 
@@ -38,7 +38,7 @@ std::unique_ptr<cc::Gene> cc::GenePool::getFromPool(const std::string& geneName)
 }
 
 std::unique_ptr<cc::Gene> cc::GenePool::getRandomGeneFromPool() {
-    int randomNameIndex = cc::randomNumberGenerator::getRandomInt(0, geneNames_.size() - 1);
+    int randomNameIndex = randomNumberGenerator_->getRandomInt(0, geneNames_.size() - 1);
     return getFromPool(geneNames_[randomNameIndex]);
 }
 

@@ -1,21 +1,26 @@
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 
 
 #include "../core/include/RandomNumberGenerator.hpp"
 
-namespace ccr = cgpExperiments::core::randomNumberGenerator;
+namespace cc = cgpExperiments::core;
 
 static constexpr int kNumTests = 100000;
+static constexpr int kRngSeed = 12345;
 
 void printFloatTest() {
     std::map<int, int> counts;
-
     const int kNumBuckets = 10;
     float bucketStep = 1.0f / static_cast<float>(kNumBuckets);
+
+    std::unique_ptr<cc::RandomNumberGenerator> rng =
+        std::make_unique<cc::RandomNumberGenerator>(kRngSeed);
+
     for (int i = 0; i < kNumTests; i++) {
-        float f = ccr::getRandomFloat();
+        float f = rng->getRandomFloat();
 
         for (int i = 0; i < kNumBuckets; i++) { 
             float fi = static_cast<float>(i);
@@ -39,10 +44,13 @@ void printFloatTest() {
 
 void printIntTest() {
     std::map<int, int> counts;
-
     constexpr int kUpperLimit = 10;
+
+    std::unique_ptr<cc::RandomNumberGenerator> rng = 
+        std::make_unique<cc::RandomNumberGenerator>(kRngSeed);
+
     for (int i = 0; i < kNumTests; i++) {
-        int randomInt = ccr::getRandomInt(0, kUpperLimit);
+        int randomInt = rng->getRandomInt(0, kUpperLimit);
         counts[randomInt]++;
     }
 
@@ -58,7 +66,6 @@ void printIntTest() {
 }
 
 int main(int argc, char** argv) {
-    ccr::seedRng(123);
     printFloatTest();
     printIntTest();
 

@@ -9,6 +9,7 @@
 #include "ExperimentConfiguration.hpp"
 #include "Gene.hpp"
 #include "GeneFactory.hpp"
+#include "RandomNumberGenerator.hpp"
 
 namespace cgpExperiments {
 namespace core {
@@ -17,7 +18,8 @@ class GenePool {
     public:
         GenePool(
             std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
-            std::shared_ptr<GeneFactory> geneFactory);
+            std::shared_ptr<GeneFactory> geneFactory,
+            std::unique_ptr<RandomNumberGenerator> randomNumberGenerator);
 
         std::unique_ptr<Gene> getFromPool(const std::string& geneName);
         std::unique_ptr<Gene> getRandomGeneFromPool();
@@ -30,6 +32,7 @@ class GenePool {
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
         std::shared_ptr<GeneFactory> geneFactory_;
         std::vector<std::string> geneNames_;
+        std::unique_ptr<RandomNumberGenerator> randomNumberGenerator_;
 
         int initialPoolSize_;
 

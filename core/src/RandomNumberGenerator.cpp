@@ -2,28 +2,25 @@
 
 #include <algorithm>
 
-namespace ccr = cgpExperiments::core::randomNumberGenerator;
+namespace cc = cgpExperiments::core;
 
-namespace {
-    std::default_random_engine generator;
-    std::uniform_real_distribution<float> floatDistribution(0, 1);
+
+cc::RandomNumberGenerator::RandomNumberGenerator(int seed) {
+    generator_.seed(seed);
+    floatDistribution_ = std::uniform_real_distribution<float>(0, 1);
 }
 
-void ccr::seedRng(int seed) {
-    generator.seed(seed);
-}
-
-float ccr::getRandomFloat() {
-    float f = floatDistribution(generator);
+float cc::RandomNumberGenerator::getRandomFloat() {
+    float f = floatDistribution_(generator_);
     return f;
 }
 
-int ccr::getRandomInt(int lowerBoundInclusive, int upperBoundInclusive) {
+int cc::RandomNumberGenerator::getRandomInt(int lowerBoundInclusive, int upperBoundInclusive) {
     if (lowerBoundInclusive == upperBoundInclusive) {
         return lowerBoundInclusive;
     }
 
-    float f = floatDistribution(generator);
+    float f = floatDistribution_(generator_);
 
     int range = upperBoundInclusive - lowerBoundInclusive + 1;
     int randomResult = (static_cast<int>(f * (range))) + lowerBoundInclusive;

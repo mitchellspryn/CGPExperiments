@@ -7,11 +7,13 @@ cc::Island::Island(
         std::shared_ptr<GenePool> genePool,
         const std::vector<std::shared_ptr<DataChunkProvider>>& inputDataChunkProviders,
         const std::shared_ptr<DataChunkProvider>& labelDataChunkProvider,
-        std::shared_ptr<ExperimentConfiguration> experimentConfiguration) {
+        std::shared_ptr<cc::ExperimentConfiguration> experimentConfiguration,
+        std::shared_ptr<cc::RandomNumberGenerator> randomNumberGenerator) {
     experimentConfiguration_ = experimentConfiguration;
     genePool_ = genePool;
     inputDataChunkProviders_ = inputDataChunkProviders;
     labelDataChunkProvider_ = labelDataChunkProvider;
+    randomNumberGenerator_ = randomNumberGenerator;
     fitnessFunction_ = fitnessFunctionFactory->create(
             experimentConfiguration_->getFitnessFunctionParameters());
 
@@ -19,7 +21,10 @@ cc::Island::Island(
 
     for (int i = 0; i < numGenotypes_; i++) {
         std::unique_ptr<cc::Genotype> resident =
-            std::make_unique<cc::Genotype>(experimentConfiguration_, genePool_);
+            std::make_unique<cc::Genotype>(
+                experimentConfiguration_, 
+                genePool_, 
+                randomNumberGenerator_);
         residents_.emplace_back(std::move(resident));
         residents_[i]->initializeRandomly();
     }
@@ -42,7 +47,6 @@ int cc::Island::getNumIterationsPerEpoch() {
     return numIterationsPerEpoch_;
 }
 
-#include <iostream>
 void cc::Island::runEpoch() {
     // TODO: technically, this should be inside the loops. 
     // But, if the genes do not modify the input buffers (as they should not),
@@ -52,7 +56,7 @@ void cc::Island::runEpoch() {
     int chunkStartIndex = evalStartIndex_;
     if (chunkStartIndex < 0) {
         chunkStartIndex = 
-            cc::randomNumberGenerator::getRandomInt(
+            randomNumberGenerator_->getRandomInt(
                 0, 
                 inputDataChunkProviders_[0]->getNumSamplesInDataset() - 1);
     }

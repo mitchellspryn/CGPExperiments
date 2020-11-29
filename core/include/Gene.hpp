@@ -30,9 +30,14 @@ class Gene {
         void connectInput(int inputNumber, int inputBufferIndex);
         void setOutputIndex(int outputBufferIndex);
 
+        // Do not use shared_ptr, as this will be called in the hot loop
+        // The RNG will be owned by the genotype, as the gene cannot exist outside of it.
+        void setRandomNumberGenerator(RandomNumberGenerator* rng);
+
     protected:
         int outputBufferIndex_;
         std::vector<int> inputBufferIndices_;
+        RandomNumberGenerator* randomNumberGenerator_ = nullptr;
 
         virtual std::unordered_map<std::string, std::string> serializeInternal() const = 0;
         virtual void initializeParametersFromConfig(

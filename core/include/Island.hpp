@@ -25,7 +25,8 @@ class Island {
                 std::shared_ptr<GenePool> genePool,
                 const std::vector<std::shared_ptr<DataChunkProvider>>& inputDataChunkProviders,
                 const std::shared_ptr<DataChunkProvider>& labelDataChunkProvider,
-                std::shared_ptr<ExperimentConfiguration> experimentConfiguration);
+                std::shared_ptr<ExperimentConfiguration> experimentConfiguration,
+                std::shared_ptr<RandomNumberGenerator> randomNumberGenerator);
 
         int getNumIterationsPerEpoch();
         void runEpoch();
@@ -50,6 +51,7 @@ class Island {
         std::shared_ptr<GenePool> genePool_;
         std::vector<std::shared_ptr<DataChunk>> inputDataChunkBuffers_;
         std::shared_ptr<DataChunk> labelDataChunkBuffer_;
+        std::shared_ptr<RandomNumberGenerator> randomNumberGenerator_;
 
         void fillParametersFromMap(
                 const std::unordered_map<std::string, std::string>& params);
