@@ -18,7 +18,7 @@ cc::CheckpointSaver::CheckpointSaver(
     std::filesystem::create_directory(outputRootDirectory_);
 
     // Write log header.
-    std::string logFileName_ = outputRootDirectory_ + "/log.txt";
+    logFileName_ = outputRootDirectory_ + "/log.txt";
     std::ofstream logFile(logFileName_);
     if (!logFile.good()) {
         throw std::runtime_error(
@@ -64,6 +64,14 @@ void cc::CheckpointSaver::saveCheckpoint(
 void cc::CheckpointSaver::appendLogInformation(
         const cc::CheckpointLogInformation_t& checkpointLogInformation) {
     std::ofstream logFile(logFileName_, std::ios_base::app);
+
+    if (!logFile.good()) {
+        throw std::runtime_error(
+            "Could not open '"
+            + logFileName_
+            + "' in append mode.");
+    }
+
     logFile 
         << std::to_string(checkpointLogInformation.cumulativeNumberOfEpochs)
         << ","
@@ -142,6 +150,13 @@ void cc::CheckpointSaver::savePredictions(
 
     stream.write(
         reinterpret_cast<const char*>(data), size*sizeof(float));
+
+    // Temp debugging
+    std::string tmpFilePath = outputDirectory + "/tmp.dat";
+    std::ofstream tmpStream(tmpFilePath, std::ios::out);
+    for (int i = 0; i < predictions.getSize(); i++) {
+        tmpStream << std::to_string(data[i]) << "\n";
+    }
 }
 
 void cc::CheckpointSaver::parseParameters(

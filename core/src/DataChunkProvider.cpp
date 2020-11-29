@@ -10,6 +10,8 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
+#include <omp.h>
+
 namespace cc = cgpExperiments::core;
 
 cc::DataChunkProvider::DataChunkProvider(

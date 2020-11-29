@@ -46,12 +46,13 @@ cc::CgpTrainer::CgpTrainer(
 
     for (size_t i = 0; i < numIslands_; i++) {
         islands_.emplace_back(
-            fitnessFunctionFactory_,
-            genePool_,
-            inputDataChunkProviders_,
-            labelDataChunkProvider_,
-            experimentConfiguration,
-            std::make_shared<cc::RandomNumberGenerator>(rngSeed_));
+            std::make_unique<cc::Island>(
+                fitnessFunctionFactory_,
+                genePool_,
+                inputDataChunkProviders_,
+                labelDataChunkProvider_,
+                experimentConfiguration,
+                std::make_shared<cc::RandomNumberGenerator>(rngSeed_)));
 
         rngSeed_++;
     }
@@ -66,7 +67,7 @@ void cc::CgpTrainer::run() {
     }
 
     long numEpochsRun = 0;
-    int numIterationsPerEpoch = islands_[0].getNumIterationsPerEpoch();
+    int numIterationsPerEpoch = islands_[0]->getNumIterationsPerEpoch();
     bestIslandIndex_ = -1;
     bestFitnessScore_ = std::numeric_limits<double>::max();
 
@@ -84,23 +85,25 @@ void cc::CgpTrainer::run() {
     while ((numEpochsRun < terminationNumEpochs_)
             && (bestFitnessScore_ > terminationFitness_)) {
 
-        #pragma omp parallel for default(none) shared(islands_)
-        for (size_t i = 0; i < islands_.size(); i++) {
-            islands_[i].runEpoch();
+        {
+            #pragma omp parallel for ordered default(none) shared(islands_)
+            for (size_t i = 0; i < islands_.size(); i++) {
+                islands_[i]->runEpoch();
+            }
         }
 
         for (size_t i = 0; i < islands_.size(); i++) {
-            double islandFitness = islands_[i].getBestFitness();
+            double islandFitness = islands_[i]->getBestFitness();
             if (islandFitness < bestFitnessScore_) {
                 bestFitnessScore_ = islandFitness;
                 bestIslandIndex_ = i;
             }
         }
 
-        const cc::Genotype& bestGenotype = islands_[bestIslandIndex_].getBestGenotype();
+        const cc::Genotype& bestGenotype = islands_[bestIslandIndex_]->getBestGenotype();
         for (size_t i = 0; i < islands_.size(); i++) {
             if (i != bestIslandIndex_) {
-                islands_[i].setResidentGenotypes(bestGenotype, bestFitnessScore_);
+                islands_[i]->setResidentGenotypes(bestGenotype, bestFitnessScore_);
             }
         }
 
@@ -120,7 +123,7 @@ void cc::CgpTrainer::run() {
             checkpointSaver_->saveCheckpoint(
                 checkpointInformation, 
                 bestGenotype, 
-                islands_[0].getBestPredictions());
+                islands_[bestIslandIndex_]->getBestPredictions());
         }
 
         if ((consoleFrequency_ > 0)
@@ -139,7 +142,7 @@ void cc::CgpTrainer::run() {
         }
     }
 
-    const cc::Genotype& endingGenotype = islands_[bestIslandIndex_].getBestGenotype();
+    const cc::Genotype& endingGenotype = islands_[bestIslandIndex_]->getBestGenotype();
 
     cc::CheckpointLogInformation_t finalCpInformation;
     finalCpInformation.cumulativeNumberOfEpochs = numEpochsRun;
@@ -151,15 +154,19 @@ void cc::CgpTrainer::run() {
     checkpointSaver_->saveCheckpoint(
         finalCpInformation, 
         endingGenotype,
-        islands_[0].getBestPredictions());
+        islands_[bestIslandIndex_]->getBestPredictions());
 }
 
 const cc::Genotype& cc::CgpTrainer::getBestGenotype() {
-    return islands_[bestIslandIndex_].getBestGenotype();
+    return islands_[bestIslandIndex_]->getBestGenotype();
 }
 
 double cc::CgpTrainer::getBestGenotypeFitness() {
     return bestFitnessScore_;
+}
+
+const cc::DataChunk& cc::CgpTrainer::getBestPredictions() {
+    return islands_[bestIslandIndex_]->getBestPredictions();
 }
 
 void cc::CgpTrainer::fillParametersFromMap(

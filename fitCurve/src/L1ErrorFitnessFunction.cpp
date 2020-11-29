@@ -1,4 +1,4 @@
-#include "../include/L2ErrorFitnessFunction.hpp"
+#include "../include/L1ErrorFitnessFunction.hpp"
 
 #include <cmath>
 #include <assert.h>
@@ -6,7 +6,7 @@
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
 
-double fc::L2ErrorFitnessFunction::evaluate(
+double fc::L1ErrorFitnessFunction::evaluate(
         const cc::DataChunk& predictions,
         const cc::DataChunk& labels,
         const cc::Genotype& genotype) {
@@ -21,9 +21,11 @@ double fc::L2ErrorFitnessFunction::evaluate(
     const float* p = predictions.getConstDataPtr();
     const float* l = labels.getConstDataPtr();
 
-    for (int i = 0; i < predictions.getNum(); i++) {
-        err += (p[i]-l[i]) * (p[i]-l[i]);
-    }
+    int n = predictions.getNum();
 
+    for (int i = 0; i < predictions.getNum(); i++) {
+        err += std::abs(p[i]-l[i]);
+    }
+    
     return err / static_cast<double>(predictions.getNum());
 }

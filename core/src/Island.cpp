@@ -119,7 +119,7 @@ const cc::Genotype& cc::Island::getBestGenotype() {
 }
 
 const cc::DataChunk& cc::Island::getBestPredictions() {
-    return residents_[bestFitnessIndex_]->evaluate(inputDataChunkBuffers_); 
+    return residents_[bestFitnessIndex_]->evaluate(inputDataChunkBuffers_);
 }
 
 void cc::Island::setResidentGenotypes(const cc::Genotype& genotype, double fitness) {

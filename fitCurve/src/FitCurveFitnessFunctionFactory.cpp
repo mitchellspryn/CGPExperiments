@@ -1,4 +1,5 @@
 #include "../include/FitCurveFitnessFunctionFactory.hpp"
+#include "../include/L1ErrorFitnessFunction.hpp"
 #include "../include/L2ErrorFitnessFunction.hpp"
 
 #include <stdexcept>
@@ -15,7 +16,9 @@ std::unique_ptr<cc::FitnessFunction> fc::FitCurveFitnessFunctionFactory::create(
 
     std::string fitnessFunctionName = fitnessFunctionParameters.at("name");
     const char* name = fitnessFunctionName.c_str();
-    if (strncasecmp(name, "l2", 3) == 0) {
+    if (strncasecmp(name, "l1", 3) == 0) {
+        return std::make_unique<fc::L1ErrorFitnessFunction>();
+    } else if (strncasecmp(name, "l2", 3) == 0) {
         return std::make_unique<fc::L2ErrorFitnessFunction>();
     }
 

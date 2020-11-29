@@ -27,6 +27,7 @@ class CgpTrainer {
         void run();
         const Genotype& getBestGenotype();
         double getBestGenotypeFitness();
+        const DataChunk& getBestPredictions();
 
     private:
         int maxNumThreads_;
@@ -43,7 +44,7 @@ class CgpTrainer {
         std::shared_ptr<FitnessFunctionFactory> fitnessFunctionFactory_;
         std::shared_ptr<GenePool> genePool_;
         std::shared_ptr<ExperimentConfiguration> experimentConfiguration_;
-        std::vector<Island> islands_;
+        std::vector<std::unique_ptr<Island>> islands_;
 
         std::vector<std::shared_ptr<DataChunkProvider>> inputDataChunkProviders_;
         std::shared_ptr<DataChunkProvider> labelDataChunkProvider_;

@@ -52,7 +52,7 @@ std::string fc::DivideProtectedGene::generateCode(cc::CodeGenerationContext_t& c
     <<  "  if (std::abs(" << context.inputVariableNames[1] << "[i]) < 0.000001) {\n"
     <<  "    " << context.outputVariableName << "[i] = 1;\n"
     <<  "  } else {\n"
-    <<  "    " << context.outputVariableName << "[i] = " << context.inputVariableNames[0] << "[i] /" << context.inputVariableNames[1] << "[i];\n"
+    <<  "    " << context.outputVariableName << "[i] = " << context.inputVariableNames[0] << "[i] / " << context.inputVariableNames[1] << "[i];\n"
     <<  "}\n";
 
     return codeTemplate.str();

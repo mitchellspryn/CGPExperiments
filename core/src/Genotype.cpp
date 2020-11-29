@@ -243,7 +243,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
             if (geneBufferIndex < numInputDatasets_) {
                 context.inputVariableNames.emplace_back("in" + std::to_string(geneBufferIndex));
             } else {
-                context.inputVariableNames.emplace_back("tmp" + std::to_string(geneBufferIndex));
+                context.inputVariableNames.emplace_back("tmp" + std::to_string(geneBufferIndex - numInputDatasets_));
             }
         }
 
