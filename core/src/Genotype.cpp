@@ -56,6 +56,10 @@ const std::unordered_set<int> cc::Genotype::getActiveGenes() const {
     return activeGenes_;
 }
 
+const std::vector<std::shared_ptr<cc::DataChunk>>& cc::Genotype::getDataBuffers() const {
+    return buffers_;
+}
+
 const cc::DataChunk& cc::Genotype::evaluate(std::vector<std::shared_ptr<DataChunk>>& inputs) {
     if (inputs.size() != numInputDatasets_) {
         throw std::runtime_error(
@@ -115,6 +119,7 @@ std::vector<std::unordered_map<std::string, std::string>> cc::Genotype::serializ
     genotypeParameters["inputDataWidth"] = std::to_string(inputDataWidth_);
     genotypeParameters["inputDataHeight"] = std::to_string(inputDataHeight_);
     genotypeParameters["inputDataNumSamples"] = std::to_string(inputDataNumSamples_);
+    genotypeParameters["outputBufferIndex"] = std::to_string(outputBufferIndex_);
 
     switch (mutationType_) {
         case MutationType::Percentage: 
@@ -170,9 +175,11 @@ void cc::Genotype::deserialize(const std::vector<std::unordered_map<std::string,
         while (stream.good()) {
             std::string indexStr;
             std::getline(stream, indexStr, ',');
-            int index = std::stoi(indexStr);
-            genes_[i-1]->connectInput(inputNumber, index);
-            inputNumber++;
+            if (indexStr.size() > 0) {
+                int index = std::stoi(indexStr);
+                genes_[i-1]->connectInput(inputNumber, index);
+                inputNumber++;
+            }
         }
 
         genes_[i-1]->setOutputIndex(numInputDatasets_ + i - 1);
@@ -549,8 +556,8 @@ void cc::Genotype::fillParametersFromMap(
                 inputDataWidth_, inputDataHeight_, inputDataNumSamples_));
     }
 
-    if (params.count("outputIndex") > 0) {
-        outputBufferIndex_ = std::stoi(params.at("outputIndex"));
+    if (params.count("outputBufferIndex") > 0) {
+        outputBufferIndex_ = std::stoi(params.at("outputBufferIndex"));
     } else {
         outputBufferIndex_ = randomNumberGenerator_->getRandomInt(
                 numInputDatasets_,

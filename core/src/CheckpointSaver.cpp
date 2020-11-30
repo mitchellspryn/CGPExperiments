@@ -150,13 +150,6 @@ void cc::CheckpointSaver::savePredictions(
 
     stream.write(
         reinterpret_cast<const char*>(data), size*sizeof(float));
-
-    // Temp debugging
-    std::string tmpFilePath = outputDirectory + "/tmp.dat";
-    std::ofstream tmpStream(tmpFilePath, std::ios::out);
-    for (int i = 0; i < predictions.getSize(); i++) {
-        tmpStream << std::to_string(data[i]) << "\n";
-    }
 }
 
 void cc::CheckpointSaver::parseParameters(

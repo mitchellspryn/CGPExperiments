@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8.3)
 #set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 project(CgpExperiments)
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17 -O0 -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17 -O3 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17 -O0 -g")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17 -O3 -g")
 
 find_package(OpenMP REQUIRED)
 
@@ -40,4 +40,10 @@ add_executable(GenerateCurve
 add_executable(TestRng
     application/testRng.cpp
     ${core_SRC}
+)
+
+add_executable(DumpBuffers
+    application/dumpBuffers.cpp
+    ${core_SRC}
+    ${fitCurve_SRC}
 )
