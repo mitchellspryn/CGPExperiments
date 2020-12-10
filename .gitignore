@@ -36,3 +36,6 @@ build/
 
 # swap files
 *.swp
+
+#ipynb checkpoints
+.ipynb_checkpoints/
