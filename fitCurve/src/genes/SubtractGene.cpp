@@ -18,10 +18,6 @@ void fc::SubtractGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string fc::SubtractGene::getGeneName() const {
-    return "subtract";
-}
-
 void fc::SubtractGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();

@@ -19,10 +19,6 @@ void fc::SinGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string fc::SinGene::getGeneName() const {
-    return "sin";
-}
-
 void fc::SinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();

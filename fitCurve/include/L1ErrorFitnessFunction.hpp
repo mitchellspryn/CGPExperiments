@@ -6,6 +6,8 @@
 namespace cgpExperiments {
 namespace fitCurve {
 
+static constexpr const char* kL1ErrorFitnessFunctionName = "l1";
+
 class L1ErrorFitnessFunction : public cgpExperiments::core::FitnessFunction {
     public:
         virtual ~L1ErrorFitnessFunction() override {};

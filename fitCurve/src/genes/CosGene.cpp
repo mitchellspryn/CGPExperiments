@@ -19,10 +19,6 @@ void fc::CosGene::mutateParameters() {
     // Nothing to mutate!
 }
 
-std::string fc::CosGene::getGeneName() const {
-    return "cos";
-}
-
 void fc::CosGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();

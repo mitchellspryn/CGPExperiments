@@ -10,6 +10,7 @@ namespace cgpExperiments {
 namespace fitCurve {
 
 static constexpr int kAddGeneTypeId = 0;
+static constexpr const char* kAddGeneTypeName = "add";
 
 class AddGene : public cgpExperiments::core::Gene {
     public:
@@ -18,7 +19,7 @@ class AddGene : public cgpExperiments::core::Gene {
         virtual void initializeParametersFromConfig(const std::unordered_map<std::string, std::string>& geneParameters) override;
         virtual void initializeParametersFromTemplateGene(const cgpExperiments::core::Gene* other) override;
         virtual void mutateParameters() override;
-        virtual std::string getGeneName() const override;
+        virtual std::string getGeneName() const override { return std::string(kAddGeneTypeName); }
         virtual void evaluate(std::vector<std::shared_ptr<cgpExperiments::core::DataChunk>>& buffers) override;
         virtual std::string generateCode(cgpExperiments::core::CodeGenerationContext_t& context) const override;
         virtual bool isParameterFree() const override { return true; }

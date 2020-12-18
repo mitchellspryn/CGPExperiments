@@ -37,10 +37,6 @@ void fc::ConstantOutputGene::mutateParameters() {
     value_ = minValue_ + ((maxValue_-minValue_) * randomNumberGenerator_->getRandomFloat());
 }
 
-std::string fc::ConstantOutputGene::getGeneName() const {
-    return "constantOutput";
-}
-
 void fc::ConstantOutputGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
 

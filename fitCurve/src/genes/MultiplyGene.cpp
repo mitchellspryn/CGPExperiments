@@ -18,10 +18,6 @@ void fc::MultiplyGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string fc::MultiplyGene::getGeneName() const {
-    return "multiply";
-}
-
 void fc::MultiplyGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();

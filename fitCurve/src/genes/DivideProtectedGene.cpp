@@ -18,10 +18,6 @@ void fc::DivideProtectedGene::mutateParameters() {
     // nothing to mutate!
 }
 
-std::string fc::DivideProtectedGene::getGeneName() const {
-    return "divideProtected";
-}
-
 void fc::DivideProtectedGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
     float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
     float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();
