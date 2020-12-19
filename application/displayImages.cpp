@@ -29,6 +29,7 @@ std::shared_ptr<cc::DataChunkProvider> makeProvider(
     params["sampleWidth"] = std::to_string(gImageWidth);
     params["sampleHeight"] = std::to_string(gImageHeight);
     params["fileName"] = fileName;
+    params["dataTypeSize"] = "1";
 
     std::shared_ptr<cc::DataChunkProvider> provider = 
         std::make_shared<cc::DataChunkProvider>(params, randomNumberGenerator);
@@ -41,21 +42,18 @@ void clearScreen() {
 }
 
 cv::Mat visualizeDataChunk(cc::DataChunk& chunk) {
-    cv::Mat floatArray = cv::Mat(
+    cv::Mat array = cv::Mat(
         gImageHeight, 
         gImageWidth,
-        CV_32FC1,
-        chunk.getDataPtr());
+        CV_8UC1,
+        chunk.getCharDataPtr());
 
-    cv::Mat result;
-    floatArray.convertTo(result, CV_8UC1);
-
-    return result;
+    return array;
 }
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        std::cout << "Usage: ./displayImages <root_path>" << std::endl;
+        std::cout << "Usage: ./DisplayImages <root_path>" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -74,14 +72,14 @@ int main(int argc, char** argv) {
     std::shared_ptr<cc::DataChunkProvider> sProvider = makeProvider(rootPath + "_s.dat", randomNumberGenerator);
     std::shared_ptr<cc::DataChunkProvider> labelProvider = makeProvider(rootPath + "_label.dat", randomNumberGenerator);
 
-    cc::DataChunk rDataChunk(gImageWidth, gImageHeight, 1);
-    cc::DataChunk gDataChunk(gImageWidth, gImageHeight, 1);
-    cc::DataChunk bDataChunk(gImageWidth, gImageHeight, 1);
-    cc::DataChunk grayDataChunk(gImageWidth, gImageHeight, 1);
-    cc::DataChunk hDataChunk(gImageWidth, gImageHeight, 1);
-    cc::DataChunk lDataChunk(gImageWidth, gImageHeight, 1);
-    cc::DataChunk sDataChunk(gImageWidth, gImageHeight, 1);
-    cc::DataChunk labelDataChunk(gImageWidth, gImageHeight, 1);
+    cc::DataChunk rDataChunk(gImageWidth, gImageHeight, 1, 1);
+    cc::DataChunk gDataChunk(gImageWidth, gImageHeight, 1, 1);
+    cc::DataChunk bDataChunk(gImageWidth, gImageHeight, 1, 1);
+    cc::DataChunk grayDataChunk(gImageWidth, gImageHeight, 1, 1);
+    cc::DataChunk hDataChunk(gImageWidth, gImageHeight, 1, 1);
+    cc::DataChunk lDataChunk(gImageWidth, gImageHeight, 1, 1);
+    cc::DataChunk sDataChunk(gImageWidth, gImageHeight, 1, 1);
+    cc::DataChunk labelDataChunk(gImageWidth, gImageHeight, 1, 1);
 
     cv::namedWindow("Red", CV_WINDOW_AUTOSIZE);
     cv::namedWindow("Green", CV_WINDOW_AUTOSIZE);

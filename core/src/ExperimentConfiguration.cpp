@@ -29,6 +29,19 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
     std::string tmp1 = j["geneset"];
     geneset_ = tmp1;
 
+    std::string dataTypeStr = j["dataType"];
+    if (dataTypeStr == "uint8") {
+        dataTypeSize_ = sizeof(char);
+    } else if (dataTypeStr == "float") {
+        dataTypeSize_ = sizeof(4);
+    } else {
+        throw std::runtime_error(
+            "Unrecognized dataType '"
+            + dataTypeStr
+            + "'. Valid types are 'float' and 'uint8'."
+        );
+    }
+
     auto fillFromKeyValue = 
         [](nlohmann::json jobj, std::unordered_map<std::string, std::string>& map) {
         for (nlohmann::json::iterator it = jobj.begin(); it != jobj.end(); ++it) {
@@ -65,4 +78,12 @@ cc::ExperimentConfiguration::ExperimentConfiguration(const std::string& inputJso
     }
 
     fillFromKeyValue(j["labelDataChunkParameters"], labelDataChunkProviderParameters_);
+
+    // This is a bit of a hack, but it makes authoring the json simpler
+    for (auto &map : inputDataChunkProviderParameters_) {
+        map["dataTypeSize"] = std::to_string(dataTypeSize_);
+    }
+
+    labelDataChunkProviderParameters_["dataTypeSize"] = std::to_string(dataTypeSize_);
+    genotypeParameters_["dataTypeSize"] = std::to_string(dataTypeSize_);
 }

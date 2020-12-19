@@ -34,13 +34,15 @@ cc::Island::Island(
             std::make_shared<cc::DataChunk>(
                 inputDataChunkProviders_[i]->getChunkWidth(),
                 inputDataChunkProviders_[i]->getChunkHeight(),
-                numEvaluationSamples_));
+                numEvaluationSamples_,
+                experimentConfiguration->getDataTypeSize()));
     }
 
     labelDataChunkBuffer_ = std::make_shared<cc::DataChunk>(
             labelDataChunkProvider_->getChunkWidth(),
             labelDataChunkProvider_->getChunkHeight(),
-            numEvaluationSamples_);
+            numEvaluationSamples_,
+            experimentConfiguration->getDataTypeSize());
 }
 
 int cc::Island::getNumIterationsPerEpoch() {

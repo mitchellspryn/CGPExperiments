@@ -20,8 +20,8 @@ void fc::CosGene::mutateParameters() {
 }
 
 void fc::CosGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
-    float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
-    float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
+    float* firstBuf = buffers[inputBufferIndices_[0]]->getFloatDataPtr();
+    float* outputBuf = buffers[outputBufferIndex_]->getFloatDataPtr();
 
     int numExamples = buffers[inputBufferIndices_[0]]->getNum();
     for (int i = 0; i < numExamples; i++) {

@@ -18,8 +18,8 @@ double fc::L1ErrorFitnessFunction::evaluate(
 
     float err = 0;
 
-    const float* p = predictions.getConstDataPtr();
-    const float* l = labels.getConstDataPtr();
+    const float* p = predictions.getConstFloatDataPtr();
+    const float* l = labels.getConstFloatDataPtr();
 
     int n = predictions.getNum();
 

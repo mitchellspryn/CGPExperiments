@@ -19,9 +19,9 @@ void fc::DivideProtectedGene::mutateParameters() {
 }
 
 void fc::DivideProtectedGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
-    float* firstBuf = buffers[inputBufferIndices_[0]]->getDataPtr();
-    float* secondBuf = buffers[inputBufferIndices_[1]]->getDataPtr();
-    float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
+    float* firstBuf = buffers[inputBufferIndices_[0]]->getFloatDataPtr();
+    float* secondBuf = buffers[inputBufferIndices_[1]]->getFloatDataPtr();
+    float* outputBuf = buffers[outputBufferIndex_]->getFloatDataPtr();
 
     int numExamples = buffers[inputBufferIndices_[0]]->getNum();
     for (int i = 0; i < numExamples; i++) {

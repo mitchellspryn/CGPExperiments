@@ -1,5 +1,6 @@
 #include "../include/Genotype.hpp"
 
+#include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <strings.h>
@@ -120,6 +121,7 @@ std::vector<std::unordered_map<std::string, std::string>> cc::Genotype::serializ
     genotypeParameters["inputDataHeight"] = std::to_string(inputDataHeight_);
     genotypeParameters["inputDataNumSamples"] = std::to_string(inputDataNumSamples_);
     genotypeParameters["outputBufferIndex"] = std::to_string(outputBufferIndex_);
+    genotypeParameters["dataTypeSize"] = std::to_string(dataTypeSize_);
 
     switch (mutationType_) {
         case MutationType::Percentage: 
@@ -192,6 +194,20 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
         throw std::runtime_error("Only c++ code generation is currently supported.");
     }
 
+    std::string dataTypeName = "";
+    assert(buffers_.size() > 0);
+
+    if (buffers_[0]->getDataTypeSize() == 1) {
+        dataTypeName = "char";
+    } else if (buffers_[0]->getDataTypeSize() == 4) {
+        dataTypeName = "float";
+    } else {
+        throw std::runtime_error(
+            "Unrecognized dataTypeSize: '"
+            + std::to_string(buffers_[0]->getDataTypeSize())
+            + "'.");
+    }
+
     // Generate the function
     std::stringstream functionStringStream;
     functionStringStream << "    void compute(";
@@ -202,12 +218,14 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     for (int i = 0; i < numInputDatasets_; i++) {
         std::string inputVariableName = "in" + std::to_string(i);
         inputVariableNames.emplace(inputVariableName);
-        functionStringStream << "const float* " << inputVariableName;
+        functionStringStream << "const " << dataTypeName << "* " << inputVariableName;
         context.variableNamesInUse.emplace(inputVariableName);
         functionStringStream << ", ";
     }
 
-    functionStringStream << "float* outputBuf, int width, int height, int num) {\n" ;
+    functionStringStream 
+        << dataTypeName
+        << "* outputBuf, int width, int height, int num) {\n" ;
     context.variableNamesInUse.emplace("width");
     context.variableNamesInUse.emplace("height");
     context.variableNamesInUse.emplace("num");
@@ -285,7 +303,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
 
     std::stringstream variableDeclarationStringStream;
     
-    int numFloats = buffers_[0]->getSize();
+    int numSamples = buffers_[0]->getSizeInSamples();
     for (const std::string& variable : context.variableNamesInUse) {
         if ((variable != "width")
             && (variable != "height")
@@ -295,10 +313,10 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
                 << "      " 
                 << variable 
                 << ".resize(" 
-                << std::to_string(numFloats)
+                << std::to_string(numSamples)
                 << ", 0);\n";
 
-            variableDeclarationStringStream << "    std::vector<float> " << variable << ";\n";
+            variableDeclarationStringStream << "    std::vector<" << dataTypeName << "> " << variable << ";\n";
         }
     }
 
@@ -507,6 +525,7 @@ void cc::Genotype::fillParametersFromMap(
     inputDataWidth_ = std::stoi(params.at("inputDataWidth"));
     inputDataHeight_ = std::stoi(params.at("inputDataHeight"));
     inputDataNumSamples_ = std::stoi(params.at("inputDataNumSamples"));
+    dataTypeSize_ = std::stoi(params.at("dataTypeSize"));
 
     if (strncasecmp(params.at("mutationType").c_str(), "percentage", 20) == 0) {
         mutationType_ = MutationType::Percentage;
@@ -545,15 +564,9 @@ void cc::Genotype::fillParametersFromMap(
 
     buffers_.reserve(genes_.size() + numInputDatasets_);
     for (int i = 0; i < genes_.size() + numInputDatasets_; i++) {
-        std::unique_ptr<cc::DataChunk> dc = 
-            std::make_unique<cc::DataChunk>(
-                inputDataWidth_, 
-                inputDataHeight_, 
-                inputDataNumSamples_);
-
         buffers_.emplace_back(
             std::make_unique<cc::DataChunk>(
-                inputDataWidth_, inputDataHeight_, inputDataNumSamples_));
+                inputDataWidth_, inputDataHeight_, inputDataNumSamples_, dataTypeSize_));
     }
 
     if (params.count("outputBufferIndex") > 0) {

@@ -2,24 +2,28 @@
 
 namespace cc = cgpExperiments::core;
 
-cc::DataChunk::DataChunk(int width, int height, int num) {
+cc::DataChunk::DataChunk(int width, int height, int num, int dataTypeSize) {
     width_ = width;
     height_ = height;
     num_ = num;
+    dataTypeSize_ = dataTypeSize;
     maxNum_ = num;
-    size_ = width * height * num;
-    widthHeight_ = width * height;
-
-    data_.resize(size_, 0);
+    sizeInSamples_ = width * height * num;
+    sizeInBytes_ = sizeInSamples_ * dataTypeSize_;
+    capacityInSamples_ = sizeInSamples_;
+    capacityInBytes_ = sizeInBytes_;
+    data_.resize(sizeInBytes_, 0);
 }
 
 void cc::DataChunk::setNum(int num) {
     num_ = num;
-    size_ = width_ * height_ * num;
+    sizeInSamples_ = width_ * height_ * num;
+    sizeInBytes_ = sizeInSamples_ * dataTypeSize_;
 
     if (num > maxNum_) {
         maxNum_ = num;
-        capacity_ = size_;
-        data_.resize(size_, 0);
+        capacityInSamples_ = sizeInSamples_;
+        capacityInBytes_ = sizeInBytes_;
+        data_.resize(sizeInBytes_, 0);
     }
 }

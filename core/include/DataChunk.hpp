@@ -8,27 +8,47 @@ namespace core {
 
 class DataChunk {
     public:
-        DataChunk(int width, int height, int num);
+        DataChunk(int width, int height, int num, int dataTypeSize);
 
         inline int getWidth() const { return width_; }
         inline int getHeight() const { return height_; }
         inline int getNum() const { return num_; }
-        inline int getSize() const { return size_; }
-        inline int getCapacity() const { return capacity_; }
-        inline float* getDataPtr() { return data_.data(); }
-        inline const float* getConstDataPtr() const { return data_.data(); }
+        inline int getDataTypeSize() const { return dataTypeSize_; }
+        inline int getSizeInSamples() const { return sizeInSamples_; }
+        inline int getSizeInBytes() const { return sizeInBytes_; }
+        inline int getCapacityInSamples() const { return capacityInSamples_; }
+        inline int getCapacityInBytes() const { return capacityInBytes_; }
+
+        inline float* getFloatDataPtr() { 
+            return reinterpret_cast<float*>(data_.data());
+        }
+
+        inline const float* getConstFloatDataPtr() const { 
+            return reinterpret_cast<const float*>(data_.data());
+        }
+
+        inline char* getCharDataPtr() {
+            return data_.data();
+        }
+
+        inline const char* getConstCharDataPtr() const {
+            return const_cast<const char*>(data_.data());
+        }
+
         inline void setNum(int num);
 
     private:
         int width_;
         int height_;
         int num_;
+        int dataTypeSize_;
         int maxNum_;
-        int size_;
-        int capacity_;
+        int sizeInSamples_;
+        int sizeInBytes_;
+        int capacityInSamples_;
+        int capacityInBytes_;
 
-        int widthHeight_;
-        std::vector<float> data_; 
+        std::vector<char> data_; 
 };
 
 }

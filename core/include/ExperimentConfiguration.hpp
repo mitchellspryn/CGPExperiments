@@ -15,6 +15,10 @@ class ExperimentConfiguration {
             return geneset_;
         }
 
+        inline int getDataTypeSize() const {
+            return dataTypeSize_;
+        }
+
         inline const std::unordered_map<std::string, std::string>& getTrainerParameters() const {
             return trainerParameters_;
         }
@@ -57,6 +61,7 @@ class ExperimentConfiguration {
 
     private:
         std::string geneset_;
+        int dataTypeSize_;
         std::unordered_map<std::string, std::string> trainerParameters_;
         std::unordered_map<std::string, std::string> islandParameters_;
         std::unordered_map<std::string, std::string> genotypeParameters_;

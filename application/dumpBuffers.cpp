@@ -127,7 +127,8 @@ const cc::DataChunk& runPredictions(
             std::make_shared<cc::DataChunk>(
                 std::stoi(genotypeParameters.at("inputDataWidth")),
                 std::stoi(genotypeParameters.at("inputDataHeight")),
-                std::stoi(genotypeParameters.at("inputDataNumSamples"))));
+                std::stoi(genotypeParameters.at("inputDataNumSamples")),
+                experimentConfiguration->getDataTypeSize()));
 
         providers[i]->getRandomChunk(*inputDataChunks[i], 0);
     }
@@ -140,11 +141,10 @@ void saveChunkToFile(
         const cc::DataChunk& chunk) {
     std::ofstream stream(fileName, std::ios::out | std::ios::binary);
 
-    const float* data = chunk.getConstDataPtr();
-    int size = chunk.getSize();
+    const char* data = chunk.getConstCharDataPtr();
+    int size = chunk.getSizeInBytes();
 
-    stream.write(
-        reinterpret_cast<const char*>(data), size*sizeof(float));
+    stream.write(data, size);
 }
 
 int main(int argc, char** argv) {

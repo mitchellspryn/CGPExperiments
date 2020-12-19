@@ -53,6 +53,7 @@ class Genotype {
         int inputDataWidth_;
         int inputDataHeight_;
         int inputDataNumSamples_;
+        int dataTypeSize_;
 
         int outputBufferIndex_;
 

@@ -1,5 +1,6 @@
 #include "../include/DataChunkProvider.hpp"
 
+#include <cassert>
 #include <cstring>
 #include <fcntl.h>
 #include <filesystem>
@@ -22,7 +23,7 @@ cc::DataChunkProvider::DataChunkProvider(
     fillParametersFromMap(parameters);
     fileSizeInBytes_ = std::filesystem::file_size(fileName_);
 
-    sampleSizeInBytes_ = sampleWidth_ * sampleHeight_ * sizeof(float);
+    sampleSizeInBytes_ = sampleWidth_ * sampleHeight_ * sampleDataTypeSize_;
     if ((fileSizeInBytes_ % sampleSizeInBytes_) != 0) {
         throw std::runtime_error(
                 "Provided input file '" 
@@ -44,6 +45,7 @@ cc::DataChunkProvider::~DataChunkProvider() {
 }
 
 void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex) {
+    assert(chunk.getDataTypeSize() == sampleDataTypeSize_);
     if (startIndex >= numSamples_) {
         throw std::runtime_error(
                 "Attempted to grab data at (zero-based) index "
@@ -61,8 +63,8 @@ void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex) {
     int firstCopyNumSamples = std::min(chunk.getNum(), numSamples_ - startIndex);
     int numBytesToCopy = firstCopyNumSamples * sampleSizeInBytes_;
 
-    float* chunkBuffer = chunk.getDataPtr();
-    float* data = baseAddress_ + ((sampleSizeInBytes_ * startIndex) / sizeof(float));
+    char* chunkBuffer = chunk.getCharDataPtr();
+    char* data = baseAddress_ + ((sampleSizeInBytes_ * startIndex) / sampleDataTypeSize_);
 
     std::memcpy(chunkBuffer, data, numBytesToCopy);
 
@@ -110,7 +112,7 @@ void cc::DataChunkProvider::mapFileIntoMemory(const std::string& fileName) {
                 + "'.");
     }
 
-    baseAddress_ = reinterpret_cast<float*>(mappedMemory);
+    baseAddress_ = reinterpret_cast<char*>(mappedMemory);
 }
 
 void cc::DataChunkProvider::releaseMappedFile(bool allowThrow) {
@@ -168,4 +170,9 @@ void cc::DataChunkProvider::fillParametersFromMap(
     sampleWidth_ = std::stoi(parameters.at("sampleWidth"));
     sampleHeight_ = std::stoi(parameters.at("sampleHeight"));
     fileName_ = parameters.at("fileName");
+    
+    sampleDataTypeSize_ = std::stoi(parameters.at("dataTypeSize"));
+    assert((sampleDataTypeSize_ == 4)
+            ||
+           (sampleDataTypeSize_ == 1));
 }

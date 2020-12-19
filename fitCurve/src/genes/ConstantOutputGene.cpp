@@ -38,7 +38,7 @@ void fc::ConstantOutputGene::mutateParameters() {
 }
 
 void fc::ConstantOutputGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
-    float* outputBuf = buffers[outputBufferIndex_]->getDataPtr();
+    float* outputBuf = buffers[outputBufferIndex_]->getFloatDataPtr();
 
     int numExamples = buffers[outputBufferIndex_]->getNum();
     for (int i = 0; i < numExamples; i++) {

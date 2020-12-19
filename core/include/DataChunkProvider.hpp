@@ -39,12 +39,13 @@ class DataChunkProvider {
         int sampleWidth_;
         int sampleHeight_;
         int numSamples_;
+        int sampleDataTypeSize_; // should be 4 or 1
         int fileSizeInBytes_;
         int sampleSizeInBytes_;
 
         std::shared_ptr<RandomNumberGenerator> randomNumberGenerator_;
 
-        float* baseAddress_ = nullptr;
+        char* baseAddress_ = nullptr;
 
         void mapFileIntoMemory(const std::string& fileName);
         void releaseMappedFile(bool allowThrow);
