@@ -197,10 +197,13 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     std::string dataTypeName = "";
     assert(buffers_.size() > 0);
 
+    bool isOpenCvGenotype = false;
     if (buffers_[0]->getDataTypeSize() == 1) {
-        dataTypeName = "char";
+        dataTypeName = "cv::mat";
+        isOpenCvGenotype = true;
     } else if (buffers_[0]->getDataTypeSize() == 4) {
         dataTypeName = "float";
+        isOpenCvGenotype = false;
     } else {
         throw std::runtime_error(
             "Unrecognized dataTypeSize: '"
@@ -218,14 +221,28 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     for (int i = 0; i < numInputDatasets_; i++) {
         std::string inputVariableName = "in" + std::to_string(i);
         inputVariableNames.emplace(inputVariableName);
-        functionStringStream << "const " << dataTypeName << "* " << inputVariableName;
+        functionStringStream << "const " << dataTypeName;
+        
+        if (isOpenCvGenotype) {
+            functionStringStream << "& ";
+        } else {
+            functionStringStream << "* ";
+        }
+
+        functionStringStream << inputVariableName;
         context.variableNamesInUse.emplace(inputVariableName);
         functionStringStream << ", ";
     }
 
-    functionStringStream 
-        << dataTypeName
-        << "* outputBuf, int width, int height, int num) {\n" ;
+    functionStringStream  << dataTypeName;
+
+    if (isOpenCvGenotype) {
+        functionStringStream << "& ";
+    } else {
+        functionStringStream << "* ";
+    }
+    
+    functionStringStream << "outputBuf, int width, int height, int num) {\n" ;
     context.variableNamesInUse.emplace("width");
     context.variableNamesInUse.emplace("height");
     context.variableNamesInUse.emplace("num");
@@ -291,38 +308,54 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
         generatedIndexes.emplace(geneIndexToGenerate);
     }
     
-    functionStringStream << "    ////////////////////////////////////////////////////\n";
-    functionStringStream 
-        << 
-        "    return tmp" 
-        << std::to_string(outputBufferIndex_ - numInputDatasets_)
-        << ".data();\n  }\n";
-
     std::stringstream constructorStringStream;
     constructorStringStream << "    GeneratedFunction() {\n";
 
     std::stringstream variableDeclarationStringStream;
     
     int numSamples = buffers_[0]->getSizeInSamples();
+    int width = buffers_[0]->getWidth();
+    int height = buffers_[0]->getHeight();
     for (const std::string& variable : context.variableNamesInUse) {
         if ((variable != "width")
             && (variable != "height")
             && (variable != "num")
             && (inputVariableNames.count(variable) == 0)) {
-            constructorStringStream 
-                << "      " 
-                << variable 
-                << ".resize(" 
-                << std::to_string(numSamples)
-                << ", 0);\n";
+            if (isOpenCvGenotype) {
+                constructorStringStream 
+                    << "      "
+                    << variable
+                    << " = cv::Mat::zeros("
+                    << std::to_string(height)
+                    << ", "
+                    << std::to_string(width)
+                    << ", CV_8UC1);\n";
 
-            variableDeclarationStringStream << "    std::vector<" << dataTypeName << "> " << variable << ";\n";
+                variableDeclarationStringStream << "    cv::Mat " << dataTypeName << ";\n";
+            } else {
+                constructorStringStream 
+                    << "      " 
+                    << variable 
+                    << ".resize(" 
+                    << std::to_string(numSamples)
+                    << ", 0);\n";
+
+                variableDeclarationStringStream << "    std::vector<" << dataTypeName << "> " << variable << ";\n";
+            }
         }
     }
 
     constructorStringStream << "    }\n";
 
     std::stringstream outputStream;
+
+    if (isOpenCvGenotype) {
+        outputStream << ""
+            << "#include <opencv2/core/core.hpp>\n"
+            << "#include <opencv2/imgproc/imgproc.hpp>\n"
+            << "\n";
+    }
+
     outputStream << ""
     <<   "#include <cmath>\n"
     <<   "#include <vector>\n"
