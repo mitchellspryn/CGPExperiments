@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <opencv2/core/core.hpp>
+
 #include "../../../core/include/Gene.hpp"
 
 namespace cgpExperiments {
@@ -26,8 +28,15 @@ class ErodeGene : public cgpExperiments::core::Gene {
         virtual bool isParameterFree() const override { return false; }
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
+
     private:
+        int minNumIterations_;
+        int maxNumIterations_;
         int numIterations_;
+
+        cv::Mat structuringElement_;
+
+        void initializeStructuringElement();
 };
 
 }

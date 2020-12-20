@@ -63,7 +63,7 @@ void cc::DataChunkProvider::getRandomChunk(DataChunk& chunk, int startIndex) {
     int firstCopyNumSamples = std::min(chunk.getNum(), numSamples_ - startIndex);
     int numBytesToCopy = firstCopyNumSamples * sampleSizeInBytes_;
 
-    char* chunkBuffer = chunk.getCharDataPtr();
+    unsigned char* chunkBuffer = chunk.getCharDataPtr();
     char* data = baseAddress_ + ((sampleSizeInBytes_ * startIndex) / sampleDataTypeSize_);
 
     std::memcpy(chunkBuffer, data, numBytesToCopy);

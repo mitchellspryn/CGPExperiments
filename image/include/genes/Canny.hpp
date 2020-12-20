@@ -28,8 +28,17 @@ class CannyGene : public cgpExperiments::core::Gene {
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
 
     private:
-        float lowerThresh_;
-        float upperThresh_;
+        int minLowerThresh_;
+        int maxLowerThresh_;
+        int lowerThresh_;
+
+        int minUpperThresh_;
+        int maxUpperThresh_;
+        int upperThresh_;
+
+        inline void mutateLowerThreshold();
+        inline void mutateUpperThreshold();
+        inline void rectifyThresholds();
 };
 
 }

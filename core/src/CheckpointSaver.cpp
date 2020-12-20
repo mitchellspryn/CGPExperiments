@@ -145,7 +145,7 @@ void cc::CheckpointSaver::savePredictions(
     std::string outputFilePath = outputDirectory + "/predictions.dat";
 
     std::ofstream stream(outputFilePath, std::ios::out | std::ios::binary);
-    const char* data = predictions.getConstCharDataPtr();
+    const unsigned char* data = predictions.getConstCharDataPtr();
     int size = predictions.getSizeInBytes();
 
     stream.write(data, size);

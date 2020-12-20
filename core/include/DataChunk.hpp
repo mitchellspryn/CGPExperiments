@@ -27,12 +27,12 @@ class DataChunk {
             return reinterpret_cast<const float*>(data_.data());
         }
 
-        inline char* getCharDataPtr() {
+        inline unsigned char* getCharDataPtr() {
             return data_.data();
         }
 
-        inline const char* getConstCharDataPtr() const {
-            return const_cast<const char*>(data_.data());
+        inline const unsigned char* getConstCharDataPtr() const {
+            return const_cast<const unsigned char*>(data_.data());
         }
 
         inline void setNum(int num);
@@ -48,7 +48,7 @@ class DataChunk {
         int capacityInSamples_;
         int capacityInBytes_;
 
-        std::vector<char> data_; 
+        std::vector<unsigned char> data_; 
 };
 
 }

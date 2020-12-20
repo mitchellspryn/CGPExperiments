@@ -25,9 +25,9 @@ void ci::AbsDifferenceGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>
     int height = buffers[0]->getHeight();
     int num = buffers[0]->getNum();
 
-    char* aData = buffers[inputBufferIndices_[0]]->getCharDataPtr();
-    char* bData = buffers[inputBufferIndices_[1]]->getCharDataPtr();
-    char* cData = buffers[outputBufferIndex_]->getCharDataPtr();
+    unsigned char* aData = buffers[inputBufferIndices_[0]]->getCharDataPtr();
+    unsigned char* bData = buffers[inputBufferIndices_[1]]->getCharDataPtr();
+    unsigned char* cData = buffers[outputBufferIndex_]->getCharDataPtr();
 
     for (int i = 0; i < num; i++) {
         int offset = (width*height*i);

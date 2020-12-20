@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <opencv2/core/core.hpp>
+
 #include "../../../core/include/Gene.hpp"
 
 namespace cgpExperiments {
@@ -28,7 +30,13 @@ class DilateGene : public cgpExperiments::core::Gene {
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
 
     private:
-        float numIterations_ = 1;
+        int minNumIterations_;
+        int maxNumIterations_;
+        int numIterations_;
+
+        cv::Mat structuringElement_;
+
+        void initializeStructuringElement();
 };
 
 }

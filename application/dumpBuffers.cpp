@@ -141,7 +141,7 @@ void saveChunkToFile(
         const cc::DataChunk& chunk) {
     std::ofstream stream(fileName, std::ios::out | std::ios::binary);
 
-    const char* data = chunk.getConstCharDataPtr();
+    const unsigned char* data = chunk.getConstCharDataPtr();
     int size = chunk.getSizeInBytes();
 
     stream.write(data, size);
