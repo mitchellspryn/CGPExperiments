@@ -16,7 +16,7 @@ static constexpr const char* kLocalNormalizeGeneTypeName = "localNormalize";
 // That is, output[x, y] = normalize(input[x-(width/2):x+(width/2), y-(height/2):y+(height/2)])
 class LocalNormalizeGene : public cgpExperiments::core::Gene {
     public:
-        virtual ~LocalNormalize() {};
+        virtual ~LocalNormalizeGene() {};
         virtual int getTypeId() const override { return kLocalNormalizeGeneTypeId; }
         virtual void initializeParametersFromConfig(const std::unordered_map<std::string, std::string>& geneParameters) override;
         virtual void initializeParametersFromTemplateGene(const cgpExperiments::core::Gene* other) override;

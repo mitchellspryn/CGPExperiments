@@ -13,7 +13,7 @@ static constexpr int kAddCGeneTypeId = 1;
 static constexpr const char* kAddCGeneTypeName = "addC";
 
 // Adds a constant to each pixel
-class AddC : public cgpExperiments::core::Gene {
+class AddCGene : public cgpExperiments::core::Gene {
     public:
         virtual ~AddCGene() {};
         virtual int getTypeId() const override { return kAddCGeneTypeId; }

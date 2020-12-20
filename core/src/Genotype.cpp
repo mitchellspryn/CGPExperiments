@@ -247,6 +247,11 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     context.variableNamesInUse.emplace("height");
     context.variableNamesInUse.emplace("num");
 
+    // TODO: for ease of implementation, assume that opencv only passes in a single image at a time. 
+    if (isOpenCvGenotype) {
+        functionStringStream << "      assert(num == 1);\n";
+    }
+
     std::stack<int> indexesToGenerate;
     std::queue<int> queue;
     queue.push(outputBufferIndex_);
@@ -357,6 +362,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     }
 
     outputStream << ""
+    <<   "#include <cassert>\n"
     <<   "#include <cmath>\n"
     <<   "#include <vector>\n"
     <<   "\n"

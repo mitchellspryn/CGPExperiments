@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kGaussianBlurTypeId = 10;
+static constexpr int kGaussianBlurGeneTypeId = 10;
 static constexpr const char* kGaussianBlurGeneTypeName = "gaussianBlur";
 
 // Performs a gaussain blur of [kernelSize x kernelSize] over the image

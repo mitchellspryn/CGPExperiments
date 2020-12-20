@@ -10,7 +10,7 @@ namespace cgpExperiments {
 namespace image {
 
 static constexpr int kAbsDifferenceGeneTypeId = 0;
-static constexpr const char* kAbsDifferenceGeneName = "absDifference";
+static constexpr const char* kAbsDifferenceGeneTypeName = "absDifference";
 
 // Takes two images as input, and computes pixel-wise absolute difference
 // That is, out[x,y] = |a[x, y] - b[x,y]|
@@ -21,7 +21,7 @@ class AbsDifferenceGene : public cgpExperiments::core::Gene {
         virtual void initializeParametersFromConfig(const std::unordered_map<std::string, std::string>& geneParameters) override;
         virtual void initializeParametersFromTemplateGene(const cgpExperiments::core::Gene* other) override;
         virtual void mutateParameters() override;
-        virtual std::string getGeneName() const override { return std::string(kAbsDifferenceGeneName); }
+        virtual std::string getGeneName() const override { return std::string(kAbsDifferenceGeneTypeName); }
         virtual void evaluate(std::vector<std::shared_ptr<cgpExperiments::core::DataChunk>>& buffers) override;
         virtual std::string generateCode(cgpExperiments::core::CodeGenerationContext_t& context) const override;
         virtual bool isParameterFree() const override { return true; }

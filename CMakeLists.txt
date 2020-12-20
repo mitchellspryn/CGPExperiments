@@ -23,9 +23,15 @@ file(GLOB fitCurve_SRC
     "fitCurve/src/**/*.cpp"
 )
 
+file(GLOB image_SRC
+    "image/src/*.cpp"
+    "image/src/**/*.cpp"
+)
+
 include_directories(
     core/include
     fitCurve/include
+    image/include
     ${OpenCV_INCLUDE_DIRS}
 )
 
@@ -33,6 +39,11 @@ add_executable(TrainCgp
     application/trainCgp.cpp
     ${core_SRC}
     ${fitCurve_SRC}
+    ${image_SRC}
+)
+
+target_link_libraries(TrainCgp
+    ${OpenCV_LIBRARIES}
 )
 
 add_executable(GenerateCurve
@@ -48,6 +59,11 @@ add_executable(DumpBuffers
     application/dumpBuffers.cpp
     ${core_SRC}
     ${fitCurve_SRC}
+    ${image_SRC}
+)
+
+target_link_libraries(DumpBuffers
+    ${OpenCV_LIBRARIES}
 )
 
 add_executable(DisplayImages

@@ -58,7 +58,7 @@ std::unique_ptr<cc::Gene> ci::ImageGeneFactory::createGene(int typeId) {
         case ci::kAverageGeneTypeId:
             return std::make_unique<ci::AverageGene>();
         case ci::kAverageValueGeneTypeId:
-            return std::make_unique<ci::AverageValueGene();
+            return std::make_unique<ci::AverageValueGene>();
         case ci::kCannyGeneTypeId:
             return std::make_unique<ci::CannyGene>();
         case ci::kDilateGeneTypeId:
@@ -104,7 +104,7 @@ std::unique_ptr<cc::Gene> ci::ImageGeneFactory::createGene(int typeId) {
         case ci::kRescaleGeneTypeId:
             return std::make_unique<ci::RescaleGene>();
         case ci::kResizeThenGaborGeneTypeId:
-            return std::make_unique<ci::ResizeThanGaborGene>();
+            return std::make_unique<ci::ResizeThenGaborGene>();
         case ci::kShiftGeneTypeId:
             return std::make_unique<ci::ShiftGene>();
         case ci::kSmoothBilateralGeneTypeId:
@@ -112,7 +112,7 @@ std::unique_ptr<cc::Gene> ci::ImageGeneFactory::createGene(int typeId) {
         case ci::kSmoothBlurGeneTypeId:
             return std::make_unique<ci::SmoothBlurGene>();
         case ci::kSmoothMedianGeneTypeId:
-            return std::make_unique<ci::SmoothMedianGeneTypeId>();
+            return std::make_unique<ci::SmoothMedianGene>();
         case ci::kSobelGeneTypeId:
             return std::make_unique<ci::SobelGene>();
         case ci::kSobelXGeneTypeId:
