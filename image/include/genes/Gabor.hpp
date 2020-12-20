@@ -27,7 +27,30 @@ class GaborGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
-        // TODO: gabor filter parameters
+        float minSigma_;
+        float maxSigma_;
+        float sigma_;
+
+        float minTheta_;
+        float maxTheta_;
+        float theta_;
+
+        float minLambda_;
+        float maxLambda_;
+        float lambda_;
+
+        float minGamma_;
+        float maxGamma_;
+        float gamma_;
+
+        cv::Mat gaborKernel_;
+
+        void refreshGaborKernel();
+
+        void mutateSigma();
+        void mutateTheta();
+        void mutateLambda();
+        void mutateGamma();
 };
 
 }

@@ -27,7 +27,16 @@ class GaussianBlurGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
-        int kernelSize_;
+        int minX_;
+        int maxX_;
+        int x_;
+
+        int minY_;
+        int maxY_;
+        int y_;
+
+        void mutateX();
+        void mutateY();
 };
 
 }
