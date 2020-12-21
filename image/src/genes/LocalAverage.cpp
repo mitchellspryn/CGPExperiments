@@ -45,8 +45,6 @@ void ci::LocalAverageGene::initializeParametersFromTemplateGene(const cc::Gene* 
     minNeighborhoodHeight_ = gene->minNeighborhoodHeight_;
     maxNeighborhoodHeight_ = gene->maxNeighborhoodHeight_;
     neighborhoodHeight_ = gene->neighborhoodHeight_;
-
-    initializeStructuringElement();
 }
 
 void ci::LocalAverageGene::mutateParameters() {

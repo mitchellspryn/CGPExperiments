@@ -79,6 +79,18 @@ void ci::ShiftGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffer
 std::string ci::ShiftGene::generateCode(cc::CodeGenerationContext_t& context) const {
     std::stringstream codeTemplate;
 
+    auto replaceAllFxn = [](
+            std::string str, 
+            const std::string& from, 
+            const std::string& to) -> std::string {
+        size_t startPos = 0;
+        while((startPos = str.find(from, startPos)) != std::string::npos) {
+            str.replace(startPos, from.length(), to);
+            startPos += to.length(); // Handles case where 'to' is a substring of 'from'
+        }
+        return str;
+    };
+
     codeTemplate
         << "{\n"
         << "  double affineData[6] = {1, 0, $HS, 0, 1, $VS};\n"

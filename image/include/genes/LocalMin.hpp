@@ -34,6 +34,9 @@ class LocalMinGene : public cgpExperiments::core::Gene {
         int maxNeighborhoodHeight_;
         int neighborhoodWidth_;
         int neighborhoodHeight_;
+
+        void mutateNeighborhoodWidth();
+        void mutateNeighborhoodHeight();
 };
 
 }

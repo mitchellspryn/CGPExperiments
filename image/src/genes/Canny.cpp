@@ -84,7 +84,7 @@ void ci::CannyGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffer
         cv::Mat input(height, width, CV_8UC1, inputData + offset);
         cv::Mat output(height, width, CV_8UC1, outputData + offset);
 
-        cv::canny(input, output, lowerThresh_, upperThresh_);
+        cv::Canny(input, output, lowerThresh_, upperThresh_);
     }
 }
 
@@ -92,7 +92,7 @@ std::string ci::CannyGene::generateCode(cc::CodeGenerationContext_t& context) co
     std::stringstream codeTemplate;
 
     codeTemplate
-        << "cv::canny("
+        << "cv::Canny("
         << context.inputVariableNames[0]
         << ", "
         << context.outputVariableName

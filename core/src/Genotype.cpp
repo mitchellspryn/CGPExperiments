@@ -364,6 +364,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     outputStream << ""
     <<   "#include <cassert>\n"
     <<   "#include <cmath>\n"
+    <<   "#include <limits>\n"
     <<   "#include <vector>\n"
     <<   "\n"
     <<   "class GeneratedFunction {\n" 

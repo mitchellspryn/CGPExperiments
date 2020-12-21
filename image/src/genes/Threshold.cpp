@@ -14,7 +14,7 @@ void ci::ThresholdGene::initializeParametersFromConfig(
     maxThresh_ = std::stoi(geneParameters.at("maxThresh"));
 
     if (geneParameters.count("thresh") > 0) {
-        thresh_ = std::stoi(geneParameters.at("thresh"))
+        thresh_ = std::stoi(geneParameters.at("thresh"));
     } else {
         mutateParameters();
     }

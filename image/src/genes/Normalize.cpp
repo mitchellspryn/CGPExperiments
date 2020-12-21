@@ -54,7 +54,7 @@ std::string ci::NormalizeGene::generateCode(cc::CodeGenerationContext_t& context
     };
 
     codeTemplate
-        << "cv::normalize(
+        << "cv::normalize("
         << context.inputVariableNames[0]
         << ", "
         << context.outputVariableName

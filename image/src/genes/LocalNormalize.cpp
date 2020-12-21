@@ -47,8 +47,6 @@ void ci::LocalNormalizeGene::initializeParametersFromTemplateGene(const cc::Gene
     minNeighborhoodHeight_ = gene->minNeighborhoodHeight_;
     maxNeighborhoodHeight_ = gene->maxNeighborhoodHeight_;
     neighborhoodHeight_ = gene->neighborhoodHeight_;
-
-    initializeStructuringElement();
 }
 
 void ci::LocalNormalizeGene::mutateParameters() {
@@ -82,8 +80,8 @@ void ci::LocalNormalizeGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>
                 int minY = std::max(cy - (neighborhoodHeight_ / 2), 0);
                 int maxY = std::min(cy + (neighborhoodHeight_ / 2), input.rows - 1);
 
-                int minVal = std::numeric_limits<int>::max();
-                int maxVal = std::numeric_limits<int>::min();
+                unsigned char minVal = std::numeric_limits<unsigned char>::max();
+                unsigned char maxVal = std::numeric_limits<unsigned char>::min();
                 for (int y = minY; y <= maxY; y++) {
                     for (int x = minX; x <= maxX; x++) {
                         minVal = std::min(minVal, input.at<unsigned char>(y, x));
@@ -121,8 +119,8 @@ std::string ci::LocalNormalizeGene::generateCode(cc::CodeGenerationContext_t& co
         << "    int minY = std::max(cy - ($NH / 2), 0);\n"
         << "    int maxY = std::max(cy - ($NH / 2), $INPUT.rows - 1);\n"
         << "\n"
-        << "    int minVal = std::numeric_limits<int>::max();\n"
-        << "    int maxVal = std::numeric_limits<int>::min();\n"
+        << "    unsigned char minVal = std::numeric_limits<unsigned char>::max();\n"
+        << "    unsigned char maxVal = std::numeric_limits<unsigned char>::min();\n"
         << "    for (int y = minY; y <= maxY; y++) {\n"
         << "      for (int x = minX; x <= maxX; x++) {\n"
         << "        minVal = std::min(minVal, $INPUT.at<unsigned char>(y, x));\n"

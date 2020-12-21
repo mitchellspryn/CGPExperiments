@@ -1,4 +1,4 @@
-#include "../../include/genes/Sobel.hpp"
+#include "../../include/genes/SobelY.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

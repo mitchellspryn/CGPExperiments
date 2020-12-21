@@ -107,7 +107,7 @@ std::unordered_map<std::string, std::string> ci::SmoothBilateralGene::serializeI
 
     tmp["minSigma"] = minSigma_;
     tmp["maxSigma"] = maxSigma_;
-    tmp["sigma"] = sigma;
+    tmp["sigma"] = sigma_;
 
     return tmp;
 }

@@ -144,7 +144,7 @@ void saveChunkToFile(
     const unsigned char* data = chunk.getConstCharDataPtr();
     int size = chunk.getSizeInBytes();
 
-    stream.write(data, size);
+    stream.write(reinterpret_cast<const char*>(data), size);
 }
 
 int main(int argc, char** argv) {

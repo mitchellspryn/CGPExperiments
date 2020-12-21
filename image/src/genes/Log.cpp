@@ -4,8 +4,8 @@
 
 #include <sstream>
 
-namespace cc = cgpLogeriments::core;
-namespace ci = cgpLogeriments::image;
+namespace cc = cgpExperiments::core;
+namespace ci = cgpExperiments::image;
 
 void ci::LogGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {

@@ -1,6 +1,7 @@
 #include "../../include/genes/Rescale.hpp"
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <stdexcept>
 #include <sstream>
@@ -10,8 +11,8 @@ namespace ci = cgpExperiments::image;
 
 void ci::RescaleGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {
-    minValue_ = std::stoi(geneParameters.at("minScale"));
-    maxValue_ = std::stoi(geneParameters.at("maxScale"));
+    minScale_ = std::stoi(geneParameters.at("minScale"));
+    maxScale_ = std::stoi(geneParameters.at("maxScale"));
 
     if (geneParameters.count("scale") > 0) {
         scale_ = std::stoi(geneParameters.at("scale"));
@@ -39,18 +40,18 @@ void ci::RescaleGene::mutateParameters() {
 }
 
 void ci::RescaleGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
-    width_ = buffers[0]->getWidth();
-    height_ = buffers[0]->getHeight();
+    int width = buffers[0]->getWidth();
+    int height = buffers[0]->getHeight();
     int num = buffers[0]->getNum();
 
     unsigned char* inputData = buffers[inputBufferIndices_[0]]->getCharDataPtr();
     unsigned char* outputData = buffers[outputBufferIndex_]->getCharDataPtr();
 
     for (int i = 0; i < num; i++) {
-        int offset = (width_*height_*i);
+        int offset = (width*height*i);
 
-        cv::Mat input(height_, width_, CV_8UC1, inputData + offset);
-        cv::Mat output(height_, width_, CV_8UC1, outputData + offset);
+        cv::Mat input(height, width, CV_8UC1, inputData + offset);
+        cv::Mat output(height, width, CV_8UC1, outputData + offset);
 
         cv::Mat tmp;
         cv::resize(

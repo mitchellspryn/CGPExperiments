@@ -13,7 +13,7 @@ void ci::MultiplyCGene::initializeParametersFromConfig(
     minValue_ = std::stoi(geneParameters.at("minValue"));
     maxValue_ = std::stoi(geneParameters.at("maxValue"));
 
-    if (geneParameters.counnt("value") > 0) {
+    if (geneParameters.count("value") > 0) {
         value_ = std::stoi(geneParameters.at("value"));
     } else {
         mutateParameters();

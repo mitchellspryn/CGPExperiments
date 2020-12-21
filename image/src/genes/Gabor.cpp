@@ -1,8 +1,5 @@
 #include "../../include/genes/Gabor.hpp"
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-
 #include <cassert>
 #include <sstream>
 
@@ -107,7 +104,7 @@ void ci::GaborGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffer
         cv::Mat input(height, width, CV_8UC1, inputData + offset);
         cv::Mat output(height, width, CV_8UC1, outputData + offset);
 
-        cv::filter2d(input, output, -1, gaborKernel_);
+        cv::filter2D(input, output, -1, gaborKernel_);
     }
 }
 
@@ -130,7 +127,7 @@ std::string ci::GaborGene::generateCode(cc::CodeGenerationContext_t& context) co
         << ");\n";
 
     codeTemplate
-        << "cv::filter2d("
+        << "cv::filter2D("
         << context.inputVariableNames[0]
         << ", "
         << context.outputVariableName

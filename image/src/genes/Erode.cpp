@@ -13,7 +13,7 @@ void ci::ErodeGene::initializeParametersFromConfig(
     maxNumIterations_ = std::stoi(geneParameters.at("maxNumIterations"));
 
     if (geneParameters.count("numIterations") > 0) {
-        lowerThresh_ = std::stoi(geneParameters.at("lowerThresh"));
+        numIterations_ = std::stoi(geneParameters.at("numIterations"));
     } else {
         mutateParameters();
     }
@@ -78,26 +78,11 @@ std::string ci::ErodeGene::generateCode(cc::CodeGenerationContext_t& context) co
 std::unordered_map<std::string, std::string> ci::ErodeGene::serializeInternal() const {
     std::unordered_map<std::string, std::string> tmp;
 
-    tmp["minLowerThresh"] = std::to_string(minLowerThresh_);
-    tmp["minUpperThresh"] = std::to_string(minUpperThresh_);
-    tmp["maxLowerThresh"] = std::to_string(maxLowerThresh_);
-    tmp["maxUpperThresh"] = std::to_string(maxUpperThresh_);
-    tmp["lowerThresh"] = std::to_string(lowerThresh_);
-    tmp["upperThresh"] = std::to_string(upperThresh_);
+    tmp["minNumIterations"] = std::to_string(minNumIterations_);
+    tmp["maxNumIterations"] = std::to_string(maxNumIterations_);
+    tmp["numIterations"] = std::to_string(numIterations_);
 
     return tmp;
-}
-
-void ci::ErodeGene::mutateLowerThreshold() {
-    float range = static_cast<float>(maxLowerThresh_-minLowerThresh_);
-    float offset = range * randomNumberGenerator_->getRandomFloat();
-    lowerThresh_ = minLowerThresh_ + static_cast<int>(offset);
-}
-
-void ci::ErodeGene::mutateUpperThreshold() {
-    float range = static_cast<float>(maxUpperThresh_-minUpperThresh_);
-    float offset = range * randomNumberGenerator_->getRandomFloat();
-    upperThresh_ = minLowerThresh_ + static_cast<int>(offset);
 }
 
 void ci::ErodeGene::initializeStructuringElement() {

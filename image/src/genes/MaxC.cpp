@@ -13,7 +13,7 @@ void ci::MaxCGene::initializeParametersFromConfig(
     minValue_ = std::stoi(geneParameters.at("minValue"));
     maxValue_ = std::stoi(geneParameters.at("maxValue"));
 
-    if (geneParameters.counnt("value") > 0) {
+    if (geneParameters.count("value") > 0) {
         value_ = std::stoi(geneParameters.at("value"));
     } else {
         mutateParameters();
@@ -56,7 +56,7 @@ void ci::MaxCGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers
             for (int x = 0; x < input.cols; x++) {
                 output.at<unsigned char>(y, x) = std::max(
                     input.at<unsigned char>(y, x),
-                    value_);
+                    static_cast<unsigned char>(value_));
             }
         }
     }

@@ -4,6 +4,9 @@
 #include <string>
 #include <unordered_map>
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 #include "../../../core/include/Gene.hpp"
 
 namespace cgpExperiments {

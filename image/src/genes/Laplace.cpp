@@ -37,7 +37,7 @@ void ci::LaplaceGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buff
 
         // TODO: should we allow modification of the kernel size?
         // Other candidate is hard-coded 3?
-        cv::laplace(input, output);
+        cv::Laplacian(input, output, -1, 3);
     }
 }
 
@@ -45,10 +45,11 @@ std::string ci::LaplaceGene::generateCode(cc::CodeGenerationContext_t& context) 
     std::stringstream codeTemplate;
 
     codeTemplate
-        << "cv::laplace("
+        << "cv::Laplacian("
         << context.inputVariableNames[0]
         << ", "
         << context.outputVariableName
+        << ", -1, 3"
         << ");\n";
 
     return codeTemplate.str();

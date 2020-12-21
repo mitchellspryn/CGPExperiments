@@ -47,8 +47,6 @@ void ci::LocalMinGene::initializeParametersFromTemplateGene(const cc::Gene* othe
     minNeighborhoodHeight_ = gene->minNeighborhoodHeight_;
     maxNeighborhoodHeight_ = gene->maxNeighborhoodHeight_;
     neighborhoodHeight_ = gene->neighborhoodHeight_;
-
-    initializeStructuringElement();
 }
 
 void ci::LocalMinGene::mutateParameters() {
@@ -82,7 +80,7 @@ void ci::LocalMinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buf
                 int minY = std::max(cy - (neighborhoodHeight_ / 2), 0);
                 int maxY = std::min(cy + (neighborhoodHeight_ / 2), input.rows - 1);
 
-                int minVal = std::numeric_limits<int>::max();
+                unsigned char minVal = std::numeric_limits<unsigned char>::max();
                 for (int y = minY; y <= maxY; y++) {
                     for (int x = minX; x <= maxX; x++) {
                         minVal = std::min(minVal, input.at<unsigned char>(y, x));
@@ -118,7 +116,7 @@ std::string ci::LocalMinGene::generateCode(cc::CodeGenerationContext_t& context)
         << "    int minY = std::max(cy - ($NH / 2), 0);\n"
         << "    int maxY = std::max(cy - ($NH / 2), $INPUT.rows - 1);\n"
         << "\n"
-        << "    int minVal = std::numeric_limits<int>::max();\n"
+        << "    unsigned char minVal = std::numeric_limits<unsigned char>::max();\n"
         << "    for (int y = minY; y <= maxY; y++) {\n"
         << "      for (int x = minX; x <= maxX; x++) {\n"
         << "        minVal = std::min(minVal, $INPUT.at<unsigned char>(y, x));\n"

@@ -1,6 +1,5 @@
 #include "../../include/genes/Unsharpen.hpp"
 
-#include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <sstream>
@@ -87,5 +86,5 @@ std::unordered_map<std::string, std::string> ci::UnsharpenGene::serializeInterna
 
 void ci::UnsharpenGene::initializeKernel() {
     kernel_ = cv::Mat::ones(3, 3, CV_64FC1) * -1;
-    kernel_[1][1] = 9;
+    kernel_.at<double>(1, 1) = 9;
 }

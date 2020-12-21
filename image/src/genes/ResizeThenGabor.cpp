@@ -1,6 +1,5 @@
 #include "../../include/genes/ResizeThenGabor.hpp"
 
-#include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <cassert>
@@ -52,7 +51,7 @@ void ci::ResizeThenGaborGene::initializeParametersFromConfig(
         mutateScale();
     }
 
-    refreshResizeThenGaborKernel();
+    refreshGaborKernel();
 }
 
 void ci::ResizeThenGaborGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
@@ -82,7 +81,7 @@ void ci::ResizeThenGaborGene::initializeParametersFromTemplateGene(const cc::Gen
     gamma_ = gene->gamma_;
 
     // Recreate the kernel from scratch rather than risk shallow copy
-    refreshResizeThenGaborKernel(); 
+    refreshGaborKernel(); 
 }
 
 void ci::ResizeThenGaborGene::mutateParameters() {
@@ -101,7 +100,7 @@ void ci::ResizeThenGaborGene::mutateParameters() {
     }
 
     if (f < 0.8) {
-        refreshResizeThenGaborKernel();
+        refreshGaborKernel();
     }
 }
 
@@ -134,7 +133,7 @@ void ci::ResizeThenGaborGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk
             cv::INTER_LANCZOS4);
 
 
-        cv::filter2d(tmp2, output, -1, gaborKernel_);
+        cv::filter2D(tmp2, output, -1, gaborKernel_);
     }
 }
 
@@ -178,7 +177,7 @@ std::string ci::ResizeThenGaborGene::generateCode(cc::CodeGenerationContext_t& c
         << "    " << std::to_string(gamma_) << "\n"
         << "  );\n"
         << "\n"
-        << "  cv::filter2d(tmp2, $OUTPUT, -1, kernel);\n"
+        << "  cv::filter2D(tmp2, $OUTPUT, -1, kernel);\n"
         << "}\n";
 
     std::string output = replaceAllFxn(
@@ -226,9 +225,9 @@ std::unordered_map<std::string, std::string> ci::ResizeThenGaborGene::serializeI
     return tmp;
 }
 
-void ci::ResizeThenGaborGene::refreshResizeThenGaborKernel() {
+void ci::ResizeThenGaborGene::refreshGaborKernel() {
     // TODO: should we allow modification of kernel size?
-    gaborKernel_ = cv::getResizeThenGaborKernel(
+    gaborKernel_ = cv::getGaborKernel(
         cv::Size(3, 3),
         sigma_,
         theta_, 

@@ -28,8 +28,16 @@ class LocalNormalizeGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
+        int minNeighborhoodWidth_;
+        int maxNeighborhoodWidth_;
         int neighborhoodWidth_;
+
+        int minNeighborhoodHeight_;
+        int maxNeighborhoodHeight_;
         int neighborhoodHeight_;
+
+        void mutateNeighborhoodWidth();
+        void mutateNeighborhoodHeight();
 };
 
 }

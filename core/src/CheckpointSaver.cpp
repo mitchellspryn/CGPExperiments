@@ -148,7 +148,7 @@ void cc::CheckpointSaver::savePredictions(
     const unsigned char* data = predictions.getConstCharDataPtr();
     int size = predictions.getSizeInBytes();
 
-    stream.write(data, size);
+    stream.write(reinterpret_cast<const char*>(data), size);
 }
 
 void cc::CheckpointSaver::parseParameters(
