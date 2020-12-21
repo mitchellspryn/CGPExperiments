@@ -47,6 +47,7 @@ void ci::LocalAverageGene::initializeParametersFromTemplateGene(const cc::Gene* 
     neighborhoodHeight_ = gene->neighborhoodHeight_;
 
     initializeStructuringElement();
+}
 
 void ci::LocalAverageGene::mutateParameters() {
     float f = randomNumberGenerator_->getRandomFloat();

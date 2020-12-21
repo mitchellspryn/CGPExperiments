@@ -49,6 +49,7 @@ void ci::LocalMaxGene::initializeParametersFromTemplateGene(const cc::Gene* othe
     neighborhoodHeight_ = gene->neighborhoodHeight_;
 
     initializeStructuringElement();
+}
 
 void ci::LocalMaxGene::mutateParameters() {
     float f = randomNumberGenerator_->getRandomFloat();

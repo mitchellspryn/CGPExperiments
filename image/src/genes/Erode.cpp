@@ -36,6 +36,7 @@ void ci::ErodeGene::initializeParametersFromTemplateGene(const cc::Gene* other) 
     numIterations_ = gene->numIterations_;
 
     initializeStructuringElement();
+}
 
 void ci::ErodeGene::mutateParameters() {
     numIterations_ = randomNumberGenerator_->getRandomInt(minNumIterations_, maxNumIterations_);

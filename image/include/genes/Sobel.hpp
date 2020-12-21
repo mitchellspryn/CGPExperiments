@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kSobelGeneTypeId = 32;
+static constexpr int kSobelGeneTypeId = 31;
 static constexpr const char* kSobelGeneTypeName = "sobel";
 
 // Performs a horizontal and vertical sobel edge detection operator.

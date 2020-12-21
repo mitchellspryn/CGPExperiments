@@ -28,8 +28,19 @@ class ShiftGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
+        int minVerticalShift_;
+        int maxVerticalShift_;
         int verticalShift_;
+
+        int minHorizontalShift_;
+        int maxHorizontalShift_;
         int horizontalShift_;
+
+        cv::Mat affineMat_;
+
+        void mutateVerticalShift();
+        void mutateHorizontalShift();
+        void refreshAffineMat();
 };
 
 }

@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kSobelYGeneTypeId = 34;
+static constexpr int kSobelYGeneTypeId = 33;
 static constexpr const char* kSobelYGeneTypeName = "sobelY";
 
 // Performs the sobel operation in the Y direction

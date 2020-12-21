@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kSubtractCGeneTypeId = 36;
+static constexpr int kSubtractCGeneTypeId = 35;
 static constexpr const char* kSubtractCGeneTypeName = "subtractC";
 
 // Subtracts a constant value from each pixel

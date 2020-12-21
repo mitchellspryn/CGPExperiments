@@ -16,6 +16,9 @@ typedef struct CodeGenerationContext {
     std::vector<std::string> inputVariableNames;
     std::string outputVariableName;
     std::unordered_set<std::string> variableNamesInUse;
+    int inputWidth;
+    int inputHeight;
+    int inputN;
 } CodeGenerationContext_t;
 
 }

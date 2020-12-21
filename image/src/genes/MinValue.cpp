@@ -4,8 +4,8 @@
 
 #include <sstream>
 
-namespace cc = cgpMinValueeriments::core;
-namespace ci = cgpMinValueeriments::image;
+namespace cc = cgpExperiments::core;
+namespace ci = cgpExperiments::image;
 
 void ci::MinValueGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {

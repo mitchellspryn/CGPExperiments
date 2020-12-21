@@ -27,7 +27,9 @@ class RescaleGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
-        float value_;
+        int minScale_;
+        int maxScale_;
+        int scale_;
 };
 
 }

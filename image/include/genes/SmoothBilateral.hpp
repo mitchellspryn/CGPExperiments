@@ -27,7 +27,16 @@ class SmoothBilateralGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
-        // TODO: bilateral smoothing params
+        int minD_;
+        int maxD_;
+        int d_;
+
+        float minSigma_;
+        float maxSigma_;
+        float sigma_;
+
+        void mutateD();
+        void mutateSigma();
 };
 
 }

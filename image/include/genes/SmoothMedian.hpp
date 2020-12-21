@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kSmoothMedianGeneTypeId = 31;
+static constexpr int kSmoothMedianGeneTypeId = 30;
 static constexpr const char* kSmoothMedianGeneTypeName = "smoothMedian";
 
 // Performs median smoothing with a kernel of size [kernelSize_ x kernelSize_]
@@ -27,6 +27,8 @@ class SmoothMedianGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
+        int minKernelSize_;
+        int maxKernelSize_;
         int kernelSize_;
 };
 

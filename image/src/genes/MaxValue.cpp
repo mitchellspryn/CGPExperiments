@@ -4,8 +4,8 @@
 
 #include <sstream>
 
-namespace cc = cgpMaxValueeriments::core;
-namespace ci = cgpMaxValueeriments::image;
+namespace cc = cgpExperiments::core;
+namespace ci = cgpExperiments::image;
 
 void ci::MaxValueGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {

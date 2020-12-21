@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kThresholdGeneTypeId = 38;
+static constexpr int kThresholdGeneTypeId = 37;
 static constexpr const char* kThresholdGeneTypeName = "threshold";
 
 // Performs binary thresholding on the input image. 
@@ -27,7 +27,9 @@ class ThresholdGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
-        float threshold_;
+        int minThresh_;
+        int maxThresh_;
+        int thresh_;
 };
 
 }

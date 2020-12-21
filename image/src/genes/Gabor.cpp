@@ -123,9 +123,9 @@ std::string ci::GaborGene::generateCode(cc::CodeGenerationContext_t& context) co
         << tmpVariableName
         << " = cv::getGaborKernel(\n"
         << "  cv::Size(3,3),\n"
-        << "  " << std::to_string(sigma_) << "\n"
-        << "  " << std::to_string(theta_) << "\n"
-        << "  " << std::to_string(lambda_) << "\n"
+        << "  " << std::to_string(sigma_) << ",\n"
+        << "  " << std::to_string(theta_) << ",\n"
+        << "  " << std::to_string(lambda_) << ",\n"
         << "  " << std::to_string(gamma_) << "\n"
         << ");\n";
 

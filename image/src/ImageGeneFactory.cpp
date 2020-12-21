@@ -30,7 +30,6 @@
 #include "../include/genes/ResizeThenGabor.hpp"
 #include "../include/genes/Shift.hpp"
 #include "../include/genes/SmoothBilateral.hpp"
-#include "../include/genes/SmoothBlur.hpp"
 #include "../include/genes/SmoothMedian.hpp"
 #include "../include/genes/Sobel.hpp"
 #include "../include/genes/SobelX.hpp"
@@ -109,8 +108,6 @@ std::unique_ptr<cc::Gene> ci::ImageGeneFactory::createGene(int typeId) {
             return std::make_unique<ci::ShiftGene>();
         case ci::kSmoothBilateralGeneTypeId:
             return std::make_unique<ci::SmoothBilateralGene>();
-        case ci::kSmoothBlurGeneTypeId:
-            return std::make_unique<ci::SmoothBlurGene>();
         case ci::kSmoothMedianGeneTypeId:
             return std::make_unique<ci::SmoothMedianGene>();
         case ci::kSobelGeneTypeId:
@@ -202,8 +199,6 @@ int ci::ImageGeneFactory::getTypeId(const std::string& geneName) {
         return ci::kShiftGeneTypeId;
     } else if (strncasecmp(name, ci::kSmoothBilateralGeneTypeName, 30) == 0) {
         return ci::kSmoothBilateralGeneTypeId;
-    } else if (strncasecmp(name, ci::kSmoothBlurGeneTypeName, 30) == 0) {
-        return ci::kSmoothBlurGeneTypeId;
     } else if (strncasecmp(name, ci::kSmoothMedianGeneTypeName, 30) == 0) {
         return kSmoothMedianGeneTypeId;
     } else if (strncasecmp(name, ci::kSobelGeneTypeName, 30) == 0) {

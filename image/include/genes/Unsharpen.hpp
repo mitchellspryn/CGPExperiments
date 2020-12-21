@@ -9,12 +9,11 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kUnsharpenGeneTypeId = 39;
+static constexpr int kUnsharpenGeneTypeId = 38;
 static constexpr const char* kUnsharpenGeneTypeName = "unsharpen";
 
 // Performs the Unsharpen operation on an input image
 // Unsharpening is convolution with a kernel like [[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]]
-// TODO: should this be [[1, 1, 1], [1, -7, 1], [1, 1, 1]]?
 class UnsharpenGene : public cgpExperiments::core::Gene {
     public:
         virtual ~UnsharpenGene() {};
@@ -28,6 +27,10 @@ class UnsharpenGene : public cgpExperiments::core::Gene {
         virtual bool isParameterFree() const override { return true; }
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
+    private:
+        cv::Mat kernel_;
+
+        void initializeKernel();
 };
 
 }

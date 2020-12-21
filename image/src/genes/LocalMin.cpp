@@ -49,6 +49,7 @@ void ci::LocalMinGene::initializeParametersFromTemplateGene(const cc::Gene* othe
     neighborhoodHeight_ = gene->neighborhoodHeight_;
 
     initializeStructuringElement();
+}
 
 void ci::LocalMinGene::mutateParameters() {
     float f = randomNumberGenerator_->getRandomFloat();

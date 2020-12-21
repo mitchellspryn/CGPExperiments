@@ -36,6 +36,7 @@ void ci::DilateGene::initializeParametersFromTemplateGene(const cc::Gene* other)
     numIterations_ = gene->numIterations_;
 
     initializeStructuringElement();
+}
 
 void ci::DilateGene::mutateParameters() {
     numIterations_ = randomNumberGenerator_->getRandomInt(minNumIterations_, maxNumIterations_);

@@ -4,8 +4,8 @@
 
 #include <sstream>
 
-namespace cc = cgpNormalizeeriments::core;
-namespace ci = cgpNormalizeeriments::image;
+namespace cc = cgpExperiments::core;
+namespace ci = cgpExperiments::image;
 
 void ci::NormalizeGene::initializeParametersFromConfig(
         const std::unordered_map<std::string, std::string>& geneParameters) {

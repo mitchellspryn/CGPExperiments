@@ -9,7 +9,7 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr int kSqrtGeneTypeId = 35;
+static constexpr int kSqrtGeneTypeId = 34;
 static constexpr const char* kSqrtGeneTypeName = "sqrt";
 
 // Performs the pixel-wise square root operator
