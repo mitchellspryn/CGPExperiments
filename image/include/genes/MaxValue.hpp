@@ -23,7 +23,7 @@ class MaxValueGene : public cgpExperiments::core::Gene {
         virtual std::string getGeneName() const override { return std::string(kMaxValueGeneTypeName); }
         virtual void evaluate(std::vector<std::shared_ptr<cgpExperiments::core::DataChunk>>& buffers) override;
         virtual std::string generateCode(cgpExperiments::core::CodeGenerationContext_t& context) const override;
-        virtual bool isParameterFree() const override { return false; }
+        virtual bool isParameterFree() const override { return true; }
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
 };
