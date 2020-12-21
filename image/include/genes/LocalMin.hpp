@@ -28,6 +28,10 @@ class LocalMinGene : public cgpExperiments::core::Gene {
         virtual int getNumInputs() const override { return 1; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
+        int minNeighborhoodWidth_;
+        int minNeighborhoodHeight_;
+        int maxNeighborhoodWidth_;
+        int maxNeighborhoodHeight_;
         int neighborhoodWidth_;
         int neighborhoodHeight_;
 };

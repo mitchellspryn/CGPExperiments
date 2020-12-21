@@ -87,18 +87,6 @@ std::unordered_map<std::string, std::string> ci::DilateGene::serializeInternal()
     return tmp;
 }
 
-void ci::DilateGene::mutateLowerThreshold() {
-    float range = static_cast<float>(maxLowerThresh_-minLowerThresh_);
-    float offset = range * randomNumberGenerator_->getRandomFloat();
-    lowerThresh_ = minLowerThresh_ + static_cast<int>(offset);
-}
-
-void ci::DilateGene::mutateUpperThreshold() {
-    float range = static_cast<float>(maxUpperThresh_-minUpperThresh_);
-    float offset = range * randomNumberGenerator_->getRandomFloat();
-    upperThresh_ = minLowerThresh_ + static_cast<int>(offset);
-}
-
 void ci::DilateGene::initializeStructuringElement() {
     // TODO: should we allow for changing the structuring element of dilation?
     structuringElement_ = cv::getStructuringElement(
