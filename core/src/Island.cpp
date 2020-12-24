@@ -2,8 +2,6 @@
 
 namespace cc = cgpExperiments::core;
 
-#include <iostream>
-
 cc::Island::Island(
         std::shared_ptr<FitnessFunctionFactory> fitnessFunctionFactory,
         std::shared_ptr<GenePool> genePool,
@@ -89,7 +87,6 @@ void cc::Island::runEpoch() {
     }
 
     for (int iter = 0; iter < numIterationsPerEpoch_; iter++) {
-        std::cout << "iter: " << iter << std::endl;
         for (int i = 0; i < numGenotypes_; i++) {
             if (i != bestFitnessIndex_) {
                 residents_[i]->setGenes(
