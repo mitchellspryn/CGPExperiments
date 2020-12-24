@@ -7,7 +7,7 @@
         "rngSeed": 1234,
         "terminationFitness": 0.00001,
         "terminationNumEpochs": 10000,
-        "checkpointFrequency": 100,
+        "checkpointFrequency": 10,
         "consoleFrequency": 1
     },
     "islandParameters": {

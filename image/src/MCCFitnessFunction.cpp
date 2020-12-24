@@ -47,7 +47,7 @@ double ci::MCCFitnessFunction::evaluate(
                     * static_cast<double>(tn+fn);
     
     if ((num == 0) || (denom == 0)) {
-        return 0;
+        return 1;
     }
 
     double mcc = num / std::sqrt(denom);
