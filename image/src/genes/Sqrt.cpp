@@ -34,21 +34,42 @@ void ci::SqrtGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers
         cv::Mat input(height, width, CV_8UC1, inputData + offset);
         cv::Mat output(height, width, CV_8UC1, outputData + offset);
 
-        cv::sqrt(input, output);
+        cv::Mat tmp;
+        input.convertTo(tmp, CV_32F);
+        cv::sqrt(tmp, tmp);
+        tmp.convertTo(output, CV_8U);
     }
 }
 
 std::string ci::SqrtGene::generateCode(cc::CodeGenerationContext_t& context) const {
     std::stringstream codeTemplate;
 
-    codeTemplate
-        << "cv::sqrt("
-        << context.inputVariableNames[0]
-        << ", "
-        << context.outputVariableName
-        << ");\n";
+    auto replaceAllFxn = [](
+            std::string str, 
+            const std::string& from, 
+            const std::string& to) -> std::string {
+        size_t startPos = 0;
+        while((startPos = str.find(from, startPos)) != std::string::npos) {
+            str.replace(startPos, from.length(), to);
+            startPos += to.length(); // Handles case where 'to' is a substring of 'from'
+        }
+        return str;
+    };
 
-    return codeTemplate.str();
+    codeTemplate
+        << "{\n"
+        << "  cv::Mat tmp;\n"
+        << "  $INPUT.convertTo(tmp, CV_32F);\n"
+        << "  cv::sqrt(tmp, tmp);\n"
+        << "  tmp.convertTo($OUTPUT, CV_8U);\n"
+        << "}\n";
+
+    std::string output = codeTemplate.str();
+    output = replaceAllFxn(output, "$OUTPUT", context.outputVariableName);
+    output = replaceAllFxn(output, "$INPUT", context.inputVariableNames[0]);
+
+    return output;
+
 }
 
 std::unordered_map<std::string, std::string> ci::SqrtGene::serializeInternal() const {

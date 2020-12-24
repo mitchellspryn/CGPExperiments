@@ -37,6 +37,14 @@ void ci::SmoothMedianGene::initializeParametersFromTemplateGene(const cc::Gene* 
 
 void ci::SmoothMedianGene::mutateParameters() {
     kernelSize_ = randomNumberGenerator_->getRandomInt(minKernelSize_, maxKernelSize_);
+    if ((kernelSize_ % 2) == 0) {
+        float f = randomNumberGenerator_->getRandomFloat();
+        if (f > 0.5) {
+            kernelSize_ -= 1;
+        } else {
+            kernelSize_ += 1;
+        }
+    }
 }
 
 void ci::SmoothMedianGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {

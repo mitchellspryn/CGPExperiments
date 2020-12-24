@@ -1,6 +1,6 @@
 {
     "geneset": "image",
-    "datatype": "uint8",
+    "dataType": "uint8",
     "trainerParameters": {
         "maxNumThreads": 8,
         "numIslands": 16,
@@ -13,17 +13,17 @@
     "islandParameters": {
         "numGenotypes": 5,
         "numIterationsPerEpoch": 2000,
-        "numEvaluationSamples": 200,
+        "numEvaluationSamples": 9,
         "evalStartIndex": 0
     },
     "genotypeParameters": {
         "geneGridWidth": 100,
         "geneGridHeight": 1,
         "maxLookback": 100,
-        "numInputDatasets": 1,
-        "inputDataWidth": 1,
-        "inputDataHeight": 1,
-        "inputDataNumSamples": 200,
+        "numInputDatasets": 7,
+        "inputDataWidth": 500,
+        "inputDataHeight": 500,
+        "inputDataNumSamples": 9,
         "mutationType": "singleActive"
     },
     "fitnessFunctionParameters": {
@@ -60,7 +60,7 @@
         "constantOutput": {
             "minValue": 0,
             "maxValue": 255
-        }
+        },
         "dilate": {
             "minNumIterations": 1,
             "maxNumIterations": 3
@@ -74,8 +74,8 @@
         "gabor": {
             "minSigma": 0,
             "maxSigma": 16,
-            "minOrientation": -8,
-            "maxOrientation": 8,
+            "minTheta": -8,
+            "maxTheta": 8,
             "minLambda": "5",
             "maxLambda": "15",
             "minGamma": 0,
@@ -90,25 +90,25 @@
         "laplace": {
         },
         "localAverage": {
-            "minNeighborhodWidth": 2,
+            "minNeighborhoodWidth": 2,
             "maxNeighborhoodWidth": 32,
             "minNeighborhoodHeight": 2,
             "maxNeighborhoodHeight": 32
         },
         "localMax": {
-            "minNeighborhodWidth": 2,
+            "minNeighborhoodWidth": 2,
             "maxNeighborhoodWidth": 32,
             "minNeighborhoodHeight": 2,
             "maxNeighborhoodHeight": 32
         },
         "localMin": {
-            "minNeighborhodWidth": 2,
+            "minNeighborhoodWidth": 2,
             "maxNeighborhoodWidth": 32,
             "minNeighborhoodHeight": 2,
             "maxNeighborhoodHeight": 32
         },
         "localNormalize": {
-            "minNeighborhodWidth": 2,
+            "minNeighborhoodWidth": 2,
             "maxNeighborhoodWidth": 32,
             "minNeighborhoodHeight": 2,
             "maxNeighborhoodHeight": 32
@@ -146,8 +146,8 @@
         "resizeThenGabor": {
             "minSigma": 0,
             "maxSigma": 16,
-            "minOrientation": -8,
-            "maxOrientation": 8,
+            "minTheta": -8,
+            "maxTheta": 8,
             "minLambda": "5",
             "maxLambda": "15",
             "minGamma": 0,
@@ -156,7 +156,7 @@
             "maxScale": 10
         },
         "shift": {
-            "minVertialShift": -16,
+            "minVerticalShift": -16,
             "maxVerticalShift": 16,
             "minHorizontalShift": -16,
             "maxHorizontalShift": 16
@@ -186,8 +186,8 @@
         "subtract": {
         },
         "threshold": {
-            "minValue": 75,
-            "maxValue": 200
+            "minThresh": 75,
+            "maxThresh": 200
         },
         "unsharpen": {
         }
@@ -232,6 +232,6 @@
             "sampleWidth": 500,
             "sampleHeight": 500,
             "fileName": "/mnt/data_disk/cgpData/card/card_gray.dat"
-        },
+        }
     ]
 }
