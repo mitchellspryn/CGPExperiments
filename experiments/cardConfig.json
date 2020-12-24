@@ -3,16 +3,16 @@
     "dataType": "uint8",
     "trainerParameters": {
         "maxNumThreads": 8,
-        "numIslands": 16,
+        "numIslands": 8,
         "rngSeed": 1234,
         "terminationFitness": 0.00001,
         "terminationNumEpochs": 10000,
         "checkpointFrequency": 100,
-        "consoleFrequency": 10
+        "consoleFrequency": 1
     },
     "islandParameters": {
         "numGenotypes": 5,
-        "numIterationsPerEpoch": 2000,
+        "numIterationsPerEpoch": 200,
         "numEvaluationSamples": 9,
         "evalStartIndex": 0
     },

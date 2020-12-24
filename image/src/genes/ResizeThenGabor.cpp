@@ -80,6 +80,10 @@ void ci::ResizeThenGaborGene::initializeParametersFromTemplateGene(const cc::Gen
     maxGamma_ = gene->maxGamma_;
     gamma_ = gene->gamma_;
 
+    minScale_ = gene->minScale_;
+    maxScale_ = gene->maxScale_;
+    scale_ = gene->scale_;
+
     // Recreate the kernel from scratch rather than risk shallow copy
     refreshGaborKernel(); 
 }
