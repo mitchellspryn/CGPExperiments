@@ -6,6 +6,7 @@
 #include "../include/genes/Average.hpp"
 #include "../include/genes/AverageValue.hpp"
 #include "../include/genes/Canny.hpp"
+#include "../include/genes/ConstantOutput.hpp"
 #include "../include/genes/Dilate.hpp"
 #include "../include/genes/Erode.hpp"
 #include "../include/genes/Exp.hpp"
@@ -60,6 +61,8 @@ std::unique_ptr<cc::Gene> ci::ImageGeneFactory::createGene(int typeId) {
             return std::make_unique<ci::AverageValueGene>();
         case ci::kCannyGeneTypeId:
             return std::make_unique<ci::CannyGene>();
+        case ci::kConstantOutputGeneTypeId:
+            return std::make_unique<ci::ConstantOutputGene>();
         case ci::kDilateGeneTypeId:
             return std::make_unique<ci::DilateGene>();
         case ci::kErodeGeneTypeId:
@@ -151,6 +154,8 @@ int ci::ImageGeneFactory::getTypeId(const std::string& geneName) {
         return ci::kAverageValueGeneTypeId;
     } else if (strncasecmp(name, ci::kCannyGeneTypeName, 30) == 0) {
         return ci::kCannyGeneTypeId;
+    } else if (strncasecmp(name, ci::kConstantOutputGeneTypeName, 30) == 0) {
+        return ci::kConstantOutputGeneTypeId;
     } else if (strncasecmp(name, ci::kDilateGeneTypeName, 30) == 0) {
         return ci::kDilateGeneTypeId;
     } else if (strncasecmp(name, ci::kErodeGeneTypeName, 30) == 0 ) {
