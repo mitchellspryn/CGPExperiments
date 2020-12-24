@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <opencv2/core/core.hpp>
+
 #include "../../../core/include/Gene.hpp"
 
 namespace cgpExperiments {
@@ -35,8 +37,12 @@ class LocalMaxGene : public cgpExperiments::core::Gene {
         int neighborhoodWidth_;
         int neighborhoodHeight_;
 
+        cv::Mat kernel_;
+
         void mutateNeighborhoodWidth();
         void mutateNeighborhoodHeight();
+
+        void refreshKernel();
 };
 
 }

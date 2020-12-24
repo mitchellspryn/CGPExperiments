@@ -27,7 +27,8 @@ void ci::LocalMinGene::initializeParametersFromConfig(
     } else {
         mutateNeighborhoodHeight();
     }
-
+    
+    refreshKernel();
 }
 
 void ci::LocalMinGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
@@ -47,6 +48,8 @@ void ci::LocalMinGene::initializeParametersFromTemplateGene(const cc::Gene* othe
     minNeighborhoodHeight_ = gene->minNeighborhoodHeight_;
     maxNeighborhoodHeight_ = gene->maxNeighborhoodHeight_;
     neighborhoodHeight_ = gene->neighborhoodHeight_;
+
+    refreshKernel();
 }
 
 void ci::LocalMinGene::mutateParameters() {
@@ -56,6 +59,8 @@ void ci::LocalMinGene::mutateParameters() {
     } else {
         mutateNeighborhoodHeight();
     }
+
+    refreshKernel();
 }
 
 void ci::LocalMinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
@@ -72,24 +77,7 @@ void ci::LocalMinGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buf
         cv::Mat input(height, width, CV_8UC1, inputData + offset);
         cv::Mat output(height, width, CV_8UC1, outputData + offset);
 
-        // TODO: is there a slick way to do this with opencv api?
-        for (int cy = 0; cy < input.rows; cy++) {
-            for (int cx = 0; cx < input.cols; cx++) {
-                int minX = std::max(cx - (neighborhoodWidth_ / 2), 0);
-                int maxX = std::min(cx + (neighborhoodWidth_ / 2), input.cols - 1);
-                int minY = std::max(cy - (neighborhoodHeight_ / 2), 0);
-                int maxY = std::min(cy + (neighborhoodHeight_ / 2), input.rows - 1);
-
-                unsigned char minVal = std::numeric_limits<unsigned char>::max();
-                for (int y = minY; y <= maxY; y++) {
-                    for (int x = minX; x <= maxX; x++) {
-                        minVal = std::min(minVal, input.at<unsigned char>(y, x));
-                    }
-                }
-
-                output.at<unsigned char>(cy, cx) = minVal;
-            }
-        }
+        cv::erode(input, output, kernel_); 
     }
 }
 
@@ -109,22 +97,9 @@ std::string ci::LocalMinGene::generateCode(cc::CodeGenerationContext_t& context)
     }; 
 
     codeTemplate 
-        << "for (int cy = 0; cy < $INPUT.rows; cy++) {\n"
-        << "  for (int cx = 0; cx < $INPUT.cols; cx++) {\n"
-        << "    int minX = std::max(cx - ($NW / 2), 0);\n"
-        << "    int maxX = std::max(cx - ($NW / 2), $INPUT.cols - 1);\n"
-        << "    int minY = std::max(cy - ($NH / 2), 0);\n"
-        << "    int maxY = std::max(cy - ($NH / 2), $INPUT.rows - 1);\n"
-        << "\n"
-        << "    unsigned char minVal = std::numeric_limits<unsigned char>::max();\n"
-        << "    for (int y = minY; y <= maxY; y++) {\n"
-        << "      for (int x = minX; x <= maxX; x++) {\n"
-        << "        minVal = std::min(minVal, $INPUT.at<unsigned char>(y, x));\n"
-        << "      }\n"
-        << "    }\n"
-        << "\n"
-        << "    $OUTPUT.at<unsigned char>(cy, cx) = minVal;\n"
-        << "  }\n"
+        << "{\n"
+        << "  cv::Mat kernel = cv::Mat::ones($NH, $NW, CV_8UC1);\n"
+        << "  cv::dilate($INPUT, $OUTPUT, kernel);\n"
         << "}\n";
 
     std::string templateCode = codeTemplate.str();
@@ -159,5 +134,9 @@ void ci::LocalMinGene::mutateNeighborhoodHeight() {
     neighborhoodHeight_ = randomNumberGenerator_->getRandomInt(
         minNeighborhoodHeight_,
         maxNeighborhoodHeight_);
+}
+
+void ci::LocalMinGene::refreshKernel() {
+    kernel_ = cv::Mat::ones(neighborhoodHeight_, neighborhoodWidth_, CV_8UC1);
 }
 

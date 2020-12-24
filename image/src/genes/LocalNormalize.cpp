@@ -28,6 +28,7 @@ void ci::LocalNormalizeGene::initializeParametersFromConfig(
         mutateNeighborhoodHeight();
     }
 
+    refreshKernel();
 }
 
 void ci::LocalNormalizeGene::initializeParametersFromTemplateGene(const cc::Gene* other) {
@@ -47,6 +48,8 @@ void ci::LocalNormalizeGene::initializeParametersFromTemplateGene(const cc::Gene
     minNeighborhoodHeight_ = gene->minNeighborhoodHeight_;
     maxNeighborhoodHeight_ = gene->maxNeighborhoodHeight_;
     neighborhoodHeight_ = gene->neighborhoodHeight_;
+
+    refreshKernel();
 }
 
 void ci::LocalNormalizeGene::mutateParameters() {
@@ -56,6 +59,8 @@ void ci::LocalNormalizeGene::mutateParameters() {
     } else {
         mutateNeighborhoodHeight();
     }
+
+    refreshKernel();
 }
 
 void ci::LocalNormalizeGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>>& buffers) {
@@ -72,27 +77,16 @@ void ci::LocalNormalizeGene::evaluate(std::vector<std::shared_ptr<cc::DataChunk>
         cv::Mat input(height, width, CV_8UC1, inputData + offset);
         cv::Mat output(height, width, CV_8UC1, outputData + offset);
 
-        // TODO: is there a slick way to do this with opencv api?
-        for (int cy = 0; cy < input.rows; cy++) {
-            for (int cx = 0; cx < input.cols; cx++) {
-                int minX = std::max(cx - (neighborhoodWidth_ / 2), 0);
-                int maxX = std::min(cx + (neighborhoodWidth_ / 2), input.cols - 1);
-                int minY = std::max(cy - (neighborhoodHeight_ / 2), 0);
-                int maxY = std::min(cy + (neighborhoodHeight_ / 2), input.rows - 1);
-
-                unsigned char minVal = std::numeric_limits<unsigned char>::max();
-                unsigned char maxVal = std::numeric_limits<unsigned char>::min();
-                for (int y = minY; y <= maxY; y++) {
-                    for (int x = minX; x <= maxX; x++) {
-                        minVal = std::min(minVal, input.at<unsigned char>(y, x));
-                        maxVal = std::max(maxVal, input.at<unsigned char>(y, x));
-                    }
-                }
-
-                output.at<unsigned char>(cy, cx) = static_cast<unsigned char>(
-                        255.0f * (input.at<unsigned char>(cy, cx) - minVal) / static_cast<float>(maxVal - minVal));
-            }
-        }
+        // TODO: direct implementation requires all computations to be performed in float space
+        // Can we do more without converting?
+        input.convertTo(inputFloatWorkspace_, CV_32FC1); 
+        cv::dilate(inputFloatWorkspace_, dilateWorkspace_, kernel_);
+        cv::erode(inputFloatWorkspace_, erodeWorkspace_, kernel_);
+        cv::divide(
+            (inputFloatWorkspace_ - erodeWorkspace_) * 255.0,
+            (dilateWorkspace_ - erodeWorkspace_),
+            normedWorkspace_);
+        normedWorkspace_.convertTo(output, CV_8UC1);
     }
 }
 
@@ -112,26 +106,22 @@ std::string ci::LocalNormalizeGene::generateCode(cc::CodeGenerationContext_t& co
     }; 
 
     codeTemplate 
-        << "for (int cy = 0; cy < $INPUT.rows; cy++) {\n"
-        << "  for (int cx = 0; cx < $INPUT.cols; cx++) {\n"
-        << "    int minX = std::max(cx - ($NW / 2), 0);\n"
-        << "    int maxX = std::max(cx - ($NW / 2), $INPUT.cols - 1);\n"
-        << "    int minY = std::max(cy - ($NH / 2), 0);\n"
-        << "    int maxY = std::max(cy - ($NH / 2), $INPUT.rows - 1);\n"
+        << "{\n"
+        << "  cv::Mat kernel = cv::Mat::ones($NH, $NW, CV_8UC1);\n"
+        << "  cv::Mat floatWorkspace;\n"
+        << "  cv::Mat dilateWorkspace;\n"
+        << "  cv::Mat erodeWorkspace;\n"
+        << "  cv::Mat normedWorkspace;\n"
         << "\n"
-        << "    unsigned char minVal = std::numeric_limits<unsigned char>::max();\n"
-        << "    unsigned char maxVal = std::numeric_limits<unsigned char>::min();\n"
-        << "    for (int y = minY; y <= maxY; y++) {\n"
-        << "      for (int x = minX; x <= maxX; x++) {\n"
-        << "        minVal = std::min(minVal, $INPUT.at<unsigned char>(y, x));\n"
-        << "        maxVal = std::max(maxVal, $INPUT.at<unsigned char>(y, x));\n"
-        << "      }\n"
-        << "    }\n"
-        << "\n"
-        << "    $OUTPUT.at<unsigned char>(cy, cx) = static_cast<unsigned char>(\n"
-        << "      255.0f * ($INPUT.at<unsigned char>(cy, cx) - minVal) / static_cast<float>(maxVal - minVal));\n"
-        << "  }\n"
-        << "}\n";
+        << "  $INPUT.convertTo(floatWorkspace, CV_32FC1);\n"
+        << "  cv::dilate(floatWorkspace, dilateWorkspace, kernel);\n"
+        << "  cv::erode(floatWorkspace, erodeWorkspace, kernel);\n"
+        << "  cv::divide(\n"
+        << "    (floatWorkspace - erodeWorkspace) * 255.0,\n"
+        << "    (dilateWorkspace - erodeWorkspace),\n"
+        << "    normedWorkspace);\n"
+        << "  normedWorkspace.convertTo($OUTPUT, CV_8UC1);\n"
+        << "};\n";
 
     std::string templateCode = codeTemplate.str();
     templateCode = replaceAllFxn(templateCode, "$OUTPUT", context.outputVariableName);
@@ -165,5 +155,9 @@ void ci::LocalNormalizeGene::mutateNeighborhoodHeight() {
     neighborhoodHeight_ = randomNumberGenerator_->getRandomInt(
         minNeighborhoodHeight_,
         maxNeighborhoodHeight_);
+}
+
+void ci::LocalNormalizeGene::refreshKernel() {
+    kernel_ = cv::Mat::ones(neighborhoodHeight_, neighborhoodWidth_, CV_32FC1);
 }
 

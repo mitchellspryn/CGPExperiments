@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <opencv2/core/core.hpp>
+
 #include "../../../core/include/Gene.hpp"
 
 namespace cgpExperiments {
@@ -36,8 +38,18 @@ class LocalNormalizeGene : public cgpExperiments::core::Gene {
         int maxNeighborhoodHeight_;
         int neighborhoodHeight_;
 
+        cv::Mat kernel_;
+
+        // Some buffers for performing repeated work.
+        cv::Mat inputFloatWorkspace_;
+        cv::Mat dilateWorkspace_;
+        cv::Mat erodeWorkspace_;
+        cv::Mat normedWorkspace_;
+
         void mutateNeighborhoodWidth();
         void mutateNeighborhoodHeight();
+
+        void refreshKernel();
 };
 
 }
