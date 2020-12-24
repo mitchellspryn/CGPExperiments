@@ -12,8 +12,12 @@
 #include "../fitCurve/include/FitCurveFitnessFunctionFactory.hpp"
 #include "../fitCurve/include/FitCurveGeneFactory.hpp"
 
+#include "../image/include/ImageFitnessFunctionFactory.hpp"
+#include "../image/include/ImageGeneFactory.hpp"
+
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
+namespace ci = cgpExperiments::image;
 
 std::shared_ptr<cc::ExperimentConfiguration> getExperimentConfiguration(
         const std::string& jsonFileName) {
@@ -24,6 +28,8 @@ std::shared_ptr<cc::GeneFactory> createGeneFactory(
         const std::string& geneSet) {
     if (strncasecmp(geneSet.c_str(), "fitcurve", 9) == 0) {
         return std::make_shared<fc::FitCurveGeneFactory>();
+    } else if (strncasecmp(geneSet.c_str(), "image", 9) == 0) {
+        return std::make_shared<ci::ImageGeneFactory>();
     }
 
     throw std::runtime_error(
@@ -36,6 +42,8 @@ std::shared_ptr<cc::FitnessFunctionFactory> createFitnessFunctionFactory(
         const std::string& geneSet) {
     if (strncasecmp(geneSet.c_str(), "fitcurve", 9) == 0) {
         return std::make_shared<fc::FitCurveFitnessFunctionFactory>();
+    } else if (strncasecmp(geneSet.c_str(), "image", 9) == 0) {
+        return std::make_shared<ci::ImageFitnessFunctionFactory>();
     }
 
     throw std::runtime_error(
