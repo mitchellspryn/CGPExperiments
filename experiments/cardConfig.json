@@ -163,13 +163,13 @@
         },
         "smoothBilateral": {
             "minD": 3,
-            "maxD": 16,
+            "maxD": 8,
             "minSigma": -16,
             "maxSigma": 16
         },
         "smoothMedian": {
             "minKernelSize": 3,
-            "maxKernelSize": 15
+            "maxKernelSize": 7
         },
         "sobel": {
         },
