@@ -9,6 +9,7 @@ class RandomNumberGenerator {
     public:
         RandomNumberGenerator(int seed);
 
+        void seed(int seed);
         float getRandomFloat();
         int getRandomInt(int lowerBoundInclusive, int upperBoundInclusive);
 

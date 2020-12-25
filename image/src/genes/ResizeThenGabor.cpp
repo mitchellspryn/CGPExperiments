@@ -206,25 +206,25 @@ std::string ci::ResizeThenGaborGene::generateCode(cc::CodeGenerationContext_t& c
 std::unordered_map<std::string, std::string> ci::ResizeThenGaborGene::serializeInternal() const {
     std::unordered_map<std::string, std::string> tmp;
 
-    tmp["minSigma"] = minSigma_;
-    tmp["maxSigma"] = maxSigma_;
-    tmp["sigma"] = sigma_;
+    tmp["minSigma"] = std::to_string(minSigma_);
+    tmp["maxSigma"] = std::to_string(maxSigma_);
+    tmp["sigma"] = std::to_string(sigma_);
 
-    tmp["minTheta"] = minTheta_;
-    tmp["maxTheta"] = maxTheta_;
-    tmp["theta"] = theta_;
+    tmp["minTheta"] = std::to_string(minTheta_);
+    tmp["maxTheta"] = std::to_string(maxTheta_);
+    tmp["theta"] = std::to_string(theta_);
 
-    tmp["minLambda"] = minLambda_;
-    tmp["maxLambda"] = maxLambda_;
-    tmp["lambda"] = lambda_;
+    tmp["minLambda"] = std::to_string(minLambda_);
+    tmp["maxLambda"] = std::to_string(maxLambda_);
+    tmp["lambda"] = std::to_string(lambda_);
 
-    tmp["minGamma"] = minGamma_;
-    tmp["maxGamma"] = maxGamma_;
-    tmp["gamma"] = gamma_;
+    tmp["minGamma"] = std::to_string(minGamma_);
+    tmp["maxGamma"] = std::to_string(maxGamma_);
+    tmp["gamma"] = std::to_string(gamma_);
 
-    tmp["minScale"] = minScale_;
-    tmp["maxScale"] = maxScale_;
-    tmp["scale"] = scale_;
+    tmp["minScale"] = std::to_string(minScale_);
+    tmp["maxScale"] = std::to_string(maxScale_);
+    tmp["scale"] = std::to_string(scale_);
 
     return tmp;
 }

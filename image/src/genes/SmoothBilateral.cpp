@@ -101,13 +101,13 @@ std::string ci::SmoothBilateralGene::generateCode(cc::CodeGenerationContext_t& c
 std::unordered_map<std::string, std::string> ci::SmoothBilateralGene::serializeInternal() const {
     std::unordered_map<std::string, std::string> tmp;
 
-    tmp["minD"] = minD_;
-    tmp["maxD"] = maxD_;
-    tmp["d"] = d_;
+    tmp["minD"] = std::to_string(minD_);
+    tmp["maxD"] = std::to_string(maxD_);
+    tmp["d"] = std::to_string(d_);
 
-    tmp["minSigma"] = minSigma_;
-    tmp["maxSigma"] = maxSigma_;
-    tmp["sigma"] = sigma_;
+    tmp["minSigma"] = std::to_string(minSigma_);
+    tmp["maxSigma"] = std::to_string(maxSigma_);
+    tmp["sigma"] = std::to_string(sigma_);
 
     return tmp;
 }

@@ -10,6 +10,11 @@ cc::RandomNumberGenerator::RandomNumberGenerator(int seed) {
     floatDistribution_ = std::uniform_real_distribution<float>(0, 1);
 }
 
+void cc::RandomNumberGenerator::seed(int seed) {
+    generator_.seed(seed);
+    floatDistribution_ = std::uniform_real_distribution<float>(0, 1);
+}
+
 float cc::RandomNumberGenerator::getRandomFloat() {
     float f = floatDistribution_(generator_);
     return f;

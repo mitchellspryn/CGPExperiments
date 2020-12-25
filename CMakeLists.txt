@@ -74,3 +74,14 @@ add_executable(DisplayImages
 target_link_libraries(DisplayImages
     ${OpenCV_LIBRARIES}
 )
+
+add_executable(GenePerfTest
+    application/genePerfTest.cpp
+    ${core_SRC}
+    ${fitCurve_SRC}
+    ${image_SRC}
+)
+
+target_link_libraries(GenePerfTest
+    ${OpenCV_LIBRARIES}
+)

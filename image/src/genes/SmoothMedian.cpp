@@ -86,9 +86,9 @@ std::string ci::SmoothMedianGene::generateCode(cc::CodeGenerationContext_t& cont
 std::unordered_map<std::string, std::string> ci::SmoothMedianGene::serializeInternal() const {
     std::unordered_map<std::string, std::string> tmp;
 
-    tmp["minKernelSize"] = minKernelSize_;
-    tmp["maxKernelSize"] = maxKernelSize_;
-    tmp["kernelSize"] = kernelSize_;
+    tmp["minKernelSize"] = std::to_string(minKernelSize_);
+    tmp["maxKernelSize"] = std::to_string(maxKernelSize_);
+    tmp["kernelSize"] = std::to_string(kernelSize_);
 
     return tmp;
 }
