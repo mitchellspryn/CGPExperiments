@@ -336,7 +336,7 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
                     << std::to_string(width)
                     << ", CV_8UC1);\n";
 
-                variableDeclarationStringStream << "    cv::Mat " << dataTypeName << ";\n";
+                variableDeclarationStringStream << "    cv::Mat " << variable << ";\n";
             } else {
                 constructorStringStream 
                     << "      " 

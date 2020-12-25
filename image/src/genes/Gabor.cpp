@@ -36,7 +36,7 @@ void ci::GaborGene::initializeParametersFromConfig(
     }
 
     if (geneParameters.count("gamma") > 0) {
-        gamma_ = std::stof(geneParameters.at("gamma_"));
+        gamma_ = std::stof(geneParameters.at("gamma"));
     } else {
         mutateGamma();
     }
