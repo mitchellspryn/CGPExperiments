@@ -54,7 +54,7 @@ std::shared_ptr<cc::FitnessFunctionFactory> createFitnessFunctionFactory(
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        std::cout << "Usage: ./trainCgp <experiment_config_file>" << std::endl;
+        std::cout << "Usage: ./TrainCgp <experiment_config_file>" << std::endl;
         return EXIT_FAILURE;
     }
 

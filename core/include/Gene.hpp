@@ -22,6 +22,7 @@ class Gene {
         virtual std::string generateCode(CodeGenerationContext_t& context) const = 0;
         virtual bool isParameterFree() const = 0;
         virtual int getNumInputs() const = 0;
+        virtual float getComputeCost() const = 0;
 
         const std::vector<int>& getInputBufferIndices() { return inputBufferIndices_; }
 

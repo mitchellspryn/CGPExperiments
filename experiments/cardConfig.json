@@ -162,7 +162,7 @@
             "maxHorizontalShift": 16
         },
         "smoothBilateral": {
-            "minD": -16,
+            "minD": 3,
             "maxD": 16,
             "minSigma": -16,
             "maxSigma": 16

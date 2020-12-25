@@ -52,7 +52,8 @@ void ci::SmoothBilateralGene::mutateParameters() {
     if (f < 0.5) { 
         mutateD();
     } else {
-        mutateSigma();
+        //mutateSigma();
+        mutateD();
     }
 }
 

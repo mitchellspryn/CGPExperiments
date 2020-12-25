@@ -155,7 +155,7 @@ void saveChunkToFile(
 
 int main(int argc, char** argv) {
     if (argc != 3) {
-        std::cout << "Usage: DumpBuffers <experimentConfig> <genotypeJson>\n";
+        std::cout << "Usage: ./DumpBuffers <experimentConfig> <genotypeJson>\n";
         return EXIT_FAILURE;
     }
 

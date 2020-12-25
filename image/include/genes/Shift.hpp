@@ -28,6 +28,7 @@ class ShiftGene : public cgpExperiments::core::Gene {
         virtual std::string generateCode(cgpExperiments::core::CodeGenerationContext_t& context) const override;
         virtual bool isParameterFree() const override { return false; }
         virtual int getNumInputs() const override { return 1; }
+        virtual float getComputeCost() const override { return 5319.0f; }
         virtual std::unordered_map<std::string, std::string> serializeInternal() const override;
     private:
         int minVerticalShift_;

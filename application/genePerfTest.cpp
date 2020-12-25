@@ -28,6 +28,8 @@ namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
 namespace ci = cgpExperiments::image;
 
+static constexpr int rngSeed = 42;
+
 typedef struct iterationParams {
     int numIterations;
     int numMutateIterations;
@@ -35,7 +37,7 @@ typedef struct iterationParams {
 } iterationParams_t;
 
 std::shared_ptr<cc::RandomNumberGenerator> createRandomNumberGenerator() {
-    return std::make_shared<cc::RandomNumberGenerator>(0);
+    return std::make_shared<cc::RandomNumberGenerator>(rngSeed);
 }
 
 std::shared_ptr<cc::ExperimentConfiguration> getExperimentConfiguration(
@@ -129,7 +131,7 @@ std::shared_ptr<cc::Gene> primeGeneForBenchmarking(
     std::shared_ptr<cc::Gene> gene = geneFactory->createGene(
         geneFactory->getTypeId(geneName));
 
-    randomNumberGenerator->seed(0);
+    randomNumberGenerator->seed(rngSeed);
     gene->setRandomNumberGenerator(randomNumberGenerator.get());
 
     gene->initializeFromParameters(config->getGeneParameters(geneName));
@@ -181,7 +183,7 @@ void benchmarkGene(
 
 int main(int argc, char** argv) {
     if (argc != 6) {
-        std::cout << "Usage: ./trainCgp <experiment_config_file> <num_iterations> <num_mutate_iterations> <num_warmup_iterations> <output_filename>" << std::endl;
+        std::cout << "Usage: ./GenePerfTest <experiment_config_file> <num_iterations> <num_mutate_iterations> <num_warmup_iterations> <output_filename>" << std::endl;
         return EXIT_FAILURE;
     }
 
