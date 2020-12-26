@@ -6,11 +6,11 @@
 namespace cgpExperiments {
 namespace image {
 
-static constexpr const char* kMCCFitnessFunctionName = "mcc";
+static constexpr const char* kMccFitnessFunctionName = "mcc";
 
-class MCCFitnessFunction : public cgpExperiments::core::FitnessFunction {
+class MccFitnessFunction : public cgpExperiments::core::FitnessFunction {
     public:
-        virtual ~MCCFitnessFunction() override {};
+        virtual ~MccFitnessFunction() override {};
         virtual double evaluate(
             const cgpExperiments::core::DataChunk& predictions, 
             const cgpExperiments::core::DataChunk& labels, 

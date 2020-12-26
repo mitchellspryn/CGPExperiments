@@ -53,7 +53,7 @@ const std::vector<std::unique_ptr<cc::Gene>>& cc::Genotype::getGenes() const {
     return genes_; 
 }
 
-const std::unordered_set<int> cc::Genotype::getActiveGenes() const {
+const std::unordered_set<int>& cc::Genotype::getActiveGenes() const {
     return activeGenes_;
 }
 

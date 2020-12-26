@@ -27,7 +27,8 @@
         "mutationType": "singleActive"
     },
     "fitnessFunctionParameters": {
-        "name": "mcc"
+        "name": "mccperf",
+        "lambda": 0.0001
     },
     "genePoolParameters": {
         "initialPoolSize": 1

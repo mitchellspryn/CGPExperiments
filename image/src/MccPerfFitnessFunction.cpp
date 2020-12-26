@@ -1,14 +1,30 @@
-#include "../include/MCCFitnessFunction.hpp"
+#include "../include/MccPerfFitnessFunction.hpp"
 
 #include <cmath>
+#include <memory>
+#include <vector>
 
 namespace cc = cgpExperiments::core;
 namespace ci = cgpExperiments::image;
 
-double ci::MCCFitnessFunction::evaluate(
-    const cc::DataChunk& predictions,
-    const cc::DataChunk& labels,
-    const cc::Genotype& genotype) {
+ci::MccPerfFitnessFunction::MccPerfFitnessFunction(
+        const std::unordered_map<std::string, std::string>& parameters) {
+    lambda_ = std::stod(parameters.at("lambda"));
+}
+
+double ci::MccPerfFitnessFunction::evaluate(
+        const cc::DataChunk& predictions,
+        const cc::DataChunk& labels,
+        const cc::Genotype& genotype) {
+    double mccLoss = computeMccLoss(predictions, labels);
+    double perfLoss = computePerfLoss(genotype);
+
+    return mccLoss + (lambda_ * perfLoss);
+}
+
+double ci::MccPerfFitnessFunction::computeMccLoss(
+        const cc::DataChunk& predictions,
+        const cc::DataChunk& labels) {
 
     // (True/False) (Positive/Negative)
     long long tp = 0;
@@ -56,4 +72,16 @@ double ci::MCCFitnessFunction::evaluate(
     double fitness = 1.0 - std::abs(mcc);
 
     return fitness;
+}
+
+double ci::MccPerfFitnessFunction::computePerfLoss(const cc::Genotype& genotype) {
+    const std::vector<std::unique_ptr<cc::Gene>>& genes = genotype.getGenes();
+    const std::unordered_set<int>& activeGenes = genotype.getActiveGenes();
+
+    double cost = 0;
+    for (const int index : activeGenes) {
+        cost += genes[index]->getComputeCost();
+    }
+
+    return cost;
 }

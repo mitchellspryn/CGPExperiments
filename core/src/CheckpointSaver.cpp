@@ -15,7 +15,7 @@ cc::CheckpointSaver::CheckpointSaver(
     parseParameters(checkpointSaverParameters);
 
     // If the directory exists, does nothing.
-    std::filesystem::create_directory(outputRootDirectory_);
+    std::filesystem::create_directories(outputRootDirectory_);
 
     // Write log header.
     logFileName_ = outputRootDirectory_ + "/log.txt";

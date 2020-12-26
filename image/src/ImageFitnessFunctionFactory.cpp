@@ -1,5 +1,6 @@
 #include "../include/ImageFitnessFunctionFactory.hpp"
-#include "../include/MCCFitnessFunction.hpp"
+#include "../include/MccFitnessFunction.hpp"
+#include "../include/MccPerfFitnessFunction.hpp"
 #include "../include/L1FitnessFunction.hpp"
 #include "../include/L2FitnessFunction.hpp"
 
@@ -18,8 +19,10 @@ std::unique_ptr<cc::FitnessFunction> ci::ImageFitnessFunctionFactory::create(
 
     std::string fitnessFunctionName = fitnessFunctionParameters.at("name");
     const char* name = fitnessFunctionName.c_str();
-    if (strncasecmp(name, ci::kMCCFitnessFunctionName, 4) == 0) {
-        return std::make_unique<ci::MCCFitnessFunction>();
+    if (strncasecmp(name, ci::kMccFitnessFunctionName, 4) == 0) {
+        return std::make_unique<ci::MccFitnessFunction>();
+    } else if (strncasecmp(name, ci::kMccPerfFitnessFunctionName, 4) == 0) {
+        return std::make_unique<ci::MccPerfFitnessFunction>(fitnessFunctionParameters); 
     } else if (strncasecmp(name, ci::kL1FitnessFunctionName, 4) == 0) {
         return std::make_unique<ci::L1FitnessFunction>();
     } else if (strncasecmp(name, ci::kL2FitnessFunctionName, 4) == 0) {
