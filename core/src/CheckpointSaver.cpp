@@ -33,7 +33,8 @@ cc::CheckpointSaver::CheckpointSaver(
 void cc::CheckpointSaver::saveCheckpoint(
         const cc::CheckpointLogInformation_t& checkpointLogInformation,
         const cc::Genotype& bestGenotype,
-        const cc::DataChunk& predictions) {
+        const cc::DataChunk& predictions,
+        const std::vector<std::string>& inputDataSetNames) {
     appendLogInformation(checkpointLogInformation);
 
     std::string iterationDirectory = outputRootDirectory_ + "/";
@@ -53,7 +54,7 @@ void cc::CheckpointSaver::saveCheckpoint(
     }
 
     if (generateImage_) {
-        saveGenotypeImage(iterationDirectory, bestGenotype);
+        saveGenotypeImage(iterationDirectory, bestGenotype, inputDataSetNames);
     }
 
     if (generatePredictions_) {
@@ -112,15 +113,16 @@ void cc::CheckpointSaver::saveGenotypeToCode(
 
 void cc::CheckpointSaver::saveGenotypeImage(
         const std::string& outputDirectory, 
-        const cc::Genotype& genotype) {
+        const cc::Genotype& genotype,
+        const std::vector<std::string>& inputDataSetNames) {
     // TODO: should we allow active visibility to be togglable?
     std::string activeDotFilePath = outputDirectory + "/dotActiveGenes.gv";
     std::string allDotFilePath = outputDirectory + "/dotAllGenes.gv";
     std::string activeImagePath = outputDirectory + "/picActiveGenes.png";
     std::string allImagePath = outputDirectory + "/picAllGenes.png";
 
-    std::string activeDotFileText = genotype.generateDotFile(false);
-    std::string allDotFileText = genotype.generateDotFile(true);
+    std::string activeDotFileText = genotype.generateDotFile(false, inputDataSetNames);
+    std::string allDotFileText = genotype.generateDotFile(true, inputDataSetNames);
 
     {
         std::ofstream activeStream(activeDotFilePath);

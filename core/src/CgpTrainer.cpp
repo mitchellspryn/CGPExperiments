@@ -33,6 +33,8 @@ cc::CgpTrainer::CgpTrainer(
             std::make_shared<cc::DataChunkProvider>(
                 inputDataChunkParameters[i],
                 std::make_shared<cc::RandomNumberGenerator>(rngSeed_)));
+
+        inputDataSetNames_.emplace_back(inputDataChunkParameters[i]["displayName"]);
         
         rngSeed_++;
     }
@@ -123,7 +125,8 @@ void cc::CgpTrainer::run() {
             checkpointSaver_->saveCheckpoint(
                 checkpointInformation, 
                 bestGenotype, 
-                islands_[bestIslandIndex_]->getBestPredictions());
+                islands_[bestIslandIndex_]->getBestPredictions(),
+                inputDataSetNames_);
         }
 
         if ((consoleFrequency_ > 0)
@@ -154,7 +157,8 @@ void cc::CgpTrainer::run() {
     checkpointSaver_->saveCheckpoint(
         finalCpInformation, 
         endingGenotype,
-        islands_[bestIslandIndex_]->getBestPredictions());
+        islands_[bestIslandIndex_]->getBestPredictions(),
+        inputDataSetNames_);
 }
 
 const cc::Genotype& cc::CgpTrainer::getBestGenotype() {

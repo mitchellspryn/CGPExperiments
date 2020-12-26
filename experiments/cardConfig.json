@@ -201,37 +201,44 @@
         {
             "sampleWidth": 500,
             "sampleHeight": 500,
-            "fileName": "/mnt/data_disk/cgpData/card/card_r.dat"
+            "fileName": "/mnt/data_disk/cgpData/card/card_r.dat",
+            "displayName": "red"
         },
         {
             "sampleWidth": 500,
             "sampleHeight": 500,
-            "fileName": "/mnt/data_disk/cgpData/card/card_g.dat"
+            "fileName": "/mnt/data_disk/cgpData/card/card_g.dat",
+            "displayName": "green"
         },
         {
             "sampleWidth": 500,
             "sampleHeight": 500,
-            "fileName": "/mnt/data_disk/cgpData/card/card_b.dat"
+            "fileName": "/mnt/data_disk/cgpData/card/card_b.dat",
+            "displayName": "blue"
         },
         {
             "sampleWidth": 500,
             "sampleHeight": 500,
-            "fileName": "/mnt/data_disk/cgpData/card/card_h.dat"
+            "fileName": "/mnt/data_disk/cgpData/card/card_h.dat",
+            "displayName": "hue"
         },
         {
             "sampleWidth": 500,
             "sampleHeight": 500,
-            "fileName": "/mnt/data_disk/cgpData/card/card_l.dat"
+            "fileName": "/mnt/data_disk/cgpData/card/card_l.dat",
+            "displayName": "luminance"
         },
         {
             "sampleWidth": 500,
             "sampleHeight": 500,
-            "fileName": "/mnt/data_disk/cgpData/card/card_s.dat"
+            "fileName": "/mnt/data_disk/cgpData/card/card_s.dat",
+            "displayName": "saturation"
         },
         {
             "sampleWidth": 500,
             "sampleHeight": 500,
-            "fileName": "/mnt/data_disk/cgpData/card/card_gray.dat"
+            "fileName": "/mnt/data_disk/cgpData/card/card_gray.dat",
+            "displayName": "grayscale"
         }
     ]
 }

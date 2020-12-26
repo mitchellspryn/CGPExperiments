@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "DataChunk.hpp"
 #include "Genotype.hpp"
@@ -24,7 +25,8 @@ class CheckpointSaver {
         void saveCheckpoint(
                 const CheckpointLogInformation_t& checkpointLogInformation,
                 const Genotype& bestGenotype,
-                const DataChunk& predictions);
+                const DataChunk& predictions,
+                const std::vector<std::string>& inputDataSetNames);
     private:
         std::string outputRootDirectory_;
         std::string logFileName_;
@@ -48,7 +50,8 @@ class CheckpointSaver {
 
         void saveGenotypeImage(
                 const std::string& outputDirectory,
-                const Genotype& genotype);
+                const Genotype& genotype,
+                const std::vector<std::string>& inputDataSetNames);
 
         void savePredictions(
                 const std::string& outputDirectory,

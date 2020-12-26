@@ -51,6 +51,8 @@ class CgpTrainer {
 
         std::unique_ptr<CheckpointSaver> checkpointSaver_;
 
+        std::vector<std::string> inputDataSetNames_;
+
         void fillParametersFromMap(const std::unordered_map<std::string, std::string>& parameters);
 };
 

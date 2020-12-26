@@ -65,7 +65,8 @@
         {
             "sampleWidth": 1,
             "sampleHeight": 1,
-            "fileName": "x.dat"
+            "fileName": "x.dat",
+            "displayName": "x"
         }
     ]
 }

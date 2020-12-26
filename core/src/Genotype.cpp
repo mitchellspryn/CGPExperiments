@@ -381,7 +381,9 @@ std::string cc::Genotype::generateCode(cc::CodeGenerationContext_t& context) con
     return outputStream.str();
 }
 
-std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
+std::string cc::Genotype::generateDotFile(
+        bool includeUnusedNodes,
+        const std::vector<std::string>& inputDataSetNames) const {
     std::stringstream outputStream;
     outputStream << "digraph graphname {\n";
     outputStream << "  size=\"1000, 1000\";\n";
@@ -390,8 +392,8 @@ std::string cc::Genotype::generateDotFile(bool includeUnusedNodes) const {
         outputStream 
             << "  "
             << std::to_string(i)
-            << " [label=\"in:"
-            << std::to_string(i)
+            << " [label=\""
+            << inputDataSetNames[i]
             << "\", shape=\"ellipse\", style=\"filled\", fillcolor=\"azure\"];\n";
     }
 
