@@ -1,0 +1,66 @@
+{
+    "geneset": "fitcurve",
+    "dataType": "float",
+    "trainerParameters": {
+        "maxNumThreads": 8,
+        "numIslands": 16,
+        "rngSeed": 1234,
+        "terminationFitness": 0.00001,
+        "terminationNumEpochs": 10000,
+        "checkpointFrequency": 100,
+        "consoleFrequency": 10
+    },
+    "islandParameters": {
+        "numGenotypes": 5,
+        "numIterationsPerEpoch": 2000,
+        "numEvaluationSamples": 200,
+        "evalStartIndex": 0
+    },
+    "genotypeParameters": {
+        "geneGridWidth": 100,
+        "geneGridHeight": 1,
+        "maxLookback": 100,
+        "numInputDatasets": 1,
+        "inputDataWidth": 1,
+        "inputDataHeight": 1,
+        "inputDataNumSamples": 200,
+        "mutationType": "singleActive"
+    },
+    "fitnessFunctionParameters": {
+        "name": "l2"
+    },
+    "genePoolParameters": {
+        "initialPoolSize": 1
+    },
+    "checkpointSaverParameters": {
+        "outputDirectory": "genesetExperiments/sparse/0",
+        "generateCode": true,
+        "generateImage": true,
+        "generatePredictions": true
+    },
+    "geneParameters": {
+        "add": {
+        },
+        "constantOutput": {
+            "maxValue": 5,
+            "minValue": -5
+        },
+        "sin": {
+        },
+        "multiply": {
+        }
+    },
+    "labelDataChunkParameters": {
+        "sampleWidth": 1,
+        "sampleHeight": 1,
+        "fileName": "y.dat"
+    },
+    "inputDataChunkParameters": [
+        {
+            "sampleWidth": 1,
+            "sampleHeight": 1,
+            "fileName": "x.dat",
+            "displayName": "x"
+        }
+    ]
+}
