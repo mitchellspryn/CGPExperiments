@@ -47,6 +47,7 @@ def main():
 
     for experiment in experiments:
         run_experiment_file(experiment)
+        time.sleep(5)
 
     print('Done!')
 
