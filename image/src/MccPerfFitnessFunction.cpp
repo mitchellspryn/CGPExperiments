@@ -7,6 +7,10 @@
 namespace cc = cgpExperiments::core;
 namespace ci = cgpExperiments::image;
 
+ci::MccPerfFitnessFunction::MccPerfFitnessFunction(double lambda) {
+    lambda_ = lambda;
+}
+
 ci::MccPerfFitnessFunction::MccPerfFitnessFunction(
         const std::unordered_map<std::string, std::string>& parameters) {
     lambda_ = std::stod(parameters.at("lambda"));

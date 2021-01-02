@@ -1,0 +1,245 @@
+{
+    "geneset": "image",
+    "dataType": "uint8",
+    "trainerParameters": {
+        "maxNumThreads": 8,
+        "numIslands": 12,
+        "rngSeed": 2345,
+        "terminationFitness": 0.00001,
+        "terminationNumEpochs": 200,
+        "checkpointFrequency": 1,
+        "consoleFrequency": 1
+    },
+    "islandParameters": {
+        "numGenotypes": 5,
+        "numIterationsPerEpoch": 100,
+        "numEvaluationSamples": 9,
+        "evalStartIndex": 0
+    },
+    "genotypeParameters": {
+        "geneGridWidth": 100,
+        "geneGridHeight": 1,
+        "maxLookback": 100,
+        "numInputDatasets": 7,
+        "inputDataWidth": 500,
+        "inputDataHeight": 500,
+        "inputDataNumSamples": 9,
+        "mutationType": "singleActive"
+    },
+    "fitnessFunctionParameters": {
+        "name": "mccperf",
+        "lambda": 0.00005
+    },
+    "genePoolParameters": {
+        "initialPoolSize": 1
+    },
+    "checkpointSaverParameters": {
+        "outputDirectory": "multiObjectiveExperiments/0.00005/1",
+        "generateCode": true,
+        "generateImage": true,
+        "generatePredictions": true
+    },
+    "geneParameters": {
+        "absDifference": {
+        },
+        "addC": {
+            "minValue": -255,
+            "maxValue": 255
+        },
+        "add": {
+        },
+        "average": {
+        },
+        "averageValue": {
+        },
+        "canny": {
+            "minLowerThresh": 50,
+            "maxLowerThresh": 125,
+            "minUpperThresh": 175,
+            "maxUpperThresh": 200
+        },
+        "constantOutput": {
+            "minValue": 0,
+            "maxValue": 255
+        },
+        "dilate": {
+            "minNumIterations": 1,
+            "maxNumIterations": 3
+        },
+        "erode": {
+            "minNumIterations": 1,
+            "maxNumIterations": 3
+        },
+        "exp": {
+        },
+        "gabor": {
+            "minSigma": 0,
+            "maxSigma": 16,
+            "minTheta": -8,
+            "maxTheta": 8,
+            "minLambda": "5",
+            "maxLambda": "15",
+            "minGamma": 0,
+            "maxGamma": 1
+        },
+        "gaussianBlur": {
+            "minX": 3,
+            "maxX": 15,
+            "minY": 3,
+            "maxY": 15
+        },
+        "laplace": {
+        },
+        "localAverage": {
+            "minNeighborhoodWidth": 2,
+            "maxNeighborhoodWidth": 32,
+            "minNeighborhoodHeight": 2,
+            "maxNeighborhoodHeight": 32
+        },
+        "localMax": {
+            "minNeighborhoodWidth": 2,
+            "maxNeighborhoodWidth": 32,
+            "minNeighborhoodHeight": 2,
+            "maxNeighborhoodHeight": 32
+        },
+        "localMin": {
+            "minNeighborhoodWidth": 2,
+            "maxNeighborhoodWidth": 32,
+            "minNeighborhoodHeight": 2,
+            "maxNeighborhoodHeight": 32
+        },
+        "localNormalize": {
+            "minNeighborhoodWidth": 2,
+            "maxNeighborhoodWidth": 32,
+            "minNeighborhoodHeight": 2,
+            "maxNeighborhoodHeight": 32
+        },
+        "log": {
+        },
+        "maxC": {
+            "minValue": 0,
+            "maxValue": 255
+        },
+        "max": {
+        },
+        "maxValue": {
+        },
+        "minC": {
+            "minValue": 0,
+            "maxValue": 255
+        },
+        "min": {
+        },
+        "minValue": {
+        },
+        "multiplyC": {
+            "minValue": 0,
+            "maxValue": 255
+        },
+        "multiply": {
+        },
+        "normalize": {
+        },
+        "rescale": {
+            "minScale": 2,
+            "maxScale": 10
+        },
+        "resizeThenGabor": {
+            "minSigma": 0,
+            "maxSigma": 16,
+            "minTheta": -8,
+            "maxTheta": 8,
+            "minLambda": "5",
+            "maxLambda": "15",
+            "minGamma": 0,
+            "maxGamma": 1,
+            "minScale": 2,
+            "maxScale": 10
+        },
+        "shift": {
+            "minVerticalShift": -16,
+            "maxVerticalShift": 16,
+            "minHorizontalShift": -16,
+            "maxHorizontalShift": 16
+        },
+        "smoothBilateral": {
+            "minD": 3,
+            "maxD": 8,
+            "minSigma": -16,
+            "maxSigma": 16
+        },
+        "smoothMedian": {
+            "minKernelSize": 3,
+            "maxKernelSize": 7
+        },
+        "sobel": {
+        },
+        "sobelX": {
+        },
+        "sobelY": {
+        },
+        "sqrt": {
+        },
+        "subtractC": {
+            "minValue": -255,
+            "maxValue": 255
+        },
+        "subtract": {
+        },
+        "threshold": {
+            "minThresh": 75,
+            "maxThresh": 200
+        },
+        "unsharpen": {
+        }
+    },
+    "labelDataChunkParameters": {
+        "sampleWidth": 500,
+        "sampleHeight": 500,
+        "fileName": "/mnt/data_disk/cgpData/card/card_label.dat"
+    },
+    "inputDataChunkParameters": [
+        {
+            "sampleWidth": 500,
+            "sampleHeight": 500,
+            "fileName": "/mnt/data_disk/cgpData/card/card_r.dat",
+            "displayName": "red"
+        },
+        {
+            "sampleWidth": 500,
+            "sampleHeight": 500,
+            "fileName": "/mnt/data_disk/cgpData/card/card_g.dat",
+            "displayName": "green"
+        },
+        {
+            "sampleWidth": 500,
+            "sampleHeight": 500,
+            "fileName": "/mnt/data_disk/cgpData/card/card_b.dat",
+            "displayName": "blue"
+        },
+        {
+            "sampleWidth": 500,
+            "sampleHeight": 500,
+            "fileName": "/mnt/data_disk/cgpData/card/card_h.dat",
+            "displayName": "hue"
+        },
+        {
+            "sampleWidth": 500,
+            "sampleHeight": 500,
+            "fileName": "/mnt/data_disk/cgpData/card/card_l.dat",
+            "displayName": "luminance"
+        },
+        {
+            "sampleWidth": 500,
+            "sampleHeight": 500,
+            "fileName": "/mnt/data_disk/cgpData/card/card_s.dat",
+            "displayName": "saturation"
+        },
+        {
+            "sampleWidth": 500,
+            "sampleHeight": 500,
+            "fileName": "/mnt/data_disk/cgpData/card/card_gray.dat",
+            "displayName": "grayscale"
+        }
+    ]
+}

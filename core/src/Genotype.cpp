@@ -597,18 +597,22 @@ void cc::Genotype::fillParametersFromMap(
                 + ".");
     }
 
-    genes_.reserve(geneGridWidth_ * geneGridHeight_);
-    for (size_t i = 0; i < (geneGridWidth_ * geneGridHeight_); i++) {
-        std::unique_ptr<cc::Gene> gp(nullptr);
+    if (genes_.size() == 0) {
+        genes_.reserve(geneGridWidth_ * geneGridHeight_);
+        for (size_t i = 0; i < (geneGridWidth_ * geneGridHeight_); i++) {
+            std::unique_ptr<cc::Gene> gp(nullptr);
 
-        genes_.emplace_back(std::move(gp));
+            genes_.emplace_back(std::move(gp));
+        }
     }
 
-    buffers_.reserve(genes_.size() + numInputDatasets_);
-    for (int i = 0; i < genes_.size() + numInputDatasets_; i++) {
-        buffers_.emplace_back(
-            std::make_unique<cc::DataChunk>(
-                inputDataWidth_, inputDataHeight_, inputDataNumSamples_, dataTypeSize_));
+    if (buffers_.size() == 0) {
+        buffers_.reserve(genes_.size() + numInputDatasets_);
+        for (int i = 0; i < genes_.size() + numInputDatasets_; i++) {
+            buffers_.emplace_back(
+                std::make_unique<cc::DataChunk>(
+                    inputDataWidth_, inputDataHeight_, inputDataNumSamples_, dataTypeSize_));
+        }
     }
 
     if (params.count("outputBufferIndex") > 0) {

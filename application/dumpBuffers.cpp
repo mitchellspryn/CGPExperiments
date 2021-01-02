@@ -24,6 +24,9 @@
 #include "../image/include/ImageFitnessFunctionFactory.hpp"
 #include "../image/include/ImageGeneFactory.hpp"
 
+// A hack, but gets us the data we want
+#include "../image/include/MccPerfFitnessFunction.hpp"
+
 namespace cc = cgpExperiments::core;
 namespace fc = cgpExperiments::fitCurve;
 namespace ci = cgpExperiments::image;
@@ -107,10 +110,13 @@ std::shared_ptr<cc::Genotype> createGenotype(
     return genotype;
 }
 
-const cc::DataChunk& runPredictions(
+const cc::DataChunk& runPredictionsAndGetLosses(
         std::shared_ptr<cc::Genotype> genotype,
         std::shared_ptr<cc::ExperimentConfiguration> experimentConfiguration,
-        std::shared_ptr<cc::RandomNumberGenerator> randomNumberGenerator) {
+        std::shared_ptr<cc::RandomNumberGenerator> randomNumberGenerator,
+        bool computeLosses,
+        double& mccLoss,
+        double& perfLoss) {
     const std::unordered_map<std::string, std::string> genotypeParameters = 
         experimentConfiguration->getGenotypeParameters();
 
@@ -127,6 +133,11 @@ const cc::DataChunk& runPredictions(
                 randomNumberGenerator));
     }
 
+    std::shared_ptr<cc::DataChunkProvider> labelProvider = 
+        std::make_shared<cc::DataChunkProvider>(
+            experimentConfiguration->getLabelDataChunkProviderParameters(),
+            randomNumberGenerator);
+
     std::vector<std::shared_ptr<cc::DataChunk>> inputDataChunks;
     for (int i = 0; i < expectedNumDatasets; i++) {
         inputDataChunks.emplace_back(
@@ -139,7 +150,26 @@ const cc::DataChunk& runPredictions(
         providers[i]->getRandomChunk(*inputDataChunks[i], 0);
     }
 
-    return genotype->evaluate(inputDataChunks);
+    std::shared_ptr<cc::DataChunk> labelDataChunk
+        = std::make_shared<cc::DataChunk>(
+            std::stoi(genotypeParameters.at("inputDataWidth")),
+            std::stoi(genotypeParameters.at("inputDataHeight")),
+            std::stoi(genotypeParameters.at("inputDataNumSamples")),
+            experimentConfiguration->getDataTypeSize());
+
+    labelProvider->getRandomChunk(*labelDataChunk, 0);
+
+    const cc::DataChunk& predictions = genotype->evaluate(inputDataChunks);
+
+    if (computeLosses) {
+        std::shared_ptr<ci::MccPerfFitnessFunction> perfFitnessFunction =
+            std::make_shared<ci::MccPerfFitnessFunction>(0);
+
+        mccLoss = perfFitnessFunction->computeMccLoss(predictions, *labelDataChunk);
+        perfLoss = perfFitnessFunction->computePerfLoss(*genotype);
+    }
+
+    return predictions;
 }
 
 void saveChunkToFile(
@@ -188,8 +218,17 @@ int main(int argc, char** argv) {
         genotypeParams);
 
     std::cout << "Running prediction..." << std::endl;
+    double mccLoss = 0;
+    double perfLoss = 0;
+    bool computeLosses = (strncasecmp(geneSet.c_str(), "image", 9) == 0);
     const cc::DataChunk& prediction = 
-        runPredictions(genotype, experimentConfiguration, randomNumberGenerator);
+        runPredictionsAndGetLosses(
+            genotype, 
+            experimentConfiguration, 
+            randomNumberGenerator,
+            computeLosses,
+            mccLoss,
+            perfLoss);
 
     std::cout << "Dumping buffers..." << std::endl;
     const std::vector<std::shared_ptr<cc::DataChunk>> buffers = 
@@ -206,6 +245,17 @@ int main(int argc, char** argv) {
     }
 
     saveChunkToFile(folderName + "predictions" + extension, prediction);
+
+    if (computeLosses) {
+        std::cout << "Dumping losses...\n";
+        std::ofstream lossStream("dump/losses.txt", std::ios::out);
+        if (!lossStream.good()) {
+            throw std::runtime_error("Can't open loss stream.");
+        }
+
+        lossStream << "perf,mcc\n";
+        lossStream << perfLoss << "," << mccLoss << "\n";
+    }
 
     std::cout << "Graceful termination." << std::endl;
     return EXIT_SUCCESS;
