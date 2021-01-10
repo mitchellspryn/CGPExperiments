@@ -5,6 +5,10 @@
 namespace cgpExperiments {
 namespace core {
 
+// A random number generator wrapper.
+// A single instance should be created and used in all classes requiring RNG.
+//
+// This will allow determinism if single-threading is used.
 class RandomNumberGenerator {
     public:
         RandomNumberGenerator(int seed);

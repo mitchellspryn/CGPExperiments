@@ -1,3 +1,5 @@
+# A quick script that can be used to generate the image visualization used in the blog post.
+
 import subprocess
 import os
 import argparse

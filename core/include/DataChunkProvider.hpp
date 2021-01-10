@@ -11,6 +11,8 @@
 namespace cgpExperiments {
 namespace core {
 
+// A class that can fill a datachunk with data.
+// The current implementation copies data from a memory-mapped file.
 class DataChunkProvider {
     public:
         DataChunkProvider(

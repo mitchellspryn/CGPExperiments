@@ -1,3 +1,5 @@
+# A quick script to collect the data necesary to perform the multi objective loss analysis from the completed experiments.
+
 import subprocess
 import numpy as np
 import pandas as pd

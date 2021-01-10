@@ -6,6 +6,7 @@
 namespace cgpExperiments {
 namespace core {
 
+// A class representing a chunk of data that can be an input/output to a gene.
 class DataChunk {
     public:
         DataChunk(int width, int height, int num, int dataTypeSize);

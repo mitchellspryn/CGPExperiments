@@ -17,6 +17,7 @@ typedef struct CheckpointLogInformation {
     bool isFinal;
 } CheckpointLogInformation_t;
 
+// A class used to checkpoint the progress of training.
 class CheckpointSaver {
     public:
         CheckpointSaver(

@@ -17,6 +17,7 @@
 namespace cgpExperiments {
 namespace core {
 
+// A class that can run the CGP training program.
 class CgpTrainer {
     public:
         CgpTrainer(

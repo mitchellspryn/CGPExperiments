@@ -54,7 +54,7 @@ void cc::Island::runEpoch() {
     // But, if the genes do not modify the input buffers (as they should not),
     // then we can do it once on the outside. 
     //
-    // We should figure out a way to make this enforcable by the compiler.
+    // We should figure out a way to make this enforceable by the compiler.
     int chunkStartIndex = evalStartIndex_;
     if (chunkStartIndex < 0) {
         chunkStartIndex = 

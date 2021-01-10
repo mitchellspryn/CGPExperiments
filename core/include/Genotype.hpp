@@ -23,6 +23,7 @@ enum class MutationType {
     SingleActive
 };
 
+// A class representing a CGP genotype
 class Genotype {
     public:
         Genotype(

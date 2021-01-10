@@ -7,6 +7,7 @@
 namespace cgpExperiments {
 namespace core {
 
+// A class representing the experiment configuration.
 class ExperimentConfiguration {
     public:
         ExperimentConfiguration(const std::string& inputJsonFilePath); 

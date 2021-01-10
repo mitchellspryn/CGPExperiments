@@ -18,6 +18,7 @@
 namespace cgpExperiments {
 namespace core {
 
+// A class representing an island used during training.
 class Island {
     public:
         Island(
