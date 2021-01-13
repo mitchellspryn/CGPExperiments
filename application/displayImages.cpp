@@ -11,6 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 namespace cc = cgpExperiments::core;
 
@@ -124,6 +125,17 @@ int main(int argc, char** argv) {
                 rgb.at<cv::Vec3b>(pt) = out;
             }
         }
+
+        const cv::Size viewSize = cv::Size(300, 300);
+        cv::resize(rViz, rViz, viewSize);
+        cv::resize(gViz, gViz, viewSize);
+        cv::resize(bViz, bViz, viewSize);
+        cv::resize(grayViz, grayViz, viewSize);
+        cv::resize(hViz, hViz, viewSize);
+        cv::resize(lViz, lViz, viewSize);
+        cv::resize(sViz, sViz, viewSize);
+        cv::resize(rgb, rgb, viewSize);
+        cv::resize(labelViz, labelViz, viewSize);
 
         cv::imshow("Red", rViz);
         cv::imshow("Green", gViz);
