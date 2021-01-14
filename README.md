@@ -1,7 +1,9 @@
 # CGPExperiments
-This repository contains a framework for training [Cartesian Genetic Programs (CGPs)](https://en.wikipedia.org/wiki/Cartesian_genetic_programming). This framework allows for training on any sort of data, but has been primarily designed for image processing tasks. 
+This repository contains a framework for training [Cartesian Genetic Programs (CGPs)](https://en.wikipedia.org/wiki/Cartesian_genetic_programming). This framework allows for training on any sort of data, but has been primarily designed for image processing tasks. Here's a visualization of the type of modules you can train with this framework!
 
-For a quick introduction on CGPs and the types of problems they can solve, [consult the corresponding blog post](). 
+![doc_image](documentation_image.png)
+
+For a quick introduction on CGPs and the types of problems they can solve, [consult the corresponding blog post](http://www.mitchellspryn.com/2021/01/06/Cartesian-Genetic-Programming-For-Image-Processing.html). 
 
 # Development workflow
 To use this framework for development, you'll typically need to perform the following steps:
